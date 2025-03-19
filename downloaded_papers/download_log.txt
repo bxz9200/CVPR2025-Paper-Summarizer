@@ -1,0 +1,172 @@
+Download started at 2025-03-19 17:44:04
+Keywords: VLM, Vision Language Model
+
+
+ImagineFSL: Self-Supervised Pretraining Matters on Imagined Base Set for VLM-based Few-shot Learning
+Authors: Haoyuan Yang · Xiaoou Li · Jiaming Lv · Xianjun Cheng · Qilong Wang · Peihua Li
+Downloaded: downloaded_papers/ImagineFSL__Self_Supervised_Pretraining_Matters_on.pdf
+
+Critic-V: VLM Critics Help Catch VLM Errors in Multimodal Reasoning
+Authors: Di Zhang · Jingdi Lei · Junxian Li · Xunzhi Wang · Yujie Liu · Zonglin Yang · Jiatong LI · Weida Wang · Suorong Yang · Jianbo Wu · Peng Ye · Wanli Ouyang · Dongzhan Zhou
+Downloaded: downloaded_papers/Critic_V__VLM_Critics_Help_Catch_VLM_Errors_in_Mul.pdf
+
+Lifelong Knowledge Editing for Vision Language Models with Low-Rank Mixture-of-Experts
+Authors: Qizhou Chen · Chengyu Wang · Dakan Wang · Taolin Zhang · Wangyue Li · Xiaofeng He
+Downloaded: downloaded_papers/Lifelong_Knowledge_Editing_for_Vision_Language_Mod.pdf
+
+LayoutVLM: Differentiable Optimization of 3D Layout via Vision-Language Models
+Authors: Fan-Yun Sun · Weiyu Liu · Siyi Gu · Dylan Lim · Goutam Bhat · Federico Tombari · Manling Li · Nick Haber · Jiajun Wu
+Downloaded: downloaded_papers/LayoutVLM__Differentiable_Optimization_of_3D_Layou.pdf
+
+Forensics-Bench: A Comprehensive Forgery Detection Benchmark Suite for Large Vision Language Models
+Authors: Jin Wang · Chenghui Lv · Xian Li · Shichao Dong · Huadong Li · kelu Yao · Chao Li · Wenqi Shao · Ping Luo
+Downloaded: downloaded_papers/Forensics_Bench__A_Comprehensive_Forgery_Detection.pdf
+
+VisionZip: Longer is Better but Not Necessary in Vision Language Models
+Authors: Senqiao Yang · Yukang Chen · Zhuotao Tian · Chengyao Wang · Jingyao Li · Bei Yu · Jiaya Jia
+Downloaded: downloaded_papers/VisionZip__Longer_is_Better_but_Not_Necessary_in_V.pdf
+
+Antidote: A Unified Framework for Mitigating LVLM Hallucinations in Counterfactual Presupposition and Object Perception
+Authors: Yuanchen Wu · Lu Zhang · Hang Yao · Junlong Du · Ke Yan · Shouhong Ding · Yunsheng Wu · Xiaoqiang Li
+Downloaded: downloaded_papers/Antidote__A_Unified_Framework_for_Mitigating_LVLM_.pdf
+
+Embodied Scene Understanding for Vision Language Models via MetaVQA
+Authors: Weizhen Wang · Chenda Duan · Zhenghao Peng · Yuxin Liu · Bolei Zhou
+Downloaded: downloaded_papers/Embodied_Scene_Understanding_for_Vision_Language_M.pdf
+
+Discriminative Fine-tuning of LVLMs
+Authors: Yassine Ouali · Adrian Bulat · ALEXANDROS XENOS · Anestis Zaganidis · Ioannis Maniadis Metaxas · Brais Martinez · Georgios Tzimiropoulos
+Downloaded: downloaded_papers/Discriminative_Fine_tuning_of_LVLMs.pdf
+
+MASH-VLM: Mitigating Action-Scene Hallucination in Video-LLMs through Disentangled Spatial-Temporal Representations
+Authors: Kyungho Bae · Jinhyung Kim · Sihaeng Lee · Soonyoung Lee · Gunhee Lee · Jinwoo Choi
+Downloaded: downloaded_papers/MASH_VLM__Mitigating_Action_Scene_Hallucination_in.pdf
+
+Global-Local Tree Search in VLMs for 3D Indoor Scene Generation
+Authors: Wei Deng · Mengshi Qi · Huadong Ma
+Downloaded: downloaded_papers/Global_Local_Tree_Search_in_VLMs_for_3D_Indoor_Sce.pdf
+
+Steering Away from Harm: An Adaptive Approach to Defending Vision Language Model Against Jailbreaks
+Authors: Han Wang · Gang Wang · Huan Zhang
+Downloaded: downloaded_papers/Steering_Away_from_Harm__An_Adaptive_Approach_to_D.pdf
+
+FastVLM: Efficient Vision Encoding for Vision Language Models
+Authors: Pavan Vasu Vasu · Fartash Faghri · Chun-Liang Li · Cem Koc · Nate True · Gokula Krishnan Santhanam · Albert Antony · James Gabriel · Peter Grasch · Oncel Tuzel · Hadi Pouransari
+Downloaded: downloaded_papers/FastVLM__Efficient_Vision_Encoding_for_Vision_Lang.pdf
+
+MIMO: A medical vision language model with visual referring multimodal input and pixel grounding multimodal output
+Authors: Yanyuan Chen · Dexuan Xu · Yu Huang · ZhanSongkun · Hanpin Wang · Dongxue Chen · Xueping Wang · Meikang Qiu · Hang Li
+Downloaded: downloaded_papers/MIMO__A_medical_vision_language_model_with_visual_.pdf
+
+What’s in the Image? A Deep-Dive into the Vision of Vision Language Models
+Authors: Omri Kaduri · Shai Bagon · Tali Dekel
+Downloaded: downloaded_papers/What_s_in_the_Image__A_Deep_Dive_into_the_Vision_o.pdf
+
+Overcoming Shortcut Problem in VLM for Robust Out-of-Distribution Detection
+Authors: Zhuo Xu · Xiang Xiang · Yifan Liang
+Downloaded: downloaded_papers/Overcoming_Shortcut_Problem_in_VLM_for_Robust_Out_.pdf
+
+SPA-VL: A Comprehensive Safety Preference Alignment Dataset for Vision Language Model
+Authors: Yongting Zhang · Lu Chen · Guodong Zheng · Yifeng Gao · Rui Zheng · Jinlan Fu · Zhenfei Yin · Senjie Jin · Yu Qiao · Xuanjing Huang · Feng Zhao · Tao Gui · Jing Shao
+Downloaded: downloaded_papers/SPA_VL__A_Comprehensive_Safety_Preference_Alignmen.pdf
+
+TopV: Compatible Token Pruning with Inference Time Optimization for Fast and Low-Memory Multimodal Vision Language Model
+Authors: Cheng Yang · Yang Sui · Jinqi Xiao · Lingyi Huang · Yu Gong · Chendi Li · Jinghua Yan · Yu Bai · Ponnuswamy Sadayappan · Xia Hu · Bo Yuan
+Downloaded: downloaded_papers/TopV__Compatible_Token_Pruning_with_Inference_Time.pdf
+
+Stealthy Backdoor Attack in Self-Supervised Learning Vision Encoders for Large Vision Language Models
+Authors: Zhaoyi Liu · Huan Zhang
+Downloaded: downloaded_papers/Stealthy_Backdoor_Attack_in_Self_Supervised_Learni.pdf
+
+Towards Vision Language Models For Extra-Long Video Understanding
+Authors: Yan Shu · Zheng Liu · Peitian Zhang · Minghao Qin · Junjie Zhou · Zhengyang Liang · Tiejun Huang · Bo Zhao
+Downloaded: downloaded_papers/Towards_Vision_Language_Models_For_Extra_Long_Vide.pdf
+
+FLAIR: VLM with Fine-grained Language-informed Image Representations
+Authors: Rui Xiao · Sanghwan Kim · Iuliana Georgescu · Zeynep Akata · Stephan Alaniz
+Downloaded: downloaded_papers/FLAIR__VLM_with_Fine_grained_Language_informed_Ima.pdf
+
+VLsI: Verbalized Layers-to-Interactions from Large to Small Vision Language Models
+Authors: Byung-Kwan Lee · Ryo Hachiuma · Yu-Chiang Frank Wang · Yong Man Ro · Yueh-Hua Wu
+Downloaded: downloaded_papers/VLsI__Verbalized_Layers_to_Interactions_from_Large.pdf
+
+Beyond Sight: Towards Cognitive Alignment in LVLM via Enriched Visual Knowledge
+Authors: Yaqi Zhao · Yuanyang Yin · Lin Li · Mingan Lin · Victor Shea-Jay Huang · Siwei Chen · Weipeng Chen · Baoqun Yin · Zenan Zhou · Wentao Zhang
+Not found on arXiv
+
+FireEdit: Fine-grained Instruction-based Image Editing via Region-aware Vision Language Model
+Authors: Jun Zhou · Jiahao Li · Zunnan Xu · Hanhui Li · Yiji Cheng · Fa-Ting Hong · Qin Lin · qinglin lu · Xiaodan Liang
+Not found on arXiv
+
+ReasonGrounder: LVLM-Guided Hierarchical Feature Splatting for Open-Vocabulary 3D Visual Grounding and Reasoning
+Authors: Zhenyang Liu · Yikai Wang · Sixiao Zheng · Tongying Pan · Longfei Liang · Yanwei Fu · Xiangyang Xue
+Not found on arXiv
+
+GFlowVLM: Enhancing Multi-step Reasoning in Vision-Language Models with Generative Flow Networks
+Authors: Haoqiang Kang · Enna Sachdeva · Piyush Gupta · Sangjae Bae · Kwonjoon Lee
+Downloaded: downloaded_papers/GFlowVLM__Enhancing_Multi_step_Reasoning_in_Vision.pdf
+
+ATP-LLaVA: Adaptive Token Pruning for Large Vision Language Models
+Authors: Xubing Ye · Yukang Gan · Yixiao Ge · Xiao-Ping Zhang · Yansong Tang
+Downloaded: downloaded_papers/ATP_LLaVA__Adaptive_Token_Pruning_for_Large_Vision.pdf
+
+DocVLM: Make Your VLM an Efficient Reader
+Authors: Mor Shpigel Nacson · Aviad Aberdam · Roy Ganz · Elad Ben Avraham · Alona Golts · Yair Kittenplon · Shai Mazor · Ron Litman
+Downloaded: downloaded_papers/DocVLM__Make_Your_VLM_an_Efficient_Reader.pdf
+
+PARC: A Quantitative Framework Uncovering the Symmetries within Vision Language Models
+Authors: Jenny Schmalfuss · Nadine Chang · Vibashan VS · Maying Shen · Andrés Bruhn · Jose M. Alvarez
+Downloaded: downloaded_papers/PARC__A_Quantitative_Framework_Uncovering_the_Symm.pdf
+
+MoVE-KD: Knowledge Distillation for VLMs with Mixture of Visual Encoders
+Authors: jiajun cao · Yuan Zhang · Tao Huang · Ming Lu · Qizhe Zhang · Ruichuan An · Ningning Ma · Shanghang Zhang
+Not found on arXiv
+
+Mamba as a Bridge: Where VFM Meets VLM for Domain-Generalized Semantic Segmentation
+Authors: Xin Zhang · Robby T. Tan
+Not found on arXiv
+
+Seeing the Abstract: Translating the Abstract Language for Vision Language Models
+Authors: Davide Talon · Federico Girella · Ziyue Liu · Marco Cristani · Yiming Wang
+Not found on arXiv
+
+POPEN: Preference-Based Optimization and Ensemble for LVLM-Based Reasoning Segmentation
+Authors: Lanyun Zhu · Tianrun Chen · Qianxiong Xu · Xuanyi Liu · Deyi Ji · Haiyang Wu · De Soh Soh · Jun Liu
+Not found on arXiv
+
+A Stitch in Time Saves Nine: Small VLM is a Precise Guidance for accelerating Large VLMs
+Authors: Wangbo Zhao · Yizeng Han · Jiasheng Tang · Zhikai Li · Yibing Song · Kai Wang · Zhangyang Wang · Yang You
+Not found on arXiv
+
+Provoking Multi-modal Few-Shot LVLM via Exploration-Exploitation In-Context Learning
+Authors: Cheng Chen · Yunpeng Zhai · Yifan Zhao · Jinyang Gao · Bolin Ding · Jia Li
+Not found on arXiv
+
+InteractVLM: 3D Interaction Reasoning from 2D Foundational Models
+Authors: Sai Kumar Dwivedi · Dimitrije Antić · Shashank Tripathi · Omid Taheri · Cordelia Schmid · Michael J. Black · Dimitrios Tzionas
+Not found on arXiv
+
+MotionBench: Benchmarking and Improving Fine-grained Video Motion Understanding for Vision Language Models
+Authors: Wenyi Hong · Yean Cheng · Zhuoyi Yang · Weihan Wang · Lefan Wang · Xiaotao Gu · Shiyu Huang · Yuxiao Dong · Jie Tang
+Not found on arXiv
+
+Galaxy Walker: Geometry-aware VLMs For Galaxy-scale Understanding
+Authors: Tianyu Chen · Xingcheng Fu · Yisen Gao · Haodong Qian · Yuecen Wei · Kun Yan · Haoyi Zhou · Jianxin Li
+Not found on arXiv
+
+Ground-V: Teaching VLMs to Ground Complex Instructions in Pixels
+Authors: Yongshuo Zong · Qin ZHANG · DONGSHENG An · Zhihua Li · Xiang Xu · Linghan Xu · Zhuowen Tu · Yifan Xing · Onkar Dabeer
+Downloaded: downloaded_papers/Ground_V__Teaching_VLMs_to_Ground_Complex_Instruct.pdf
+
+VLMs-Guided Representation Distillation for Efficient Vision-Based Reinforcement Learning
+Authors: Haoran Xu · Peixi Peng · Guang Tan · Yiqian Chang · Luntong Li · Yonghong Tian
+Not found on arXiv
+
+HalLoc: Token-level Localization of Hallucinations for Vision Language Models
+Authors: Eunkyu Park · Minyeong Kim · Gunhee Kim
+Not found on arXiv
+
+
+Summary: Found 41 papers with keywords out of 2748 total papers
+Successfully downloaded 27 papers
+Download completed at 2025-03-19 17:59:37
