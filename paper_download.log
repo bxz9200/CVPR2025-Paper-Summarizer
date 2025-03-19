@@ -1,0 +1,230 @@
+2025-03-19 20:52:06,464 - INFO - Fetching papers from https://cvpr.thecvf.com/Conferences/2025/AcceptedPapers
+2025-03-19 20:52:08,976 - INFO - Found 2745 papers
+2025-03-19 20:52:08,977 - INFO - 
+Found paper with keyword: ImagineFSL: Self-Supervised Pretraining Matters on Imagined Base Set for VLM-based Few-shot Learning
+2025-03-19 20:52:08,977 - INFO - Searching arXiv for: ImagineFSL: Self-Supervised Pretraining Matters on Imagined Base Set for VLM-based Few-shot Learning
+2025-03-19 20:52:10,750 - WARNING - No matching paper found on arXiv (best similarity: 0.47)
+2025-03-19 20:52:13,752 - INFO - 
+Found paper with keyword: Critic-V: VLM Critics Help Catch VLM Errors in Multimodal Reasoning
+2025-03-19 20:52:13,762 - INFO - Searching arXiv for: Critic-V: VLM Critics Help Catch VLM Errors in Multimodal Reasoning
+2025-03-19 20:52:15,308 - INFO - Found paper on arXiv (similarity: 1.00): Critic-V: VLM Critics Help Catch VLM Errors in Multimodal Reasoning
+2025-03-19 20:52:15,309 - INFO - Downloading paper: Critic-V: VLM Critics Help Catch VLM Errors in Multimodal Reasoning
+2025-03-19 20:52:19,797 - INFO - Successfully downloaded paper to downloaded_papers/Critic-V_VLM_Critics_Help_Catch_VLM_Errors_in_Multimodal_Reasoning_2411.18203v4.pdf
+2025-03-19 20:52:22,807 - INFO - 
+Found paper with keyword: Lifelong Knowledge Editing for Vision Language Models with Low-Rank Mixture-of-Experts
+2025-03-19 20:52:22,811 - INFO - Searching arXiv for: Lifelong Knowledge Editing for Vision Language Models with Low-Rank Mixture-of-Experts
+2025-03-19 20:52:24,612 - INFO - Found paper on arXiv (similarity: 1.00): Lifelong Knowledge Editing for Vision Language Models with Low-Rank
+  Mixture-of-Experts
+2025-03-19 20:52:24,613 - INFO - Downloading paper: Lifelong Knowledge Editing for Vision Language Models with Low-Rank Mixture-of-Experts
+2025-03-19 20:52:26,936 - INFO - Successfully downloaded paper to downloaded_papers/Lifelong_Knowledge_Editing_for_Vision_Language_Models_with_Low-Rank_Mixture-of-Experts_2411.15432v2.pdf
+2025-03-19 20:52:29,943 - INFO - 
+Found paper with keyword: LayoutVLM: Differentiable Optimization of 3D Layout via Vision-Language Models
+2025-03-19 20:52:29,945 - INFO - Searching arXiv for: LayoutVLM: Differentiable Optimization of 3D Layout via Vision-Language Models
+2025-03-19 20:52:31,568 - INFO - Found paper on arXiv (similarity: 1.00): LayoutVLM: Differentiable Optimization of 3D Layout via Vision-Language
+  Models
+2025-03-19 20:52:31,569 - INFO - Downloading paper: LayoutVLM: Differentiable Optimization of 3D Layout via Vision-Language Models
+2025-03-19 20:53:17,669 - INFO - Successfully downloaded paper to downloaded_papers/LayoutVLM_Differentiable_Optimization_of_3D_Layout_via_Vision-Language_Models_2412.02193v3.pdf
+2025-03-19 20:53:20,681 - INFO - 
+Found paper with keyword: Forensics-Bench: A Comprehensive Forgery Detection Benchmark Suite for Large Vision Language Models
+2025-03-19 20:53:20,682 - INFO - Searching arXiv for: Forensics-Bench: A Comprehensive Forgery Detection Benchmark Suite for Large Vision Language Models
+2025-03-19 20:53:22,513 - INFO - Found paper on arXiv (similarity: 0.66): MMT-Bench: A Comprehensive Multimodal Benchmark for Evaluating Large
+  Vision-Language Models Towards Multitask AGI
+2025-03-19 20:53:22,514 - INFO - Downloading paper: Forensics-Bench: A Comprehensive Forgery Detection Benchmark Suite for Large Vision Language Models
+2025-03-19 20:53:56,852 - INFO - Successfully downloaded paper to downloaded_papers/Forensics-Bench_A_Comprehensive_Forgery_Detection_Benchmark_Suite_for_Large_Vision_Language_Models_2404.16006v1.pdf
+2025-03-19 20:53:59,863 - INFO - 
+Found paper with keyword: VisionZip: Longer is Better but Not Necessary in Vision Language Models
+2025-03-19 20:53:59,865 - INFO - Searching arXiv for: VisionZip: Longer is Better but Not Necessary in Vision Language Models
+2025-03-19 20:54:01,959 - INFO - Found paper on arXiv (similarity: 1.00): VisionZip: Longer is Better but Not Necessary in Vision Language Models
+2025-03-19 20:54:01,960 - INFO - Downloading paper: VisionZip: Longer is Better but Not Necessary in Vision Language Models
+2025-03-19 20:54:07,906 - INFO - Successfully downloaded paper to downloaded_papers/VisionZip_Longer_is_Better_but_Not_Necessary_in_Vision_Language_Models_2412.04467v1.pdf
+2025-03-19 20:54:10,913 - INFO - 
+Found paper with keyword: Antidote: A Unified Framework for Mitigating LVLM Hallucinations in Counterfactual Presupposition and Object Perception
+2025-03-19 20:54:10,914 - INFO - Searching arXiv for: Antidote: A Unified Framework for Mitigating LVLM Hallucinations in Counterfactual Presupposition and Object Perception
+2025-03-19 20:54:13,325 - WARNING - No matching paper found on arXiv (best similarity: 0.45)
+2025-03-19 20:54:16,332 - INFO - 
+Found paper with keyword: Embodied Scene Understanding for Vision Language Models via MetaVQA
+2025-03-19 20:54:16,333 - INFO - Searching arXiv for: Embodied Scene Understanding for Vision Language Models via MetaVQA
+2025-03-19 20:54:18,026 - INFO - Found paper on arXiv (similarity: 1.00): Embodied Scene Understanding for Vision Language Models via MetaVQA
+2025-03-19 20:54:18,027 - INFO - Downloading paper: Embodied Scene Understanding for Vision Language Models via MetaVQA
+2025-03-19 20:55:50,175 - INFO - Successfully downloaded paper to downloaded_papers/Embodied_Scene_Understanding_for_Vision_Language_Models_via_MetaVQA_2501.09167v1.pdf
+2025-03-19 20:55:53,187 - INFO - 
+Found paper with keyword: Discriminative Fine-tuning of LVLMs
+2025-03-19 20:55:53,189 - INFO - Searching arXiv for: Discriminative Fine-tuning of LVLMs
+2025-03-19 20:55:54,704 - INFO - Found paper on arXiv (similarity: 1.00): Discriminative Fine-tuning of LVLMs
+2025-03-19 20:55:54,705 - INFO - Downloading paper: Discriminative Fine-tuning of LVLMs
+2025-03-19 20:56:02,670 - INFO - Successfully downloaded paper to downloaded_papers/Discriminative_Fine-tuning_of_LVLMs_2412.04378v2.pdf
+2025-03-19 20:56:05,677 - INFO - 
+Found paper with keyword: MASH-VLM: Mitigating Action-Scene Hallucination in Video-LLMs through Disentangled Spatial-Temporal Representations
+2025-03-19 20:56:05,679 - INFO - Searching arXiv for: MASH-VLM: Mitigating Action-Scene Hallucination in Video-LLMs through Disentangled Spatial-Temporal Representations
+2025-03-19 20:56:07,611 - WARNING - No matching paper found on arXiv (best similarity: 0.45)
+2025-03-19 20:56:10,618 - INFO - 
+Found paper with keyword: Global-Local Tree Search in VLMs for 3D Indoor Scene Generation
+2025-03-19 20:56:10,621 - INFO - Searching arXiv for: Global-Local Tree Search in VLMs for 3D Indoor Scene Generation
+2025-03-19 20:56:12,257 - WARNING - No matching paper found on arXiv (best similarity: 0.47)
+2025-03-19 20:56:15,265 - INFO - 
+Found paper with keyword: Steering Away from Harm: An Adaptive Approach to Defending Vision Language Model Against Jailbreaks
+2025-03-19 20:56:15,268 - INFO - Searching arXiv for: Steering Away from Harm: An Adaptive Approach to Defending Vision Language Model Against Jailbreaks
+2025-03-19 20:56:17,820 - INFO - Found paper on arXiv (similarity: 1.00): Steering Away from Harm: An Adaptive Approach to Defending Vision
+  Language Model Against Jailbreaks
+2025-03-19 20:56:17,820 - INFO - Downloading paper: Steering Away from Harm: An Adaptive Approach to Defending Vision Language Model Against Jailbreaks
+2025-03-19 20:56:24,851 - INFO - Successfully downloaded paper to downloaded_papers/Steering_Away_from_Harm_An_Adaptive_Approach_to_Defending_Vision_Language_Model_Against_Jailbreaks_2411.16721v2.pdf
+2025-03-19 20:56:27,858 - INFO - 
+Found paper with keyword: FastVLM: Efficient Vision Encoding for Vision Language Models
+2025-03-19 20:56:27,858 - INFO - Searching arXiv for: FastVLM: Efficient Vision Encoding for Vision Language Models
+2025-03-19 20:56:30,951 - INFO - Found paper on arXiv (similarity: 1.00): FastVLM: Efficient Vision Encoding for Vision Language Models
+2025-03-19 20:56:30,954 - INFO - Downloading paper: FastVLM: Efficient Vision Encoding for Vision Language Models
+2025-03-19 20:56:32,813 - INFO - Successfully downloaded paper to downloaded_papers/FastVLM_Efficient_Vision_Encoding_for_Vision_Language_Models_2412.13303v1.pdf
+2025-03-19 20:56:35,820 - INFO - 
+Found paper with keyword: MIMO: A medical vision language model with visual referring multimodal input and pixel grounding multimodal output
+2025-03-19 20:56:35,821 - INFO - Searching arXiv for: MIMO: A medical vision language model with visual referring multimodal input and pixel grounding multimodal output
+2025-03-19 20:56:38,016 - WARNING - No matching paper found on arXiv (best similarity: 0.52)
+2025-03-19 20:56:41,025 - INFO - 
+Found paper with keyword: What’s in the Image? A Deep-Dive into the Vision of Vision Language Models
+2025-03-19 20:56:41,027 - INFO - Searching arXiv for: What’s in the Image? A Deep-Dive into the Vision of Vision Language Models
+2025-03-19 20:56:43,450 - INFO - Found paper on arXiv (similarity: 1.00): What's in the Image? A Deep-Dive into the Vision of Vision Language
+  Models
+2025-03-19 20:56:43,451 - INFO - Downloading paper: What’s in the Image? A Deep-Dive into the Vision of Vision Language Models
+2025-03-19 20:57:04,883 - INFO - Successfully downloaded paper to downloaded_papers/What’s_in_the_Image_A_Deep-Dive_into_the_Vision_of_Vision_Language_Models_2411.17491v1.pdf
+2025-03-19 20:57:07,896 - INFO - 
+Found paper with keyword: Overcoming Shortcut Problem in VLM for Robust Out-of-Distribution Detection
+2025-03-19 20:57:07,897 - INFO - Searching arXiv for: Overcoming Shortcut Problem in VLM for Robust Out-of-Distribution Detection
+2025-03-19 20:57:09,741 - WARNING - No matching paper found on arXiv (best similarity: 0.43)
+2025-03-19 20:57:12,748 - INFO - 
+Found paper with keyword: SPA-VL: A Comprehensive Safety Preference Alignment Dataset for Vision Language Model
+2025-03-19 20:57:12,752 - INFO - Searching arXiv for: SPA-VL: A Comprehensive Safety Preference Alignment Dataset for Vision Language Model
+2025-03-19 20:57:14,781 - INFO - Found paper on arXiv (similarity: 1.00): SPA-VL: A Comprehensive Safety Preference Alignment Dataset for Vision
+  Language Model
+2025-03-19 20:57:14,782 - INFO - Downloading paper: SPA-VL: A Comprehensive Safety Preference Alignment Dataset for Vision Language Model
+2025-03-19 20:57:22,896 - INFO - Successfully downloaded paper to downloaded_papers/SPA-VL_A_Comprehensive_Safety_Preference_Alignment_Dataset_for_Vision_Language_Model_2406.12030v2.pdf
+2025-03-19 20:57:25,904 - INFO - 
+Found paper with keyword: TopV: Compatible Token Pruning with Inference Time Optimization for Fast and Low-Memory Multimodal Vision Language Model
+2025-03-19 20:57:25,906 - INFO - Searching arXiv for: TopV: Compatible Token Pruning with Inference Time Optimization for Fast and Low-Memory Multimodal Vision Language Model
+2025-03-19 20:57:28,011 - WARNING - No matching paper found on arXiv (best similarity: 0.38)
+2025-03-19 20:57:31,017 - INFO - 
+Found paper with keyword: Stealthy Backdoor Attack in Self-Supervised Learning Vision Encoders for Large Vision Language Models
+2025-03-19 20:57:31,020 - INFO - Searching arXiv for: Stealthy Backdoor Attack in Self-Supervised Learning Vision Encoders for Large Vision Language Models
+2025-03-19 20:57:32,799 - INFO - Found paper on arXiv (similarity: 1.00): Stealthy Backdoor Attack in Self-Supervised Learning Vision Encoders for
+  Large Vision Language Models
+2025-03-19 20:57:32,800 - INFO - Downloading paper: Stealthy Backdoor Attack in Self-Supervised Learning Vision Encoders for Large Vision Language Models
+2025-03-19 20:57:40,823 - INFO - Successfully downloaded paper to downloaded_papers/Stealthy_Backdoor_Attack_in_Self-Supervised_Learning_Vision_Encoders_for_Large_Vision_Language_Model_2502.18290v2.pdf
+2025-03-19 20:57:43,832 - INFO - 
+Found paper with keyword: Towards Vision Language Models For Extra-Long Video Understanding
+2025-03-19 20:57:43,833 - INFO - Searching arXiv for: Towards Vision Language Models For Extra-Long Video Understanding
+2025-03-19 20:57:45,596 - INFO - Found paper on arXiv (similarity: 0.71): Video-XL: Extra-Long Vision Language Model for Hour-Scale Video
+  Understanding
+2025-03-19 20:57:45,597 - INFO - Downloading paper: Towards Vision Language Models For Extra-Long Video Understanding
+2025-03-19 20:58:25,880 - INFO - Successfully downloaded paper to downloaded_papers/Towards_Vision_Language_Models_For_Extra-Long_Video_Understanding_2409.14485v4.pdf
+2025-03-19 20:58:28,894 - INFO - 
+Found paper with keyword: FLAIR: VLM with Fine-grained Language-informed Image Representations
+2025-03-19 20:58:28,895 - INFO - Searching arXiv for: FLAIR: VLM with Fine-grained Language-informed Image Representations
+2025-03-19 20:58:30,400 - INFO - Found paper on arXiv (similarity: 1.00): FLAIR: VLM with Fine-grained Language-informed Image Representations
+2025-03-19 20:58:30,401 - INFO - Downloading paper: FLAIR: VLM with Fine-grained Language-informed Image Representations
+2025-03-19 20:58:45,922 - INFO - Successfully downloaded paper to downloaded_papers/FLAIR_VLM_with_Fine-grained_Language-informed_Image_Representations_2412.03561v1.pdf
+2025-03-19 20:58:48,930 - INFO - 
+Found paper with keyword: VLsI: Verbalized Layers-to-Interactions from Large to Small Vision Language Models
+2025-03-19 20:58:48,931 - INFO - Searching arXiv for: VLsI: Verbalized Layers-to-Interactions from Large to Small Vision Language Models
+2025-03-19 20:58:50,670 - INFO - Found paper on arXiv (similarity: 1.00): VLsI: Verbalized Layers-to-Interactions from Large to Small Vision
+  Language Models
+2025-03-19 20:58:50,670 - INFO - Downloading paper: VLsI: Verbalized Layers-to-Interactions from Large to Small Vision Language Models
+2025-03-19 21:00:27,844 - INFO - Successfully downloaded paper to downloaded_papers/VLsI_Verbalized_Layers-to-Interactions_from_Large_to_Small_Vision_Language_Models_2412.01822v1.pdf
+2025-03-19 21:00:30,854 - INFO - 
+Found paper with keyword: Beyond Sight: Towards Cognitive Alignment in LVLM via Enriched Visual Knowledge
+2025-03-19 21:00:30,855 - INFO - Searching arXiv for: Beyond Sight: Towards Cognitive Alignment in LVLM via Enriched Visual Knowledge
+2025-03-19 21:00:33,125 - INFO - Found paper on arXiv (similarity: 1.00): Beyond Sight: Towards Cognitive Alignment in LVLM via Enriched Visual
+  Knowledge
+2025-03-19 21:00:33,126 - INFO - Downloading paper: Beyond Sight: Towards Cognitive Alignment in LVLM via Enriched Visual Knowledge
+2025-03-19 21:01:10,937 - INFO - Successfully downloaded paper to downloaded_papers/Beyond_Sight_Towards_Cognitive_Alignment_in_LVLM_via_Enriched_Visual_Knowledge_2411.16824v1.pdf
+2025-03-19 21:01:13,944 - INFO - 
+Found paper with keyword: FireEdit: Fine-grained Instruction-based Image Editing via Region-aware Vision Language Model
+2025-03-19 21:01:13,945 - INFO - Searching arXiv for: FireEdit: Fine-grained Instruction-based Image Editing via Region-aware Vision Language Model
+2025-03-19 21:01:15,828 - WARNING - No matching paper found on arXiv (best similarity: 0.33)
+2025-03-19 21:01:18,832 - INFO - 
+Found paper with keyword: ReasonGrounder: LVLM-Guided Hierarchical Feature Splatting for Open-Vocabulary 3D Visual Grounding and Reasoning
+2025-03-19 21:01:18,833 - INFO - Searching arXiv for: ReasonGrounder: LVLM-Guided Hierarchical Feature Splatting for Open-Vocabulary 3D Visual Grounding and Reasoning
+2025-03-19 21:01:20,480 - WARNING - No matching paper found on arXiv (best similarity: 0.40)
+2025-03-19 21:01:23,487 - INFO - 
+Found paper with keyword: GFlowVLM: Enhancing Multi-step Reasoning in Vision-Language Models with Generative Flow Networks
+2025-03-19 21:01:23,487 - INFO - Searching arXiv for: GFlowVLM: Enhancing Multi-step Reasoning in Vision-Language Models with Generative Flow Networks
+2025-03-19 21:01:25,207 - INFO - Found paper on arXiv (similarity: 1.00): GFlowVLM: Enhancing Multi-step Reasoning in Vision-Language Models with
+  Generative Flow Networks
+2025-03-19 21:01:25,208 - INFO - Downloading paper: GFlowVLM: Enhancing Multi-step Reasoning in Vision-Language Models with Generative Flow Networks
+2025-03-19 21:01:30,855 - INFO - Successfully downloaded paper to downloaded_papers/GFlowVLM_Enhancing_Multi-step_Reasoning_in_Vision-Language_Models_with_Generative_Flow_Networks_2503.06514v1.pdf
+2025-03-19 21:01:33,861 - INFO - 
+Found paper with keyword: ATP-LLaVA: Adaptive Token Pruning for Large Vision Language Models
+2025-03-19 21:01:33,864 - INFO - Searching arXiv for: ATP-LLaVA: Adaptive Token Pruning for Large Vision Language Models
+2025-03-19 21:01:37,306 - INFO - Found paper on arXiv (similarity: 1.00): ATP-LLaVA: Adaptive Token Pruning for Large Vision Language Models
+2025-03-19 21:01:37,306 - INFO - Downloading paper: ATP-LLaVA: Adaptive Token Pruning for Large Vision Language Models
+2025-03-19 21:01:41,908 - INFO - Successfully downloaded paper to downloaded_papers/ATP-LLaVA_Adaptive_Token_Pruning_for_Large_Vision_Language_Models_2412.00447v1.pdf
+2025-03-19 21:01:44,912 - INFO - 
+Found paper with keyword: DocVLM: Make Your VLM an Efficient Reader
+2025-03-19 21:01:44,915 - INFO - Searching arXiv for: DocVLM: Make Your VLM an Efficient Reader
+2025-03-19 21:01:46,453 - INFO - Found paper on arXiv (similarity: 1.00): DocVLM: Make Your VLM an Efficient Reader
+2025-03-19 21:01:46,454 - INFO - Downloading paper: DocVLM: Make Your VLM an Efficient Reader
+2025-03-19 21:03:19,876 - INFO - Successfully downloaded paper to downloaded_papers/DocVLM_Make_Your_VLM_an_Efficient_Reader_2412.08746v1.pdf
+2025-03-19 21:03:22,890 - INFO - 
+Found paper with keyword: PARC: A Quantitative Framework Uncovering the Symmetries within Vision Language Models
+2025-03-19 21:03:22,892 - INFO - Searching arXiv for: PARC: A Quantitative Framework Uncovering the Symmetries within Vision Language Models
+2025-03-19 21:03:26,245 - WARNING - No matching paper found on arXiv (best similarity: 0.47)
+2025-03-19 21:03:29,252 - INFO - 
+Found paper with keyword: MoVE-KD: Knowledge Distillation for VLMs with Mixture of Visual Encoders
+2025-03-19 21:03:29,254 - INFO - Searching arXiv for: MoVE-KD: Knowledge Distillation for VLMs with Mixture of Visual Encoders
+2025-03-19 21:03:31,636 - INFO - Found paper on arXiv (similarity: 1.00): MoVE-KD: Knowledge Distillation for VLMs with Mixture of Visual Encoders
+2025-03-19 21:03:31,637 - INFO - Downloading paper: MoVE-KD: Knowledge Distillation for VLMs with Mixture of Visual Encoders
+2025-03-19 21:03:32,935 - INFO - Successfully downloaded paper to downloaded_papers/MoVE-KD_Knowledge_Distillation_for_VLMs_with_Mixture_of_Visual_Encoders_2501.01709v3.pdf
+2025-03-19 21:03:35,941 - INFO - 
+Found paper with keyword: Mamba as a Bridge: Where VFM Meets VLM for Domain-Generalized Semantic Segmentation
+2025-03-19 21:03:35,942 - INFO - Searching arXiv for: Mamba as a Bridge: Where VFM Meets VLM for Domain-Generalized Semantic Segmentation
+2025-03-19 21:03:37,663 - WARNING - No matching paper found on arXiv (best similarity: 0.49)
+2025-03-19 21:03:40,672 - INFO - 
+Found paper with keyword: Seeing the Abstract: Translating the Abstract Language for Vision Language Models
+2025-03-19 21:03:40,674 - INFO - Searching arXiv for: Seeing the Abstract: Translating the Abstract Language for Vision Language Models
+2025-03-19 21:03:42,780 - WARNING - No matching paper found on arXiv (best similarity: 0.25)
+2025-03-19 21:03:45,787 - INFO - 
+Found paper with keyword: POPEN: Preference-Based Optimization and Ensemble for LVLM-Based Reasoning Segmentation
+2025-03-19 21:03:45,792 - INFO - Searching arXiv for: POPEN: Preference-Based Optimization and Ensemble for LVLM-Based Reasoning Segmentation
+2025-03-19 21:03:47,503 - WARNING - No matching paper found on arXiv (best similarity: 0.33)
+2025-03-19 21:03:50,509 - INFO - 
+Found paper with keyword: A Stitch in Time Saves Nine: Small VLM is a Precise Guidance for accelerating Large VLMs
+2025-03-19 21:03:50,511 - INFO - Searching arXiv for: A Stitch in Time Saves Nine: Small VLM is a Precise Guidance for accelerating Large VLMs
+2025-03-19 21:03:52,834 - INFO - Found paper on arXiv (similarity: 1.00): A Stitch in Time Saves Nine: Small VLM is a Precise Guidance for
+  Accelerating Large VLMs
+2025-03-19 21:03:52,835 - INFO - Downloading paper: A Stitch in Time Saves Nine: Small VLM is a Precise Guidance for accelerating Large VLMs
+2025-03-19 21:04:06,016 - INFO - Successfully downloaded paper to downloaded_papers/A_Stitch_in_Time_Saves_Nine_Small_VLM_is_a_Precise_Guidance_for_accelerating_Large_VLMs_2412.03324v2.pdf
+2025-03-19 21:04:09,026 - INFO - 
+Found paper with keyword: Provoking Multi-modal Few-Shot LVLM via Exploration-Exploitation In-Context Learning
+2025-03-19 21:04:09,029 - INFO - Searching arXiv for: Provoking Multi-modal Few-Shot LVLM via Exploration-Exploitation In-Context Learning
+2025-03-19 21:04:10,732 - WARNING - No matching paper found on arXiv (best similarity: 0.47)
+2025-03-19 21:04:13,739 - INFO - 
+Found paper with keyword: InteractVLM: 3D Interaction Reasoning from 2D Foundational Models
+2025-03-19 21:04:13,742 - INFO - Searching arXiv for: InteractVLM: 3D Interaction Reasoning from 2D Foundational Models
+2025-03-19 21:04:16,266 - WARNING - No matching paper found on arXiv (best similarity: 0.47)
+2025-03-19 21:04:19,273 - INFO - 
+Found paper with keyword: MotionBench: Benchmarking and Improving Fine-grained Video Motion Understanding for Vision Language Models
+2025-03-19 21:04:19,274 - INFO - Searching arXiv for: MotionBench: Benchmarking and Improving Fine-grained Video Motion Understanding for Vision Language Models
+2025-03-19 21:04:21,350 - INFO - Found paper on arXiv (similarity: 1.00): MotionBench: Benchmarking and Improving Fine-grained Video Motion
+  Understanding for Vision Language Models
+2025-03-19 21:04:21,351 - INFO - Downloading paper: MotionBench: Benchmarking and Improving Fine-grained Video Motion Understanding for Vision Language Models
+2025-03-19 21:04:26,998 - INFO - Successfully downloaded paper to downloaded_papers/MotionBench_Benchmarking_and_Improving_Fine-grained_Video_Motion_Understanding_for_Vision_Language_M_2501.02955v1.pdf
+2025-03-19 21:04:30,004 - INFO - 
+Found paper with keyword: VLMs-Guided Representation Distillation for Efficient Vision-Based Reinforcement Learning
+2025-03-19 21:04:30,006 - INFO - Searching arXiv for: VLMs-Guided Representation Distillation for Efficient Vision-Based Reinforcement Learning
+2025-03-19 21:04:31,695 - WARNING - No matching paper found on arXiv (best similarity: 0.39)
+2025-03-19 21:04:34,701 - INFO - 
+Found paper with keyword: Galaxy Walker: Geometry-aware VLMs For Galaxy-scale Understanding
+2025-03-19 21:04:34,704 - INFO - Searching arXiv for: Galaxy Walker: Geometry-aware VLMs For Galaxy-scale Understanding
+2025-03-19 21:04:36,545 - WARNING - No matching paper found on arXiv (best similarity: 0.47)
+2025-03-19 21:04:39,552 - INFO - 
+Found paper with keyword: HalLoc: Token-level Localization of Hallucinations for Vision Language Models
+2025-03-19 21:04:39,555 - INFO - Searching arXiv for: HalLoc: Token-level Localization of Hallucinations for Vision Language Models
+2025-03-19 21:04:41,183 - INFO - Found paper on arXiv (similarity: 0.62): ESREAL: Exploiting Semantic Reconstruction to Mitigate Hallucinations in
+  Vision-Language Models
+2025-03-19 21:04:41,184 - INFO - Downloading paper: HalLoc: Token-level Localization of Hallucinations for Vision Language Models
+2025-03-19 21:04:47,930 - INFO - Successfully downloaded paper to downloaded_papers/HalLoc_Token-level_Localization_of_Hallucinations_for_Vision_Language_Models_2403.16167v4.pdf
+2025-03-19 21:04:50,936 - INFO - 
+Found paper with keyword: Ground-V: Teaching VLMs to Ground Complex Instructions in Pixels
+2025-03-19 21:04:50,938 - INFO - Searching arXiv for: Ground-V: Teaching VLMs to Ground Complex Instructions in Pixels
+2025-03-19 21:04:52,599 - WARNING - No matching paper found on arXiv (best similarity: 0.36)
+2025-03-19 21:04:55,605 - INFO - 
+Summary: Found 41 papers with keywords out of 2745 total papers
+2025-03-19 21:04:55,606 - INFO - Successfully downloaded 23 papers
+2025-03-19 21:04:55,611 - INFO - Detailed paper information saved to downloaded_papers/paper_details.csv

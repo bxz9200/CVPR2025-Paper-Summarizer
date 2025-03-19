@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Generated Paper Summaries</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-bg: #f9f9f9;
+            --medium-bg: #e8f4f8;
+            --border-color: #eee;
+            --text-color: #333;
+            --light-text: #7f8c8d;
+            --method-bg: #ebf5eb;
+            --method-border: #28a745;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px;
+            color: var(--text-color);
+            background-color: #fff;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            text-align: center;
+        }
+        
+        h2 {
+            color: var(--secondary-color);
+            margin-top: 40px;
+            font-size: 1.8em;
+            border-left: 4px solid var(--secondary-color);
+            padding-left: 15px;
+        }
+        
+        h3 {
+            color: var(--primary-color);
+            font-size: 1.3em;
+            margin-top: 25px;
+            border-bottom: 1px dotted var(--border-color);
+            padding-bottom: 5px;
+        }
+        
+        .paper-container {
+            margin-bottom: 60px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .paper-container:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .abstract {
+            background-color: var(--light-bg);
+            padding: 20px;
+            border-radius: 8px;
+            font-style: italic;
+            text-align: justify;
+            margin-bottom: 20px;
+            line-height: 1.7;
+            border-left: 3px solid var(--secondary-color);
+        }
+        
+        .summary {
+            background-color: var(--medium-bg);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: justify;
+            line-height: 1.8;
+            font-size: 1.05em;
+            border-left: 3px solid var(--accent-color);
+        }
+        
+        .method-description {
+            background-color: var(--method-bg);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: justify;
+            line-height: 1.8;
+            font-size: 1.05em;
+            border-left: 3px solid var(--method-border);
+            margin-bottom: 20px;
+        }
+        
+        .method-description strong {
+            color: var(--method-border);
+        }
+        
+        .keywords {
+            background-color: #f0f7fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .keywords span {
+            display: inline-block;
+            background-color: #e1e8ed;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: var(--primary-color);
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .keywords span:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .generation-info {
+            color: var(--light-text);
+            font-size: 0.9em;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .section-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background-color: var(--secondary-color);
+            margin-right: 8px;
+            display: inline-block;
+            border-radius: 50%;
+        }
+        
+        .method-section-title::before {
+            background-color: var(--method-border);
+        }
+        
+        details {
+            margin-top: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            padding: 5px 15px;
+        }
+        
+        summary {
+            cursor: pointer;
+            font-weight: bold;
+            padding: 8px 0;
+        }
+        
+        summary:hover {
+            color: var(--secondary-color);
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .paper-container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>AI-Generated Paper Summaries</h1>
+    <p class="generation-info">Generated on: 2025-03-19 22:05:56</p>
+<div class="paper-container">
+    <h2>Stealthy Backdoor Attack in Self-Supervised Learning Vision Encoders for Large Vision Language Model 2502.18290v2</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>encoders</span>
+        <span>lvlms</span>
+        <span>vision</span>
+        <span>backdoor</span>
+        <span>badvision</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes the following method:
+
+In this work, we propose BADVISION, the first method to exploit this vulnerability in SSL vision encoders for LVLMs with novel trigger optimization and backdoor learning techniques.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Self-supervised learning (SSL) vision encoders learn high quality image representations and thus have become a vital part of developing vision modality of large vision language models (LVLMs). Due to the high cost of training such encoders, pre-trained encoders are widely shared and deployed into many LVLMs, which are security-critical or bear societal significance. Under this practical scenario, we reveal a new backdoor threat that significant visual hallucinations can be induced into these LVLMs by merely compromising vision encoders. Because of the sharing and reuse of these encoders, many downstream LVLMs may inherit backdoor behaviors from encoders, leading to widespread backdoors. In this work, we propose BADVISION, the first method to exploit this vulnerability in SSL vision encoders for LVLMs with novel trigger optimization and backdoor learning techniques. We evaluate BADVISION on two types of SSL encoders and LVLMs across eight benchmarks. We show that BADVISION effectively drives the LVLMs to attacker-chosen hallucination with over 99% attack success rate, causing a 77.6% relative visual understanding error while maintaining the stealthiness. So TA backdoor detection methods cannot detect our attack effectively.</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">Self-supervised learning (SSL) vision encoders learn high quality image representations and thus have become a vital part of developing vision modality of large vision language models (LVLMs). In this work, we propose BADVISION, the first method to exploit this vulnerability in SSL vision encoders for LVLMs through novel trigger optimization and backdoor learning techniques. So TA backdoor detection methods cannot detect our attack effectively.</div>
+</div>
+<div class="paper-container">
+    <h2>VLs I Verbalized Layers-to-Interactions from Large to Small Vision Language Models 2412.01822v1</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>vlms</span>
+        <span>model</span>
+        <span>vision-language</span>
+        <span>models</span>
+        <span>gpt-4v</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes the following method:
+
+To address this, we propose VLs I :Verbalized Layers-to-Interactions, a new VLM family in 2B and 7B model sizes, which prioritizes efficiency without compromising accuracy. VLs I leverages a unique, layer-wise distillation process, introducing intermediate “verbalizers” that map features from each layer to natural language space, allowing smaller VLMs to flexibly align with the reasoning processes of larger VLMs. Thisapproach mitigates the training instability often encountered in output imitation and goes beyond typical final-layer tuning by aligning the small VLMs’ layer-wise progression with that of the large ones.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">The recent surge in high-quality visual instruction tuning samples from closed-source vision-language models (VLMs) such as GPT-4V has accelerated the release of open-source VLMs across various model sizes. However, scaling VLMs to improve performance using larger models brings significant computational challenges, especially for deployment on resource-constrained devices like mobile platforms and robots. To address this, we propose VLs I :Verbalized Layers-to-Interactions, a new VLM family in 2B and 7B model sizes, which prioritizes efficiency without compromising accuracy. VLs I leverages a unique, layer-wise distillation process, introducing intermediate “verbalizers” that map features from each layer to natural language space, allowing smaller VLMs to flexibly align with the reasoning processes of larger VLMs. Thisapproach mitigates the training instability often encountered in output imitation and goes beyond typical final-layer tuning by aligning the small VLMs’ layer-wise progression with that of the large ones. We validate VLs I across ten challenging vision-language benchmarks, achieving notable performance gains (11.0% for 2B and 17.4% for 7B) over GPT-4V without the need for model scaling, merging, or architectural changes.</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">However, scaling VLMs to improve performance using larger models brings significant computational challenges, especially for deployment on resource-constrained devices like mobile platforms and robots. To address this, we propose VLs I: Verbalized Layers-to-Interactions, a new VLM family in 2B and 7B model sizes, which prioritizes efficiency throughout compromising accuracy. We validate VLs I across ten challenging vision-language benchmarks, achieving notable performance gains (11. 0% for 2B and 17. 4% for 7B) over GPT-4V without the need for model scaling, merging, or architectural changes.</div>
+</div>
+<div class="paper-container">
+    <h2>GFlow VLM Enhancing Multi-step Reasoning in Vision-Language Models with Generative Flow Networks 2503.06514v1</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>tasks</span>
+        <span>fine-tuning</span>
+        <span>gflow</span>
+        <span>vlms</span>
+        <span>models</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes a method called <strong>framework<strong>.
+
+To address these challenges, we introduce a novel framework, GFlow VLM, a framework that fine-tune VLMs using Generative Flow Networks (GFlow Nets) to promote generation of diverse solutions for complex reasoning tasks. GFlow VLM models the environment as a non-Markovian decision process, allowing it to capture long-term dependencies essential for real-world applications.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Vision-Language Models (VLMs) have recently shown promising advancements in sequential decision-making tasks through task-specific fine-tuning. However, common fine-tuning methods, such as Supervised Fine-Tuning (SFT) and Reinforcement Learning (RL) techniques like Proximal Policy Optimization (PPO), present notable limitations: SFT assumes Independent and Identically Distributed (IID) data, while PPO focuses on maximizing cumulative rewards. These limitations often restrict solution diversity and hinder generalization in multi-step reasoning tasks. To address these challenges, we introduce a novel framework, GFlow VLM, a framework that fine-tune VLMs using Generative Flow Networks (GFlow Nets) to promote generation of diverse solutions for complex reasoning tasks. GFlow VLM models the environment as a non-Markovian decision process, allowing it to capture long-term dependencies essential for real-world applications. It takes observations and task descriptions as inputs to prompt chain-of-thought (Co T) reasoning which subsequently guides action selection. We use task based rewards to fine-tune VLM with GFlow Nets. This approach enables VLMs to outperform prior fine-tuning methods, including SFT and RL. Empirical results demonstrate the effectiveness of GFlow VLM on complex tasks such as card games (Number Line, Black Jack) and embodied planning tasks (ALFWorld), showing enhanced training efficiency, solution diversity, and stronger generalization capabilities across both in-distribution and out-of-distribution scenarios.</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">Vision-Language Models (VLMs) have recently shown promising advancements in sequential decision-making tasks through task-specific fine-tuning. To address these challenges, we introduce a novel framework, GFlow VLM, a framework that fine-tune VLMs utilizing Generative Flow Networks (GFlow Nets) to promote generation of diverse solutions for complex reasoning tasks. This approach enables VLMs to outperform prior fine-tuning methods, including SFT and RL. Empirical results demonstrate the effectiveness of GFlow VLM on complex tasks such as card games (Number Line, Black Jack) and embodied planning tasks (ALFWorld), showing enhanced training efficiency, solution diversity, and stronger generalization capabilities across both in-distribution and out-of-distribution scenarios.</div>
+</div>
+<div class="paper-container">
+    <h2>Forensics-Bench A Comprehensive Forgery Detection Benchmark Suite for Large Vision Language Models 2404.16006v1</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>multimodal</span>
+        <span>mmt-bench</span>
+        <span>comprehensive</span>
+        <span>benchmark</span>
+        <span>large</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes the following method:
+
+In this study, we present MMT-Bench, a comprehensive benchmark designed to assess LVLMs across massive multimodal tasks requiring expert knowledge and deliberate visual recognition, localization, reasoning, and planning.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">MMT-Bench: A Comprehensive Multimodal Benchmark for Evaluating Large Vision-Language Models Towards Multitask AGI Kaining Ying* 1Fanqing Meng* 2 1Jin Wang* 3Zhiqian Li1 3Han Lin2 1Yue Yang2 1Hao Zhang1 Wenbo Zhang4Yuqi Lin1 5Shuo Liu1Jiayi Lei1 2Quanfeng Lu1Runjian Chen1 3Peng Xu1 3 Renrui Zhang1Haozhe Zhang5Peng Gao1Yali Wang6Yu Qiao1Ping Luo3 1Kaipeng Zhang†1 Wenqi Shao†1 Abstract Large Vision-Language Models (LVLMs) show significant strides in general-purpose multimodal applications such as visual dialogue and embodied navigation. However, existing multimodal evaluation benchmarks cover a limited number of multimodal tasks testing rudimentary capabilities, falling short in tracking LVLM development. In this study, we present MMT-Bench, a comprehensive benchmark designed to assess LVLMs across massive multimodal tasks requiring expert knowledge and deliberate visual recognition, localization, reasoning, and planning. MMT-Bench comprises 325meticulously curated multi-choi</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">MMT-Bench: A Comprehensive Multimodal Benchmark for Evaluating Large Vision-Language Models Towards Multitask AGI Kaining Ying* 1Fanqing Meng* 2 1Jin Wang* 3Zhiqian Li1 3Han Lin2 1Yue Yang2 1Hao Zhang1 Wenbo Zhang4Yuqi Lin1 5Shuo Liu1Jiayi Lei1 2Quanfeng Lu1Runjian Chen1 3Peng Xu1 3 Renrui Zhang1Haozhe Zhang5Peng Gao1Yali Wang6Yu Qiao1Ping Luo3 1Kaipeng Zhang†1 Wenqi Shao†1 Abstract Large Vision-Language Models (LVLMs) show significant strides in general-purpose multimodal applications such as visual dialogue and embodied navigation. In this study, we present MMT-Bench, a comprehensive benchmark designed to assess LVLMs across massive multimodal tasks requiring expert knowledge and deliberate visual recognition, localization, reasoning, and planning. MMT-Bench comprises 325meticulously curated multi-choi.</div>
+</div>
+<div class="paper-container">
+    <h2>Embodied Scene Understanding for Vision Language Models via Meta VQA 2501.09167v1</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>vlms</span>
+        <span>spatial</span>
+        <span>embodied</span>
+        <span>closed-loop</span>
+        <span>benchmark</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes the following method:
+
+To address this, we present Meta VQA: a comprehensive benchmark designed to assess and enhance VLMs’ understanding of spatial relationships and scene dynamics through Visual Question Answering (VQA) and closed-loop simulations. Meta VQA leverages Set-of-Mark prompting and top-down view ground-truth annotations from nu Scenes and Waymo datasets to automatically generate extensive question-answer pairs based on diverse real-world traffic scenarios, ensuring object-centric and context-rich instructions.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Vision Language Models (VLMs) demonstrate significant potential as embodied AI agents for various mobility applications. However, a standardized, closed-loop benchmark for evaluating their spatial reasoning and sequential decision-making capabilities is lacking. To address this, we present Meta VQA: a comprehensive benchmark designed to assess and enhance VLMs’ understanding of spatial relationships and scene dynamics through Visual Question Answering (VQA) and closed-loop simulations. Meta VQA leverages Set-of-Mark prompting and top-down view ground-truth annotations from nu Scenes and Waymo datasets to automatically generate extensive question-answer pairs based on diverse real-world traffic scenarios, ensuring object-centric and context-rich instructions. Our experiments show that fine-tuning VLMs with the Meta VQA dataset significantly improves their spatial reasoning and embodied scene comprehension in safetycritical simulations, evident not only in improved VQA accuracies but also in emerging safety-aware driving maneuvers. In addition, the learning demonstrates strong transferability from simulation to real-world observation. Code and data will be publicly available at https:// metadriverse.github.io/metavqa .</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">Vision Language Models (VLMs) demonstrate significant potential as embodied AI agents for various mobility applications. To address this, we present Meta VQA: a comprehensive benchmark designed to assess and enhance VLMs’ understanding of spatial relationships and scene dynamics through Visual Question Answering (VQA) and closed-loop simulations. Meta VQA leverages Set-of-Mark prompting and top-down view ground-truth annotations from nu Scenes and Waymo datasets to automatically generate extensive question-answer pairs based on diverse real-world traffic scenarios, ensuring object-centric and context-rich instructions.</div>
+</div>
+<div class="paper-container">
+    <h2>Vision Zip Longer is Better but Not Necessary in Vision Language Models 2412.04467v1</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>model</span>
+        <span>visual</span>
+        <span>tokens</span>
+        <span>vision</span>
+        <span>performance</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes the following method:
+
+To address this, we introduce Vision Zip, a simple yet effective method that selects a set of informative tokens for input to the language model, reducing visual token redundancy and improving efficiency while maintaining model performance. The proposed Vision Zip can be widely applied to image and video understanding tasks and is well-suited for multi-turn dialogues in real-world scenarios, where previous methods tend to underperform. Moreover, our method significantly enhances model inference speed, improving the prefilling time by 8 × and enabling the LLa VA-Next 13B model to infer faster than the LLa VA-Next 7B model while achieving better results. Furthermore, we analyze the causes of this redundancy and encourage the community to focus on extracting better visual features rather than merely increasing token length.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Recent advancements in vision-language models have enhanced performance by increasing the length of visual tokens, making them much longer than text tokens and significantly raising computational costs. However, we observe that the visual tokens generated by popular vision encoders, such as CLIP and Sig LIP, contain significant redundancy. To address this, we introduce Vision Zip, a simple yet effective method that selects a set of informative tokens for input to the language model, reducing visual token redundancy and improving efficiency while maintaining model performance. The proposed Vision Zip can be widely applied to image and video understanding tasks and is well-suited for multi-turn dialogues in real-world scenarios, where previous methods tend to underperform. Experimental results show that Vision Zip outperforms the previous state-of-theart method by at least 5% performance gains across nearly all settings. Moreover, our method significantly enhances model inference speed, improving the prefilling time by 8 × and enabling the LLa VA-Next 13B model to infer faster than the LLa VA-Next 7B model while achieving better results. Furthermore, we analyze the causes of this redundancy and encourage the community to focus on extracting better visual features rather than merely increasing token length. Our code is available at [URL] Zip.</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">However, we observe that the visual tokens generated by popular vision encoders, such as CLIP and Sig LIP, contain significant redundancy. As a solution, To address this, we introduce Vision Zip, a simple yet effective method that selects a set of informative tokens for input to the language model, reducing visual token redundancy and improving efficiency while maintaining model performance. Moreover, our method significantly enhances model inference speed, improving the prefilling time by 8 × and enabling the LLa VA-Next 13B model to infer faster than the LLa VA-Next 7B model while achieving better results.</div>
+</div>
+<div class="paper-container">
+    <h2>Steering Away from Harm An Adaptive Approach to Defending Vision Language Model Against Jailbreaks 2411.16721v2</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>adversarial</span>
+        <span>vectors</span>
+        <span>models</span>
+        <span>harmful</span>
+        <span>attacks</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes the following method:
+
+To address this challenge, we propose ASTRA, an efficient and effective defense by a daptively steering models away from adversarial feature directions to resist VLM a ttacks. Our key procedures involve finding transferable steering vectors representing the direction of harmful response and applying adaptive activation steering to remove these directions at inference time.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Vision Language Models (VLMs) can produce unintended and harmful content when exposed to adversarial attacks, particularly because their vision capabilities create new vulnerabilities. Existing defenses, such as input preprocessing, adversarial training, and response evaluation-based methods, are often impractical for real-world deployment due to their high costs. To address this challenge, we propose ASTRA, an efficient and effective defense by a daptively steering models away from adversarial feature directions to resist VLM a ttacks. Our key procedures involve finding transferable steering vectors representing the direction of harmful response and applying adaptive activation steering to remove these directions at inference time. To create effective steering vectors, we randomly ablate the visual tokens from the adversarial images and identify those most strongly associated with jailbreaks. These tokens are then used to construct steering vectors. During inference, we perform the adaptive steering method that involves the projection between the steering vectors and calibrated activation, resulting in little performance drops on benign inputs while strongly avoiding harmful outputs under adversarial inputs. Extensive experiments across multiple models and baselines demonstrate our state-of-the-art performance and high efficiency in mitigating jailbreak risks. Additionally, ASTRA exhibits good transferability, defending against both unseen attacks at design time (i.e., structuredbased attacks) and adversarial images from diverse distributions. Our code is available at [URL] com/ASTRAL-Group/ASTRA .</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">Vision Language Models (VLMs) can produce unintended and harmful content when exposed to adversarial attacks, particularly because their vision capabilities create new vulnerabilities. To address this challenge, we propose ASTRA, an efficient and effective defense by a daptively steering models away from adversarial feature directions to resist VLM a ttacks. Extensive experiments across multiple models and baselines demonstrate our state-of-the-art performance and high efficiency in mitigating jailbreak risks. Additionally, ASTRA exhibits good transferability, defending against both unseen attacks at design time (i. e. , structuredbased attacks) and adversarial images from diverse distributions. Our code is available at [URL] com/ASTRAL-Group/ASTRA.</div>
+</div>
+<div class="paper-container">
+    <h2>Critic-V VLM Critics Help Catch VLM Errors in Multimodal Reasoning 2411.18203v4</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>critic</span>
+        <span>framework</span>
+        <span>process</span>
+        <span>reasoner</span>
+        <span>vlms</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes the following method:
+
+To address these challenges, we introduce Critic-V, a novel framework inspired by the Actor Critic paradigm to boost the reasoning capability of VLMs. This framework decouples the reasoning process and critic process by integrating two independent components: the Reasoner, which generates reasoning paths based on visual and textual inputs, and the Critic, which provides constructive critique to refine these paths. Our approach provides a promising solution to enhance the reliability of VLMs, improving their per- *These authors contributed equally. †Corresponding authorformance in real-world reasoning-heavy multimodal applications such as autonomous driving and embodied intelligence.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Vision-language models (VLMs) have shown remarkable advancements in multimodal reasoning tasks. However, they still often generate inaccurate or irrelevant responses due to issues like hallucinated image understandings or unrefined reasoning paths. To address these challenges, we introduce Critic-V, a novel framework inspired by the Actor Critic paradigm to boost the reasoning capability of VLMs. This framework decouples the reasoning process and critic process by integrating two independent components: the Reasoner, which generates reasoning paths based on visual and textual inputs, and the Critic, which provides constructive critique to refine these paths. In this approach, the Reasoner generates reasoning responses according to text prompts, which can evolve iteratively as a policy based on feedback from the Critic. This interaction process was theoretically driven by a reinforcement learning framework where the Critic offers natural language critiques instead of scalar rewards, enabling more nuanced feedback to boost the Reasoner’s capability on complex reasoning tasks. The Critic model is trained using Direct Preference Optimization (DPO), leveraging a preference dataset of critiques ranked by Rule-based Reward (RBR) to enhance its critic capabilities. Evaluation results show that the Critic-V framework significantly outperforms existing methods, including GPT-4V, on 5 out of 8 benchmarks, especially regarding reasoning accuracy and efficiency. Combining a dynamic text-based policy for the Reasoner and constructive feedback from the preference-optimized Critic enables a more reliable and context-sensitive multimodal reasoning process. Our approach provides a promising solution to enhance the reliability of VLMs, improving their per- *These authors contributed equally. †Corresponding authorformance in real-world reasoning-heavy multimodal applications such as autonomous driving and embodied intelligence.</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">This framework decouples the reasoning process and critic process by integrating two independent components: the Reasoner, which generates reasoning paths based on visual and textual inputs, and the Critic, which provides constructive critique to refine these paths. In this approach, the Reasoner generates reasoning responses according to text prompts, which can evolve iteratively as a policy based on feedback from the Critic. Evaluation results show that the Critic-V framework significantly outperforms existing methods, including GPT-4V, on 5 out of 8 benchmarks, especially regarding reasoning accuracy and efficiency. Combining a dynamic text-based policy for the Reasoner and constructive feedback from the preference-optimized Critic enables a more reliable and context-sensitive multimodal reasoning process. Our approach provides a promising solution to enhance the reliability of VLMs, improving their per- *These authors contributed equally. †Corresponding authorformance in real-world reasoning-heavy multimodal applications such as autonomous driving and embodied intelligence.</div>
+</div>
+<div class="paper-container">
+    <h2>FLAIR VLM with Fine-grained Language-informed Image Representations 2412.03561v1</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>image</span>
+        <span>fine-grained</span>
+        <span>detailed</span>
+        <span>representations</span>
+        <span>clip</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes the following method:
+
+To address this issue, we propose FLAIR, Fine-grained Language-informed Image Representations, an approach that utilizes long and detailed image descriptions to learn localized image embeddings. By sampling diverse sub-captions that describe fine-grained details about an image, we train our vision-language model to produce not only global embeddings but also text-specific image representations.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">CLIP has shown impressive results in aligning images and texts at scale. However, its ability to capture detailed visual features remains limited because CLIP matches images and texts at a global level. To address this issue, we propose FLAIR, Fine-grained Language-informed Image Representations, an approach that utilizes long and detailed image descriptions to learn localized image embeddings. By sampling diverse sub-captions that describe fine-grained details about an image, we train our vision-language model to produce not only global embeddings but also text-specific image representations. Our model introduces text-conditioned attention pooling on top of local image tokens to produce fine-grained image representations that excel at retrieving detailed image content. We achieve state-of-the-art performance on both, existing multimodal retrieval benchmarks, as well as, our newly introduced fine-grained retrieval task which evaluates vision-language models’ ability to retrieve partial image content. Furthermore, our experiments demonstrate the effectiveness of FLAIR trained on 30M imagetext pairs in capturing fine-grained visual information, including zero-shot semantic segmentation, outperforming models trained on billions of pairs. Code is available at [URL] ML/flair.</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">CLIP has shown impressive results in aligning images and texts at scale. Our model introduces text-conditioned attention pooling on top of local image tokens to produce fine-grained image representations that excel at retrieving detailed image content. We achieve state-of-the-art performance on both, existing multimodal retrieval benchmarks, as well as, our newly introduced fine-grained retrieval task which evaluates vision-language models’ ability to retrieve partial image content.</div>
+</div>
+<div class="paper-container">
+    <h2>SPA-VL A Comprehensive Safety Preference Alignment Dataset for Vision Language Model 2406.12030v2</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>vlms</span>
+        <span>models</span>
+        <span>alignment</span>
+        <span>spa-vl</span>
+        <span>safety</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes a method called <strong>Safety<strong>.
+
+To address these limitations, we propose a Safety Preference Alignment dataset for Vision Language Models named SPA-VL. In terms of breadth, SPA-VL covers 6 harmfulness domains, 13 categories, and 53 subcategories, and contains 788 samples of the quadruple (question, image, chosen response, rejected response).</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">The emergence of Vision Language Models (VLMs) has brought unprecedented advances in understanding multimodal information. The combination of textual and visual semantics in VLMs is highly complex and diverse, making the safety alignment of these models challenging. Furthermore, due to the limited study on the safety alignment of VLMs, there is a lack of large-scale, high-quality datasets. To address these limitations, we propose a Safety Preference Alignment dataset for Vision Language Models named SPA-VL. In terms of breadth, SPA-VL covers 6 harmfulness domains, 13 categories, and 53 subcategories, and contains 788 samples of the quadruple (question, image, chosen response, rejected response). In terms of depth, the responses are collected from 12 open source (e.g., Qwen VL) and closed-source (e.g., Gemini) VLMs to ensure diversity. The construction of preference data is fully automated, and the experimental results indicate that models trained with alignment techniques on the SPA-VL dataset exhibit substantial improvements in harmlessness and helpfulness while maintaining core capabilities. SPA-VL, as a large-scale, high-quality, and diverse dataset, represents a significant milestone in ensuring that VLMs achieve both harmlessness and helpfulness.</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">To address these limitations, we propose a Safety Preference Alignment dataset for Vision Language Models named SPA-VL. In terms of breadth, SPA-VL covers 6 harmfulness domains, 13 categories, and 53 subcategories, and contains 788 samples of the quadruple (question, image, chosen response, rejected response). The construction of preference data is fully automated, and the experimental results indicate that models trained with alignment techniques on the SPA-VL dataset exhibit substantial improvements in harmlessness and helpfulness while maintaining core capabilities.</div>
+</div>
+<div class="paper-container">
+    <h2>Discriminative Fine-tuning of LVLMs 2412.04378v2</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>discriminative</span>
+        <span>vision-language</span>
+        <span>models</span>
+        <span>approach</span>
+        <span>image-text</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes the following method:
+
+In this work, we propose to combine “the best of both worlds”: a new training approach for discriminative fine tuning of LVLMs that results in strong discriminative and compositional capabilities. Essentially, our approach converts a generative LVLM into a discriminative one, unlocking its capability for powerful image-text discrimination combined with enhanced language understanding. Our contributions include (1) A carefully designed training/optimization framework that utilizes image-text pairs of variable length and granularity for training the model with both contrastive and next-token prediction losses. This is accompanied by ablation studies that justify the necessity of our framework’s components. (2) A parameter-efficient adaptation method using a combination of soft prompting and Lo RA adapters.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Contrastively-trained Vision-Language Models (VLMs) like CLIP have become the de facto approach for discriminative vision-language representation learning. However, these models have limited language understanding, often exhibiting a “bag of words” behavior. At the same time, Large Vision-Language Models (LVLMs), which combine vision encoders with LLMs, have been shown capable of detailed vision-language reasoning, yet their autoregressive nature renders them less suitable for discriminative tasks. In this work, we propose to combine “the best of both worlds”: a new training approach for discriminative fine tuning of LVLMs that results in strong discriminative and compositional capabilities. Essentially, our approach converts a generative LVLM into a discriminative one, unlocking its capability for powerful image-text discrimination combined with enhanced language understanding. Our contributions include (1) A carefully designed training/optimization framework that utilizes image-text pairs of variable length and granularity for training the model with both contrastive and next-token prediction losses. This is accompanied by ablation studies that justify the necessity of our framework’s components. (2) A parameter-efficient adaptation method using a combination of soft prompting and Lo RA adapters. (3) Significant improvements over state-of-the-art CLIP-like models of similar size, including standard image-text retrieval benchmarks and notable gains in compositionality.</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">In this work, we propose to combine “the best of both worlds”: a new training approach for discriminative fine tuning of LVLMs that results in strong discriminative and compositional capabilities. Essentially, our approach converts a generative LVLM into a discriminative one, unlocking its capability for powerful image-text discrimination combined through enhanced language understanding. Our contributions include (1) A carefully designed training/optimization framework that utilizes image-text pairs of variable length and granularity for training the model through both contrastive and next-token prediction losses.</div>
+</div>
+<div class="paper-container">
+    <h2>ATP-LLa VA Adaptive Token Pruning for Large Vision Language Models 2412.00447v1</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>computational</span>
+        <span>tokens</span>
+        <span>token</span>
+        <span>visual</span>
+        <span>layers</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes a method called <strong>Adaptive<strong>.
+
+We propose ATP-LLa VA, a novel approach that adaptively determines instance-specific token pruning ratios for each LLM layer. Specifically, we introduce an Adaptive Token Pruning (ATP) module, which computes the importance score and pruning threshold based on input instance adaptively. The ATP module can be seamlessly integrated between any two LLM layers with negligible computational overhead. Additionally, we develop a Spatial Augmented Pruning (SAP) strategy that prunes visual tokens with both token redundancy and spatial modeling perspectives. Our approach reduces the average token count by 75% while maintaining performance, with only a minimal</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Large Vision Language Models (LVLMs) have achieved significant success across multi-modal tasks. However, the computational cost of processing long visual tokens can be prohibitively expensive on resource-limited devices. Previous methods have identified redundancy in visual tokens within the Large Language Model (LLM) decoder layers and have mitigated this by pruning tokens using a predefined or fixed ratio, thereby reducing computational overhead. Nonetheless, we observe that the impact of pruning ratio varies across different LLM layers and instances (image-prompt pairs). Therefore, it is essential to develop a layer-wise and instance-wise vision token pruning strategy to balance computational cost and model performance effectively. We propose ATP-LLa VA, a novel approach that adaptively determines instance-specific token pruning ratios for each LLM layer. Specifically, we introduce an Adaptive Token Pruning (ATP) module, which computes the importance score and pruning threshold based on input instance adaptively. The ATP module can be seamlessly integrated between any two LLM layers with negligible computational overhead. Additionally, we develop a Spatial Augmented Pruning (SAP) strategy that prunes visual tokens with both token redundancy and spatial modeling perspectives. Our approach reduces the average token count by 75% while maintaining performance, with only a minimal</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">Large Vision Language Models (LVLMs) have achieved significant success across multi-modal tasks. Specifically, we introduce an Adaptive Token Pruning (ATP) module, which computes the importance score and pruning threshold based on input instance adaptively. Our approach reduces the average token count by 75% while maintaining performance, through only a minimal.</div>
+</div>
+<div class="paper-container">
+    <h2>What’s in the Image A Deep-Dive into the Vision of Vision Language Models 2411.17491v1</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>visual</span>
+        <span>image</span>
+        <span>layers</span>
+        <span>tokens</span>
+        <span>models</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes a method called <strong>quantitative<strong>.
+
+We propose novel quantitative evaluation to validate our observations, leveraging real-world complex visual scenes. Finally, we demonstrate the potential of our findings in facilitating efficient visual processing in state-of-the-art VLMs.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Vision-Language Models (VLMs) have recently demonstrated remarkable capabilities in comprehending complex visual content. However, the mechanisms underlying how VLMs process visual information remain largely unexplored. In this paper, we conduct a thorough empirical analysis, focusing on the attention modules across layers. We reveal several key insights about how these models process visual data: (i) the internal representation of the query tokens (e.g., representations of ”describe the image”), is utilized by VLMs to store global image information; we demonstrate that these models generate surprisingly descriptive responses solely from these tokens, without direct access to image tokens. (ii) Cross-modal information flow is predominantly influenced by the middle layers (approximately 25% of all layers), while early and late layers contribute only marginally. (iii) Fine-grained visual attributes and object details are directly extracted from image tokens in a spatially localized manner, i.e., the generated tokens associated with a specific object or attribute attend strongly to their corresponding regions in the image. We propose novel quantitative evaluation to validate our observations, leveraging real-world complex visual scenes. Finally, we demonstrate the potential of our findings in facilitating efficient visual processing in state-of-the-art VLMs.</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">Vision-Language Models (VLMs) have recently demonstrated remarkable capabilities in comprehending complex visual content. In this paper, we conduct a thorough empirical analysis, focusing on the attention modules across layers. Finally, we demonstrate the potential of our findings in facilitating efficient visual processing in state-of-the-art VLMs.</div>
+</div>
+<div class="paper-container">
+    <h2>Motion Bench Benchmarking and Improving Fine-grained Video Motion Understanding for Vision Language M 2501.02955v1</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>motion</span>
+        <span>video</span>
+        <span>fine-grained</span>
+        <span>models</span>
+        <span>understanding</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes the following method:
+
+To address this gap, we propose Motion Bench, a comprehensive evaluation benchmark designed to assess the fine-grained motion comprehension of video understanding models. Motion Bench evaluates models’ motionlevel perception through six primary categories of motionoriented question types and includes data collected from diverse sources, ensuring a broad representation of real world video content.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">In recent years, vision language models (VLMs) have made significant advancements in video understanding. However, a crucial capability — fine-grained motion comprehension — remains under-explored in current benchmarks. To address this gap, we propose Motion Bench, a comprehensive evaluation benchmark designed to assess the fine-grained motion comprehension of video understanding models. Motion Bench evaluates models’ motionlevel perception through six primary categories of motionoriented question types and includes data collected from diverse sources, ensuring a broad representation of real world video content. Experimental results reveal that existing VLMs perform poorly in understanding fine-grained motions. To enhance VLM’s ability to perceive fine-grained motion within a limited sequence length of LLM, we conduct extensive experiments reviewing VLM architectures optimized for video feature compression and propose a novel and efficient Through-Encoder (TE) Fusion method. Experiments show that higher frame rate inputs and TE Fusion yield improvements in motion understanding, yet there is still substantial room for enhancement. Our benchmark aims to guide and motivate the development of more capable video understanding models, emphasizing the importance of fine-grained motion comprehension. Project page: [URL] .</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">In recent years, vision language models (VLMs) have made significant advancements in video understanding. To address this gap, we propose Motion Bench, a comprehensive evaluation benchmark designed to assess the fine-grained motion comprehension of video understanding models. Motion Bench evaluates models’ motionlevel perception through six primary categories of motionoriented question types and includes data collected from diverse sources, ensuring a broad representation of real world video content.</div>
+</div>
+<div class="paper-container">
+    <h2>A Stitch in Time Saves Nine Small VLM is a Precise Guidance for accelerating Large VLMs 2412.03324v2</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>attention</span>
+        <span>large</span>
+        <span>vlms</span>
+        <span>tokens</span>
+        <span>information</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">Method information extracted from abstract:
+
+A promising approach to accelerating large VLM inference is using partial information, such as attention maps from specific layers, to assess token importance and prune less essential tokens.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">A Stitch in Time Saves Nine : Small VLM is a Precise Guidance for Accelerating Large VLMs Wangbo Zhao Yizeng Han Jiasheng Tang3Zhikai Li1Yibing Song3 Kai Wang Zhangyang Wang4Yang You1National University of Singapore2DAMO Academy, Alibaba Group 3Hupan Lab4The University of Texas at Austin Abstract Vision-language models (VLMs) have shown remarkable success across various multi-modal tasks, yet large VLMs encounter significant efficiency challenges due to processing numerous visual tokens. A promising approach to accelerating large VLM inference is using partial information, such as attention maps from specific layers, to assess token importance and prune less essential tokens. However, our study reveals three key insights: (i) Partial attention information is insufficient for accurately identifying critical visual tokens, resulting in suboptimal performance, especially at low token retention ratios; (ii) Global attention information, such as the attention map aggregated</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">A Stitch in Time Saves Nine: Small VLM is a Precise Guidance for Accelerating Large VLMs Wangbo Zhao Yizeng Han Jiasheng Tang3Zhikai Li1Yibing Song3 Kai Wang Zhangyang Wang4Yang You1National University of Singapore2DAMO Academy, Alibaba Group 3Hupan Lab4The University of Texas at Austin Abstract Vision-language models (VLMs) have shown remarkable success across various multi-modal tasks, yet large VLMs encounter significant efficiency challenges due to processing numerous visual tokens. A promising approach to accelerating large VLM inference is utilizing partial information, such as attention maps from specific layers, to assess token importance and prune less essential tokens. However, our study reveals three key insights: (i) Partial attention information is insufficient for accurately identifying critical visual tokens, resulting in suboptimal performance, especially at low token retention ratios; (ii) Global attention information, such as the attention map aggregated.</div>
+</div>
+<div class="paper-container">
+    <h2>Lifelong Knowledge Editing for Vision Language Models with Low-Rank Mixture-of-Experts 2411.15432v2</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>lifelong</span>
+        <span>llms</span>
+        <span>edit</span>
+        <span>experts</span>
+        <span>vllm</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes a method called <strong>soft<strong>.
+
+In this paper, we propose Live Edit, a Li felong v ision language mode l Edit to bridge the gap between lifelong LLM editing and VLLMs. We begin by training an editing expert generator to independently produce low-rank experts for each editing instance, with the goal of correcting the relevant responses of the VLLM. Finally, to integrate visually relevant experts, we introduce a soft routing mechanism based on textual semantic relevance to achieve multi-expert fusion. For evaluation, we establish a benchmark for lifelong VLLM editing.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Model editing aims to correct inaccurate knowledge, update outdated information, and incorporate new data into Large Language Models (LLMs) without the need for retraining. This task poses challenges in lifelong scenarios where edits must be continuously applied for real-world applications. While some editors demonstrate strong robustness for lifelong editing in pure LLMs, Vision LLMs (VLLMs), which incorporate an additional vision modality, are not directly adaptable to existing LLM editors. In this paper, we propose Live Edit, a Li felong v ision language mode l Edit to bridge the gap between lifelong LLM editing and VLLMs. We begin by training an editing expert generator to independently produce low-rank experts for each editing instance, with the goal of correcting the relevant responses of the VLLM. A hard filtering mechanism is developed to utilize visual semantic knowledge, thereby coarsely eliminating visually irrelevant experts for input queries during the inference stage of the post-edited model. Finally, to integrate visually relevant experts, we introduce a soft routing mechanism based on textual semantic relevance to achieve multi-expert fusion. For evaluation, we establish a benchmark for lifelong VLLM editing. Extensive experiments demonstrate that Live Edit offers significant advantages in lifelong VLLM editing scenarios. Further experiments validate the rationality and effectiveness of each module design in Live Edit.1</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">Model editing aims to correct inaccurate knowledge, update outdated information, and incorporate new data into Large Language Models (LLMs) throughout the need for retraining. In this paper, we propose Live Edit, a Li felong v ision language mode l Edit to bridge the gap between lifelong LLM editing and VLLMs. Finally, to integrate visually relevant experts, we introduce a soft routing mechanism based on textual semantic relevance to achieve multi-expert fusion.</div>
+</div>
+<div class="paper-container">
+    <h2>Mo VE-KD Knowledge Distillation for VLMs with Mixture of Visual Encoders 2501.01709v3</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>encoders</span>
+        <span>visual</span>
+        <span>unique</span>
+        <span>multiple</span>
+        <span>models</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes a method called <strong>attention-based<strong>.
+
+In this paper, we present Mixture-of-Visual-Encoder Knowledge Distillation (Mo VEKD), a novel framework that distills the unique proficiencies of multiple vision encoders into a single, efficient encoder model. Specifically, to mitigate conflicts and retain the unique characteristics of each teacher encoder, we employ low-rank adaptation (Lo RA) and mixture-of-experts (Mo Es) to selectively activate specialized knowledge based on input features, enhancing both adaptability and efficiency. To regularize the KD process and enhance performance, we propose an attention-based distillation strategy that adaptively weighs the different encoders and emphasizes valuable visual tokens, reducing the burden of replicating comprehensive but distinct features from multiple teachers. Comprehensive experiments on popular VLMs, such as LLa VA and LLa VA-Ne XT, validate the effectiveness of our method. Our code is available at: [URL] VE-KD.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Visual encoders are fundamental components in visionlanguage models (VLMs), each showcasing unique strengths derived from various pre-trained visual foundation models. To leverage the various capabilities of these encoders, recent studies incorporate multiple encoders within a single VLM, leading to a considerable increase in computational cost. In this paper, we present Mixture-of-Visual-Encoder Knowledge Distillation (Mo VEKD), a novel framework that distills the unique proficiencies of multiple vision encoders into a single, efficient encoder model. Specifically, to mitigate conflicts and retain the unique characteristics of each teacher encoder, we employ low-rank adaptation (Lo RA) and mixture-of-experts (Mo Es) to selectively activate specialized knowledge based on input features, enhancing both adaptability and efficiency. To regularize the KD process and enhance performance, we propose an attention-based distillation strategy that adaptively weighs the different encoders and emphasizes valuable visual tokens, reducing the burden of replicating comprehensive but distinct features from multiple teachers. Comprehensive experiments on popular VLMs, such as LLa VA and LLa VA-Ne XT, validate the effectiveness of our method. Our code is available at: [URL] VE-KD.</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">Visual encoders are fundamental components in visionlanguage models (VLMs), each showcasing unique strengths derived from various pre-trained visual foundation models. Specifically, to mitigate conflicts and retain the unique characteristics of each teacher encoder, we employ low-rank adaptation (Lo RA) and mixture-of-experts (Mo Es) to selectively activate specialized knowledge based on input features, enhancing both adaptability and efficiency. To regularize the KD process and enhance performance, we propose an attention-based distillation strategy that adaptively weighs the different encoders and emphasizes valuable visual tokens, reducing the burden of replicating comprehensive but distinct features from multiple teachers.</div>
+</div>
+<div class="paper-container">
+    <h2>Beyond Sight Towards Cognitive Alignment in LVLM via Enriched Visual Knowledge 2411.16824v1</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>cognitive</span>
+        <span>vision</span>
+        <span>language</span>
+        <span>data</span>
+        <span>visual</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes the following method:
+
+Building on these insights, we propose Entity-Enhanced Cognitive Alignment (EECA), a method that employs multigranularity supervision to generate visually enriched, wellaligned tokens that not only integrate within the LLM’s embedding space but also align with the LLM’s cognitive framework. This alignment markedly enhances LVLM performance in landmark recognition.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Does seeing always mean knowing? Large Vision Language Models (LVLMs) integrate separately pre-trained vision and language components, often using CLIP-Vi T as vision backbone. However, these models frequently encounter a core issue of “cognitive misalignment” between the vision encoder (VE) and the large language model (LLM). Specifically, the VE’s representation of visual information may not fully align with LLM’s cognitive framework, leading to a mismatch where visual features exceed the language model’s interpretive range. To address this, we investigate how variations in VE representations influence LVLM comprehension, especially when the LLM faces VEUnknown data—images whose ambiguous visual representations challenge the VE’s interpretive precision. Accordingly, we construct a multi-granularity landmark dataset and systematically examine the impact of VE-Known and VE-Unknown data on interpretive abilities. Our results show that VE-Unknown data limits LVLM’s capacity for accurate understanding, while VE-Known data, rich in distinctive features, helps reduce cognitive misalignment. Building on these insights, we propose Entity-Enhanced Cognitive Alignment (EECA), a method that employs multigranularity supervision to generate visually enriched, wellaligned tokens that not only integrate within the LLM’s embedding space but also align with the LLM’s cognitive framework. This alignment markedly enhances LVLM performance in landmark recognition. Our findings underscore the challenges posed by VE-Unknown data and highlight the essential role of cognitive alignment in advancing multimodal systems.</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">Does seeing always mean knowing? Building on these insights, we propose Entity-Enhanced Cognitive Alignment (EECA), a method that employs multigranularity supervision to generate visually enriched, wellaligned tokens that not only integrate throughin the LLM’s embedding space but also align with the LLM’s cognitive framework. This alignment markedly enhances LVLM performance in landmark recognition. Our findings underscore the challenges posed by VE-Unknown data and highlight the essential role of cognitive alignment in advancing multimodal systems.</div>
+</div>
+<div class="paper-container">
+    <h2>Doc VLM Make Your VLM an Efficient Reader 2412.08746v1</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>vlms</span>
+        <span>visual</span>
+        <span>document</span>
+        <span>results</span>
+        <span>tasks</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes the following method:
+
+We introduce Doc VLM, a method that integrates an OCR-based modality into VLMs to enhance document processing while preserving original weights. Our approach employs an OCR encoder to capture textual content and layout, compressing these into a compact set of learned queries incorporated into the VLM. Comprehensive evaluations across leading VLMs show that Doc VLM significantly reduces reliance on high-resolution images for document understanding.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Vision-Language Models (VLMs) excel in diverse visual tasks but face challenges in document understanding, which requires fine-grained text processing. While typical visual tasks perform well with low-resolution inputs, readingintensive applications demand high-resolution, resulting in significant computational overhead. Using OCR-extracted text in VLM prompts partially addresses this issue but underperforms compared to full-resolution counterpart, as it lacks the complete visual context needed for optimal performance. We introduce Doc VLM, a method that integrates an OCR-based modality into VLMs to enhance document processing while preserving original weights. Our approach employs an OCR encoder to capture textual content and layout, compressing these into a compact set of learned queries incorporated into the VLM. Comprehensive evaluations across leading VLMs show that Doc VLM significantly reduces reliance on high-resolution images for document understanding. In limited-token regimes (448 ×448), Doc VLM with 64 learned queries improves Doc VQA results from 56.0% to 86.6% when integrated with Intern VL2 and from 84.4% to 91.2% with Qwen2-VL. In LLa VAOne Vision, Doc VLM achieves improved results while using 80% less image tokens. The reduced token usage allows processing multiple pages effectively, showing impressive zero-shot results on DUDE and state-of-the-art performance on MP-Doc VQA, highlighting Doc VLM’s potential for applications requiring high-performance and efficiency.</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">Vision-Language Models (VLMs) excel in diverse visual tasks but face challenges in document understanding, which requires fine-grained text processing. Our approach employs an OCR encoder to capture textual content and layout, compressing these into a compact set of learned queries incorporated into the VLM. In LLa VAOne Vision, Doc VLM achieves improved results while using 80% less image tokens. The reduced token usage allows processing multiple pages effectively, showing impressive zero-shot results on DUDE and state-of-the-art performance on MP-Doc VQA, highlighting Doc VLM’s potential for applications requiring high-performance and efficiency.</div>
+</div>
+<div class="paper-container">
+    <h2>Towards Vision Language Models For Extra-Long Video Understanding 2409.14485v4</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>visual</span>
+        <span>mllms</span>
+        <span>video</span>
+        <span>strategies</span>
+        <span>token</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes a method called <strong>special<strong>.
+
+In this work, we propose Video-XL, a novel approach that leverages MLLMs’ inherent key-value (KV) sparsification capacity to condense the visual input. Specifically, we introduce a new special token, the Visual Summarization Token ( VST), for each interval of the video, which summarizes the visual information within the interval as its associated KV . The VST module is trained by instruction fine-tuning, where two optimizing strategies are offered.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Long video understanding poses a significant challenge for current Multi-modal Large Language Models (MLLMs). Notably, the MLLMs are constrained by their limited context lengths and the substantial costs while processing long videos. Although several existing methods attempt to reduce visual tokens, their strategies encounter severe bottleneck, restricting MLLMs’ ability to perceive fine-grained visual details. In this work, we propose Video-XL, a novel approach that leverages MLLMs’ inherent key-value (KV) sparsification capacity to condense the visual input. Specifically, we introduce a new special token, the Visual Summarization Token ( VST), for each interval of the video, which summarizes the visual information within the interval as its associated KV . The VST module is trained by instruction fine-tuning, where two optimizing strategies are offered.</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">Long video understanding poses a significant challenge for current Multi-modal Large Language Models (MLLMs). In this work, we propose Video-XL, a novel approach that leverages MLLMs’ inherent key-value (KV) sparsification capacity to condense the visual input. Specifically, we introduce a new special token, the Visual Summarization Token ( VST), for each interval of the video, which summarizes the visual information within the interval as its associated KV.</div>
+</div>
+<div class="paper-container">
+    <h2>Hal Loc Token-level Localization of Hallucinations for Vision Language Models 2403.16167v4</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>hallucinations</span>
+        <span>semantic</span>
+        <span>reconstruction</span>
+        <span>vision-language</span>
+        <span>models</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes the following method:
+
+To address this issue, we introduce ESREAL, a novel unsupervised learning framework designed to suppress the generation of hallucinations through accurate localization and penalization of hallucinated tokens. Initially, ESREAL creates a reconstructed image based on the generated caption and aligns its corresponding regions with those of the original image.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Exploiting Semantic Reconstruction to Mitigate Hallucinations in Vision-Language Models Minchan Kim Minyeong Kim Junik Bae Suhwan Choi Sungkyung Kimand Buru Chang2∗ 1Seoul National University 2Sogang University {kjkkkmyheatzmilkclouds,sk0428}@snu.ac.kr .kr Abstract. Hallucinations in vision-language models pose a significant challenge to their reliability, particularly in the generation of long captions. Current methods fall short of accurately identifying and mitigating these hallucinations. To address this issue, we introduce ESREAL, a novel unsupervised learning framework designed to suppress the generation of hallucinations through accurate localization and penalization of hallucinated tokens. Initially, ESREAL creates a reconstructed image based on the generated caption and aligns its corresponding regions with those of the original image. This semantic reconstruction aids in identifying both the presence and type of token-level h</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">Exploiting Semantic Reconstruction to Mitigate Hallucinations in Vision-Language Models Minchan Kim Minyeong Kim Junik Bae Suhwan Choi Sungkyung Kimand Buru Chang2∗ 1Seoul National University 2Sogang University {kjkkkmyheatzmilkclouds, sk0428}@snu. ac. kr. kr Abstract. To address this issue, we introduce ESREAL, a novel unsupervised learning framework designed to suppress the generation of hallucinations through accurate localization and penalization of hallucinated tokens. Initially, ESREAL creates a reconstructed image based on the generated caption and aligns its corresponding regions with those of the original image.</div>
+</div>
+<div class="paper-container">
+    <h2>Fast VLM Efficient Vision Encoding for Vision Language Models 2412.13303v1</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>vision</span>
+        <span>image</span>
+        <span>latency</span>
+        <span>resolution</span>
+        <span>performance</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes the following method:
+
+Based on a comprehensive efficiency analysis of the interplay between image resolution, vision latency, token count, and LLM size, we introduce Fast VLM—a model that achieves an optimized trade-of-f between latency, model size and accuracy. Fast VLM incorporates Fast Vi THD, a novel hybrid vision encoder designed to output fewer tokens and significantly reduce encoding time for high-resolution images.</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Scaling the input image resolution is essential for enhancing the performance of Vision Language Models (VLMs), particularly in text-rich image understanding tasks. However, popular visual encoders such as Vi Ts become inefficient at high resolutions due to the large number of tokens and high encoding latency caused by stacked selfattention layers. At different operational resolutions, the vision encoder of a VLM can be optimized along two axes: reducing encoding latency and minimizing the number of visual tokens passed to the LLM, thereby lowering overall latency. Based on a comprehensive efficiency analysis of the interplay between image resolution, vision latency, token count, and LLM size, we introduce Fast VLM—a model that achieves an optimized trade-of-f between latency, model size and accuracy. Fast VLM incorporates Fast Vi THD, a novel hybrid vision encoder designed to output fewer tokens and significantly reduce encoding time for high-resolution images. Unlike previous methods, Fast VLM achieves the optimal balance between visual token count and image resolution solely by scaling the input image, eliminating the need for additional token pruning and simplifying the model design. In the LLa VA-1.5 setup, Fast VLM achieves 3.2 × improvement in time-to-first-token (TTFT) while maintaining similar performance on VLM benchmarks compared to prior works. Compared to LLa Va-One Vision at the highest resolution (1152 ×1152), Fast VLM achieves comparable performance on key benchmarks like Seed Bench and MMMU, using the same 0.5B LLM, but with 85 ×faster TTFT and a vision encoder that is 3.4 ×smaller.</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">Scaling the input image resolution is essential for enhancing the performance of Vision Language Models (VLMs), particularly in text-rich image understanding tasks. Based on a comprehensive efficiency analysis of the interplay between image resolution, vision latency, token count, and LLM size, we introduce Fast VLM—a model that achieves an optimized trade-of-f between latency, model size and accuracy. Fast VLM incorporates Fast Vi THD, a novel hybrid vision encoder designed to output fewer tokens and significantly reduce encoding time for high-resolution images. Compared to LLa Va-One Vision at the highest resolution (1152 ×1152), Fast VLM achieves comparable performance on key benchmarks like Seed Bench and MMMU, using the same 0. 5B LLM, but with 85 ×faster TTFT and a vision encoder that is 3. 4 ×smaller.</div>
+</div>
+<div class="paper-container">
+    <h2>Layout VLM Differentiable Optimization of 3D Layout via Vision-Language Models 2412.02193v3</h2>
+    <div class="section-title"><h3>Keywords</h3></div>
+    <div class="keywords">
+        <span>objects</span>
+        <span>space</span>
+        <span>models</span>
+        <span>vlms</span>
+        <span>spatial</span>
+    </div>
+    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
+    <div class="method-description">The paper proposes the following method:
+
+We introduce LAYOUT VLM, a framework and scene layout representation that exploits the semantic knowledge of Vision-Language Models (VLMs) and supports differentiable optimization to ensure physical plausibility. LAYOUT VLM employs VLMs to generate two mutually reinforcing representations from visually marked images, and *</div>
+    <div class="section-title"><h3>Original Abstract</h3></div>
+    <div class="abstract">Spatial reasoning is a fundamental aspect of human cognition, enabling intuitive understanding and manipulation of objects in three-dimensional space. While foundation models demonstrate remarkable performance on some benchmarks, they still struggle with 3D reasoning tasks like arranging objects in space according to open-ended language instructions, particularly in dense and physically constrained environments. We introduce LAYOUT VLM, a framework and scene layout representation that exploits the semantic knowledge of Vision-Language Models (VLMs) and supports differentiable optimization to ensure physical plausibility. LAYOUT VLM employs VLMs to generate two mutually reinforcing representations from visually marked images, and *</div>
+    <div class="section-title"><h3>Summary</h3></div>
+    <div class="summary">Spatial reasoning is a fundamental aspect of human cognition, enabling intuitive understanding and manipulation of objects in three-dimensional space. While foundation models demonstrate remarkable performance on some benchmarks, they still struggle with 3D reasoning tasks like arranging objects in space according to open-ended language instructions, particularly in dense and physically constrained environments. We introduce LAYOUT VLM, a framework and scene layout representation that exploits the semantic knowledge of Vision-Language Models (VLMs) and supports differentiable optimization to ensure physical plausibility.</div>
+</div>
+</body>
+</html>
