@@ -1,228 +1,158 @@
-2025-03-19 22:04:38,966 - INFO - Found 23 PDF files in downloaded_papers
-2025-03-19 22:04:38,966 - INFO - Processing: Stealthy Backdoor Attack in Self-Supervised Learning Vision Encoders for Large Vision Language Model 2502.18290v2
-2025-03-19 22:04:39,034 - INFO - Successfully validated abstract from downloaded_papers/Stealthy_Backdoor_Attack_in_Self-Supervised_Learning_Vision_Encoders_for_Large_Vision_Language_Model_2502.18290v2.pdf
-2025-03-19 22:04:39,034 - INFO - Extracted abstract (1242 chars)
-2025-03-19 22:04:39,088 - INFO - Extracted method description (223 chars)
-2025-03-19 22:04:39,519 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:04:39,520 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:04:39,520 - INFO - Trying SMMRY web service...
-2025-03-19 22:04:40,143 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:04:40,146 - INFO - Generated summary (448 chars)
-2025-03-19 22:04:42,151 - INFO - Processing: VLs I Verbalized Layers-to-Interactions from Large to Small Vision Language Models 2412.01822v1
-2025-03-19 22:04:42,235 - INFO - Successfully validated abstract from downloaded_papers/VLsI_Verbalized_Layers-to-Interactions_from_Large_to_Small_Vision_Language_Models_2412.01822v1.pdf
-2025-03-19 22:04:42,235 - INFO - Extracted abstract (1254 chars)
-2025-03-19 22:04:42,241 - INFO - Extracted method description (667 chars)
-2025-03-19 22:04:42,607 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:04:42,608 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:04:42,608 - INFO - Trying SMMRY web service...
-2025-03-19 22:04:43,822 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:04:43,824 - INFO - Generated summary (599 chars)
-2025-03-19 22:04:45,830 - INFO - Processing: GFlow VLM Enhancing Multi-step Reasoning in Vision-Language Models with Generative Flow Networks 2503.06514v1
-2025-03-19 22:04:45,912 - INFO - Successfully validated abstract from downloaded_papers/GFlowVLM_Enhancing_Multi-step_Reasoning_in_Vision-Language_Models_with_Generative_Flow_Networks_2503.06514v1.pdf
-2025-03-19 22:04:45,912 - INFO - Extracted abstract (1547 chars)
-2025-03-19 22:04:45,919 - INFO - Extracted method description (425 chars)
-2025-03-19 22:04:45,925 - INFO - Abstract is long (1547 chars), using chunk-based summarization
-2025-03-19 22:04:45,925 - INFO - Summarizing chunk 1/2
-2025-03-19 22:04:46,205 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:04:46,208 - INFO - Summarizing chunk 2/2
-2025-03-19 22:04:46,599 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:04:46,905 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:04:46,914 - INFO - Generated summary (782 chars)
-2025-03-19 22:04:48,919 - INFO - Processing: Forensics-Bench A Comprehensive Forgery Detection Benchmark Suite for Large Vision Language Models 2404.16006v1
-2025-03-19 22:04:48,990 - WARNING - Using generic abstract detection for downloaded_papers/Forensics-Bench_A_Comprehensive_Forgery_Detection_Benchmark_Suite_for_Large_Vision_Language_Models_2404.16006v1.pdf
-2025-03-19 22:04:48,990 - WARNING - Couldn't identify abstract section in downloaded_papers/Forensics-Bench_A_Comprehensive_Forgery_Detection_Benchmark_Suite_for_Large_Vision_Language_Models_2404.16006v1.pdf, using first substantial paragraph
-2025-03-19 22:04:48,992 - INFO - Successfully validated abstract from downloaded_papers/Forensics-Bench_A_Comprehensive_Forgery_Detection_Benchmark_Suite_for_Large_Vision_Language_Models_2404.16006v1.pdf
-2025-03-19 22:04:48,992 - INFO - Extracted abstract (987 chars)
-2025-03-19 22:04:48,997 - INFO - Extracted method description (262 chars)
-2025-03-19 22:04:49,268 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:04:49,269 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:04:49,269 - INFO - Trying SMMRY web service...
-2025-03-19 22:04:49,808 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:04:49,810 - INFO - Generated summary (816 chars)
-2025-03-19 22:04:51,815 - INFO - Processing: Embodied Scene Understanding for Vision Language Models via Meta VQA 2501.09167v1
-2025-03-19 22:04:52,000 - INFO - Successfully validated abstract from downloaded_papers/Embodied_Scene_Understanding_for_Vision_Language_Models_via_MetaVQA_2501.09167v1.pdf
-2025-03-19 22:04:52,002 - INFO - Extracted abstract (1236 chars)
-2025-03-19 22:04:52,008 - INFO - Extracted method description (547 chars)
-2025-03-19 22:04:52,334 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:04:52,335 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:04:52,335 - INFO - Trying SMMRY web service...
-2025-03-19 22:04:53,278 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:04:53,282 - INFO - Generated summary (626 chars)
-2025-03-19 22:04:55,287 - INFO - Processing: Vision Zip Longer is Better but Not Necessary in Vision Language Models 2412.04467v1
-2025-03-19 22:04:55,392 - INFO - Successfully validated abstract from downloaded_papers/VisionZip_Longer_is_Better_but_Not_Necessary_in_Vision_Language_Models_2412.04467v1.pdf
-2025-03-19 22:04:55,393 - INFO - Extracted abstract (1361 chars)
-2025-03-19 22:04:55,399 - INFO - Extracted method description (874 chars)
-2025-03-19 22:04:55,701 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:04:55,702 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:04:55,702 - INFO - Trying SMMRY web service...
-2025-03-19 22:04:56,521 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:04:56,524 - INFO - Generated summary (615 chars)
-2025-03-19 22:04:58,530 - INFO - Processing: Steering Away from Harm An Adaptive Approach to Defending Vision Language Model Against Jailbreaks 2411.16721v2
-2025-03-19 22:04:58,626 - INFO - Successfully validated abstract from downloaded_papers/Steering_Away_from_Harm_An_Adaptive_Approach_to_Defending_Vision_Language_Model_Against_Jailbreaks_2411.16721v2.pdf
-2025-03-19 22:04:58,626 - INFO - Extracted abstract (1626 chars)
-2025-03-19 22:04:58,633 - INFO - Extracted method description (417 chars)
-2025-03-19 22:04:58,634 - INFO - Abstract is long (1626 chars), using chunk-based summarization
-2025-03-19 22:04:58,634 - INFO - Summarizing chunk 1/2
-2025-03-19 22:04:59,065 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:04:59,069 - INFO - Summarizing chunk 2/2
-2025-03-19 22:04:59,367 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:04:59,639 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:04:59,652 - INFO - Generated summary (759 chars)
-2025-03-19 22:05:01,658 - INFO - Processing: Critic-V VLM Critics Help Catch VLM Errors in Multimodal Reasoning 2411.18203v4
-2025-03-19 22:05:01,744 - INFO - Successfully validated abstract from downloaded_papers/Critic-V_VLM_Critics_Help_Catch_VLM_Errors_in_Multimodal_Reasoning_2411.18203v4.pdf
-2025-03-19 22:05:01,744 - INFO - Extracted abstract (1941 chars)
-2025-03-19 22:05:01,753 - INFO - Extracted method description (733 chars)
-2025-03-19 22:05:01,757 - INFO - Abstract is long (1941 chars), using chunk-based summarization
-2025-03-19 22:05:01,757 - INFO - Summarizing chunk 1/2
-2025-03-19 22:05:02,432 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:02,435 - INFO - Summarizing chunk 2/2
-2025-03-19 22:05:02,777 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:03,067 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:03,081 - INFO - Generated summary (1094 chars)
-2025-03-19 22:05:05,087 - INFO - Processing: FLAIR VLM with Fine-grained Language-informed Image Representations 2412.03561v1
-2025-03-19 22:05:05,219 - INFO - Successfully validated abstract from downloaded_papers/FLAIR_VLM_with_Fine-grained_Language-informed_Image_Representations_2412.03561v1.pdf
-2025-03-19 22:05:05,219 - INFO - Extracted abstract (1291 chars)
-2025-03-19 22:05:05,225 - INFO - Extracted method description (439 chars)
-2025-03-19 22:05:05,810 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:05,811 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:05:05,811 - INFO - Trying SMMRY web service...
-2025-03-19 22:05:06,146 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:05:06,149 - INFO - Generated summary (487 chars)
-2025-03-19 22:05:08,155 - INFO - Processing: SPA-VL A Comprehensive Safety Preference Alignment Dataset for Vision Language Model 2406.12030v2
-2025-03-19 22:05:08,242 - INFO - Successfully validated abstract from downloaded_papers/SPA-VL_A_Comprehensive_Safety_Preference_Alignment_Dataset_for_Vision_Language_Model_2406.12030v2.pdf
-2025-03-19 22:05:08,242 - INFO - Extracted abstract (1271 chars)
-2025-03-19 22:05:08,248 - INFO - Extracted method description (359 chars)
-2025-03-19 22:05:08,612 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:08,613 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:05:08,613 - INFO - Trying SMMRY web service...
-2025-03-19 22:05:09,044 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:05:09,047 - INFO - Generated summary (575 chars)
-2025-03-19 22:05:11,052 - INFO - Processing: Discriminative Fine-tuning of LVLMs 2412.04378v2
-2025-03-19 22:05:11,184 - INFO - Successfully validated abstract from downloaded_papers/Discriminative_Fine-tuning_of_LVLMs_2412.04378v2.pdf
-2025-03-19 22:05:11,184 - INFO - Extracted abstract (1494 chars)
-2025-03-19 22:05:11,190 - INFO - Extracted method description (857 chars)
-2025-03-19 22:05:11,462 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:11,463 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:05:11,464 - INFO - Trying SMMRY web service...
-2025-03-19 22:05:12,622 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:05:12,627 - INFO - Generated summary (621 chars)
-2025-03-19 22:05:14,632 - INFO - Processing: ATP-LLa VA Adaptive Token Pruning for Large Vision Language Models 2412.00447v1
-2025-03-19 22:05:14,715 - INFO - Successfully validated abstract from downloaded_papers/ATP-LLaVA_Adaptive_Token_Pruning_for_Large_Vision_Language_Models_2412.00447v1.pdf
-2025-03-19 22:05:14,715 - INFO - Extracted abstract (1402 chars)
-2025-03-19 22:05:14,721 - INFO - Extracted method description (706 chars)
-2025-03-19 22:05:15,001 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:15,002 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:05:15,002 - INFO - Trying SMMRY web service...
-2025-03-19 22:05:15,995 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:05:15,998 - INFO - Generated summary (364 chars)
-2025-03-19 22:05:18,003 - INFO - Processing: What’s in the Image A Deep-Dive into the Vision of Vision Language Models 2411.17491v1
-2025-03-19 22:05:18,099 - INFO - Successfully validated abstract from downloaded_papers/What’s_in_the_Image_A_Deep-Dive_into_the_Vision_of_Vision_Language_Models_2411.17491v1.pdf
-2025-03-19 22:05:18,099 - INFO - Extracted abstract (1377 chars)
-2025-03-19 22:05:18,105 - INFO - Extracted method description (293 chars)
-2025-03-19 22:05:18,392 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:18,393 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:05:18,393 - INFO - Trying SMMRY web service...
-2025-03-19 22:05:20,052 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:05:20,054 - INFO - Generated summary (351 chars)
-2025-03-19 22:05:22,060 - INFO - Processing: Motion Bench Benchmarking and Improving Fine-grained Video Motion Understanding for Vision Language M 2501.02955v1
-2025-03-19 22:05:22,134 - INFO - Successfully validated abstract from downloaded_papers/MotionBench_Benchmarking_and_Improving_Fine-grained_Video_Motion_Understanding_for_Vision_Language_M_2501.02955v1.pdf
-2025-03-19 22:05:22,134 - INFO - Extracted abstract (1335 chars)
-2025-03-19 22:05:22,141 - INFO - Extracted method description (441 chars)
-2025-03-19 22:05:22,428 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:22,430 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:05:22,430 - INFO - Trying SMMRY web service...
-2025-03-19 22:05:24,240 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:05:24,243 - INFO - Generated summary (505 chars)
-2025-03-19 22:05:26,248 - INFO - Processing: A Stitch in Time Saves Nine Small VLM is a Precise Guidance for accelerating Large VLMs 2412.03324v2
-2025-03-19 22:05:26,324 - WARNING - Using generic abstract detection for downloaded_papers/A_Stitch_in_Time_Saves_Nine_Small_VLM_is_a_Precise_Guidance_for_accelerating_Large_VLMs_2412.03324v2.pdf
-2025-03-19 22:05:26,324 - WARNING - Couldn't identify abstract section in downloaded_papers/A_Stitch_in_Time_Saves_Nine_Small_VLM_is_a_Precise_Guidance_for_accelerating_Large_VLMs_2412.03324v2.pdf, using first substantial paragraph
-2025-03-19 22:05:26,325 - INFO - Successfully validated abstract from downloaded_papers/A_Stitch_in_Time_Saves_Nine_Small_VLM_is_a_Precise_Guidance_for_accelerating_Large_VLMs_2412.03324v2.pdf
-2025-03-19 22:05:26,325 - INFO - Extracted abstract (983 chars)
-2025-03-19 22:05:26,330 - INFO - Extracted method description (236 chars)
-2025-03-19 22:05:26,634 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:26,634 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:05:26,634 - INFO - Trying SMMRY web service...
-2025-03-19 22:05:27,433 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:05:27,436 - INFO - Generated summary (987 chars)
-2025-03-19 22:05:29,441 - INFO - Processing: Lifelong Knowledge Editing for Vision Language Models with Low-Rank Mixture-of-Experts 2411.15432v2
-2025-03-19 22:05:29,515 - INFO - Successfully validated abstract from downloaded_papers/Lifelong_Knowledge_Editing_for_Vision_Language_Models_with_Low-Rank_Mixture-of-Experts_2411.15432v2.pdf
-2025-03-19 22:05:29,515 - INFO - Extracted abstract (1459 chars)
-2025-03-19 22:05:29,522 - INFO - Extracted method description (586 chars)
-2025-03-19 22:05:29,859 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:29,860 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:05:29,860 - INFO - Trying SMMRY web service...
-2025-03-19 22:05:30,362 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:05:30,365 - INFO - Generated summary (466 chars)
-2025-03-19 22:05:32,368 - INFO - Processing: Mo VE-KD Knowledge Distillation for VLMs with Mixture of Visual Encoders 2501.01709v3
-2025-03-19 22:05:32,417 - INFO - Successfully validated abstract from downloaded_papers/MoVE-KD_Knowledge_Distillation_for_VLMs_with_Mixture_of_Visual_Encoders_2501.01709v3.pdf
-2025-03-19 22:05:32,417 - INFO - Extracted abstract (1284 chars)
-2025-03-19 22:05:32,424 - INFO - Extracted method description (993 chars)
-2025-03-19 22:05:32,781 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:32,782 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:05:32,782 - INFO - Trying SMMRY web service...
-2025-03-19 22:05:33,184 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:05:33,188 - INFO - Generated summary (736 chars)
-2025-03-19 22:05:35,192 - INFO - Processing: Beyond Sight Towards Cognitive Alignment in LVLM via Enriched Visual Knowledge 2411.16824v1
-2025-03-19 22:05:35,306 - INFO - Successfully validated abstract from downloaded_papers/Beyond_Sight_Towards_Cognitive_Alignment_in_LVLM_via_Enriched_Visual_Knowledge_2411.16824v1.pdf
-2025-03-19 22:05:35,307 - INFO - Extracted abstract (1622 chars)
-2025-03-19 22:05:35,314 - INFO - Extracted method description (408 chars)
-2025-03-19 22:05:35,316 - INFO - Abstract is long (1622 chars), using chunk-based summarization
-2025-03-19 22:05:35,316 - INFO - Summarizing chunk 1/2
-2025-03-19 22:05:35,593 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:35,595 - INFO - Summarizing chunk 2/2
-2025-03-19 22:05:35,879 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:36,168 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:36,173 - INFO - Generated summary (555 chars)
-2025-03-19 22:05:38,177 - INFO - Processing: Doc VLM Make Your VLM an Efficient Reader 2412.08746v1
-2025-03-19 22:05:38,270 - INFO - Successfully validated abstract from downloaded_papers/DocVLM_Make_Your_VLM_an_Efficient_Reader_2412.08746v1.pdf
-2025-03-19 22:05:38,270 - INFO - Extracted abstract (1507 chars)
-2025-03-19 22:05:38,278 - INFO - Extracted method description (493 chars)
-2025-03-19 22:05:38,281 - INFO - Abstract is long (1507 chars), using chunk-based summarization
-2025-03-19 22:05:38,281 - INFO - Summarizing chunk 1/2
-2025-03-19 22:05:38,554 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:38,556 - INFO - Summarizing chunk 2/2
-2025-03-19 22:05:38,833 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:39,108 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:39,114 - INFO - Generated summary (655 chars)
-2025-03-19 22:05:41,119 - INFO - Processing: Towards Vision Language Models For Extra-Long Video Understanding 2409.14485v4
-2025-03-19 22:05:41,223 - INFO - Successfully validated abstract from downloaded_papers/Towards_Vision_Language_Models_For_Extra-Long_Video_Understanding_2409.14485v4.pdf
-2025-03-19 22:05:41,224 - INFO - Extracted abstract (867 chars)
-2025-03-19 22:05:41,228 - INFO - Extracted method description (501 chars)
-2025-03-19 22:05:41,511 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:41,512 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:05:41,512 - INFO - Trying SMMRY web service...
-2025-03-19 22:05:43,674 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:05:43,677 - INFO - Generated summary (462 chars)
-2025-03-19 22:05:45,682 - INFO - Processing: Hal Loc Token-level Localization of Hallucinations for Vision Language Models 2403.16167v4
-2025-03-19 22:05:45,755 - WARNING - Using generic abstract detection for downloaded_papers/HalLoc_Token-level_Localization_of_Hallucinations_for_Vision_Language_Models_2403.16167v4.pdf
-2025-03-19 22:05:45,755 - WARNING - Couldn't identify abstract section in downloaded_papers/HalLoc_Token-level_Localization_of_Hallucinations_for_Vision_Language_Models_2403.16167v4.pdf, using first substantial paragraph
-2025-03-19 22:05:45,764 - INFO - Successfully validated abstract from downloaded_papers/HalLoc_Token-level_Localization_of_Hallucinations_for_Vision_Language_Models_2403.16167v4.pdf
-2025-03-19 22:05:45,764 - INFO - Extracted abstract (949 chars)
-2025-03-19 22:05:45,769 - INFO - Extracted method description (400 chars)
-2025-03-19 22:05:46,083 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:46,085 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:05:46,085 - INFO - Trying SMMRY web service...
-2025-03-19 22:05:48,567 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:05:48,570 - INFO - Generated summary (628 chars)
-2025-03-19 22:05:50,575 - INFO - Processing: Fast VLM Efficient Vision Encoding for Vision Language Models 2412.13303v1
-2025-03-19 22:05:50,651 - INFO - Successfully validated abstract from downloaded_papers/FastVLM_Efficient_Vision_Encoding_for_Vision_Language_Models_2412.13303v1.pdf
-2025-03-19 22:05:50,651 - INFO - Extracted abstract (1626 chars)
-2025-03-19 22:05:50,659 - INFO - Extracted method description (446 chars)
-2025-03-19 22:05:50,663 - INFO - Abstract is long (1626 chars), using chunk-based summarization
-2025-03-19 22:05:50,664 - INFO - Summarizing chunk 1/2
-2025-03-19 22:05:51,099 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:51,102 - INFO - Summarizing chunk 2/2
-2025-03-19 22:05:51,367 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:51,647 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:51,656 - INFO - Generated summary (819 chars)
-2025-03-19 22:05:53,661 - INFO - Processing: Layout VLM Differentiable Optimization of 3D Layout via Vision-Language Models 2412.02193v3
-2025-03-19 22:05:53,712 - INFO - Successfully validated abstract from downloaded_papers/LayoutVLM_Differentiable_Optimization_of_3D_Layout_via_Vision-Language_Models_2412.02193v3.pdf
-2025-03-19 22:05:53,712 - INFO - Extracted abstract (740 chars)
-2025-03-19 22:05:53,716 - INFO - Extracted method description (366 chars)
-2025-03-19 22:05:54,013 - WARNING - HuggingFace API returned status code 401
-2025-03-19 22:05:54,013 - INFO - Using SMMRY web service as fallback...
-2025-03-19 22:05:54,013 - INFO - Trying SMMRY web service...
-2025-03-19 22:05:54,521 - INFO - Using extractive summarization as final fallback...
-2025-03-19 22:05:54,524 - INFO - Generated summary (628 chars)
-2025-03-19 22:05:56,572 - INFO - Saved HTML summaries to paper_summaries.html
-2025-03-19 22:05:56,582 - INFO - Summary extraction complete!
+2025-03-20 09:18:21,417 - INFO - Found 22 PDF files in downloaded_papers
+2025-03-20 09:18:21,417 - INFO - Processing: Stealthy Backdoor Attack in Self-Supervised Learning Vision Encoders for Large Vision Language Model 2502.18290v2
+2025-03-20 09:18:21,486 - INFO - Successfully validated abstract from downloaded_papers/Stealthy_Backdoor_Attack_in_Self-Supervised_Learning_Vision_Encoders_for_Large_Vision_Language_Model_2502.18290v2.pdf
+2025-03-20 09:18:21,486 - INFO - Extracted abstract (1242 chars)
+2025-03-20 09:18:21,542 - INFO - Extracted method description (223 chars)
+2025-03-20 09:18:27,991 - INFO - Generated summary (527 chars)
+2025-03-20 09:18:29,997 - INFO - Processing: VLs I Verbalized Layers-to-Interactions from Large to Small Vision Language Models 2412.01822v1
+2025-03-20 09:18:30,082 - INFO - Successfully validated abstract from downloaded_papers/VLsI_Verbalized_Layers-to-Interactions_from_Large_to_Small_Vision_Language_Models_2412.01822v1.pdf
+2025-03-20 09:18:30,082 - INFO - Extracted abstract (1254 chars)
+2025-03-20 09:18:30,088 - INFO - Extracted method description (667 chars)
+2025-03-20 09:18:40,757 - INFO - Generated summary (541 chars)
+2025-03-20 09:18:42,764 - INFO - Processing: GFlow VLM Enhancing Multi-step Reasoning in Vision-Language Models with Generative Flow Networks 2503.06514v1
+2025-03-20 09:18:42,847 - INFO - Successfully validated abstract from downloaded_papers/GFlowVLM_Enhancing_Multi-step_Reasoning_in_Vision-Language_Models_with_Generative_Flow_Networks_2503.06514v1.pdf
+2025-03-20 09:18:42,847 - INFO - Extracted abstract (1547 chars)
+2025-03-20 09:18:42,855 - INFO - Extracted method description (425 chars)
+2025-03-20 09:18:42,861 - INFO - Abstract is long (1547 chars), using chunk-based summarization
+2025-03-20 09:18:42,861 - INFO - Summarizing chunk 1/2
+2025-03-20 09:18:49,444 - INFO - Summarizing chunk 2/2
+2025-03-20 09:19:06,808 - INFO - Generated summary (481 chars)
+2025-03-20 09:19:08,814 - INFO - Processing: Forensics-Bench A Comprehensive Forgery Detection Benchmark Suite for Large Vision Language Models 2404.16006v1
+2025-03-20 09:19:08,909 - WARNING - Using generic abstract detection for downloaded_papers/Forensics-Bench_A_Comprehensive_Forgery_Detection_Benchmark_Suite_for_Large_Vision_Language_Models_2404.16006v1.pdf
+2025-03-20 09:19:08,909 - WARNING - Couldn't identify abstract section in downloaded_papers/Forensics-Bench_A_Comprehensive_Forgery_Detection_Benchmark_Suite_for_Large_Vision_Language_Models_2404.16006v1.pdf, using first substantial paragraph
+2025-03-20 09:19:08,911 - INFO - Successfully validated abstract from downloaded_papers/Forensics-Bench_A_Comprehensive_Forgery_Detection_Benchmark_Suite_for_Large_Vision_Language_Models_2404.16006v1.pdf
+2025-03-20 09:19:08,911 - INFO - Extracted abstract (987 chars)
+2025-03-20 09:19:08,916 - INFO - Extracted method description (262 chars)
+2025-03-20 09:19:19,528 - INFO - Generated summary (612 chars)
+2025-03-20 09:19:21,534 - INFO - Processing: Embodied Scene Understanding for Vision Language Models via Meta VQA 2501.09167v1
+2025-03-20 09:19:21,734 - INFO - Successfully validated abstract from downloaded_papers/Embodied_Scene_Understanding_for_Vision_Language_Models_via_MetaVQA_2501.09167v1.pdf
+2025-03-20 09:19:21,734 - INFO - Extracted abstract (1236 chars)
+2025-03-20 09:19:21,740 - INFO - Extracted method description (547 chars)
+2025-03-20 09:19:27,905 - INFO - Generated summary (561 chars)
+2025-03-20 09:19:29,910 - INFO - Processing: Vision Zip Longer is Better but Not Necessary in Vision Language Models 2412.04467v1
+2025-03-20 09:19:30,018 - INFO - Successfully validated abstract from downloaded_papers/VisionZip_Longer_is_Better_but_Not_Necessary_in_Vision_Language_Models_2412.04467v1.pdf
+2025-03-20 09:19:30,018 - INFO - Extracted abstract (1361 chars)
+2025-03-20 09:19:30,025 - INFO - Extracted method description (874 chars)
+2025-03-20 09:19:36,808 - INFO - Generated summary (499 chars)
+2025-03-20 09:19:38,814 - INFO - Processing: Steering Away from Harm An Adaptive Approach to Defending Vision Language Model Against Jailbreaks 2411.16721v2
+2025-03-20 09:19:38,900 - INFO - Successfully validated abstract from downloaded_papers/Steering_Away_from_Harm_An_Adaptive_Approach_to_Defending_Vision_Language_Model_Against_Jailbreaks_2411.16721v2.pdf
+2025-03-20 09:19:38,900 - INFO - Extracted abstract (1626 chars)
+2025-03-20 09:19:38,908 - INFO - Extracted method description (417 chars)
+2025-03-20 09:19:38,909 - INFO - Abstract is long (1626 chars), using chunk-based summarization
+2025-03-20 09:19:38,909 - INFO - Summarizing chunk 1/2
+2025-03-20 09:19:47,115 - INFO - Summarizing chunk 2/2
+2025-03-20 09:20:02,409 - INFO - Generated summary (443 chars)
+2025-03-20 09:20:04,415 - INFO - Processing: Critic-V VLM Critics Help Catch VLM Errors in Multimodal Reasoning 2411.18203v4
+2025-03-20 09:20:04,512 - INFO - Successfully validated abstract from downloaded_papers/Critic-V_VLM_Critics_Help_Catch_VLM_Errors_in_Multimodal_Reasoning_2411.18203v4.pdf
+2025-03-20 09:20:04,512 - INFO - Extracted abstract (1941 chars)
+2025-03-20 09:20:04,522 - INFO - Extracted method description (733 chars)
+2025-03-20 09:20:04,526 - INFO - Abstract is long (1941 chars), using chunk-based summarization
+2025-03-20 09:20:04,526 - INFO - Summarizing chunk 1/2
+2025-03-20 09:20:04,911 - WARNING - HuggingFace API returned status code 503
+2025-03-20 09:20:04,915 - INFO - Summarizing chunk 2/2
+2025-03-20 09:20:05,269 - WARNING - HuggingFace API returned status code 503
+2025-03-20 09:20:05,687 - WARNING - HuggingFace API returned status code 503
+2025-03-20 09:20:05,701 - INFO - Generated summary (1094 chars)
+2025-03-20 09:20:07,707 - INFO - Processing: FLAIR VLM with Fine-grained Language-informed Image Representations 2412.03561v1
+2025-03-20 09:20:07,840 - INFO - Successfully validated abstract from downloaded_papers/FLAIR_VLM_with_Fine-grained_Language-informed_Image_Representations_2412.03561v1.pdf
+2025-03-20 09:20:07,840 - INFO - Extracted abstract (1291 chars)
+2025-03-20 09:20:07,847 - INFO - Extracted method description (439 chars)
+2025-03-20 09:20:08,448 - WARNING - HuggingFace API returned status code 503
+2025-03-20 09:20:08,449 - INFO - Using SMMRY web service as fallback...
+2025-03-20 09:20:08,449 - INFO - Trying SMMRY web service...
+2025-03-20 09:20:08,865 - INFO - Using extractive summarization as final fallback...
+2025-03-20 09:20:08,868 - INFO - Generated summary (487 chars)
+2025-03-20 09:20:10,871 - INFO - Processing: SPA-VL A Comprehensive Safety Preference Alignment Dataset for Vision Language Model 2406.12030v2
+2025-03-20 09:20:10,972 - INFO - Successfully validated abstract from downloaded_papers/SPA-VL_A_Comprehensive_Safety_Preference_Alignment_Dataset_for_Vision_Language_Model_2406.12030v2.pdf
+2025-03-20 09:20:10,973 - INFO - Extracted abstract (1271 chars)
+2025-03-20 09:20:10,978 - INFO - Extracted method description (359 chars)
+2025-03-20 09:20:11,297 - WARNING - HuggingFace API returned status code 503
+2025-03-20 09:20:11,297 - INFO - Using SMMRY web service as fallback...
+2025-03-20 09:20:11,297 - INFO - Trying SMMRY web service...
+2025-03-20 09:20:11,685 - INFO - Using extractive summarization as final fallback...
+2025-03-20 09:20:11,688 - INFO - Generated summary (575 chars)
+2025-03-20 09:20:13,693 - INFO - Processing: Discriminative Fine-tuning of LVLMs 2412.04378v2
+2025-03-20 09:20:13,817 - INFO - Successfully validated abstract from downloaded_papers/Discriminative_Fine-tuning_of_LVLMs_2412.04378v2.pdf
+2025-03-20 09:20:13,817 - INFO - Extracted abstract (1494 chars)
+2025-03-20 09:20:13,824 - INFO - Extracted method description (857 chars)
+2025-03-20 09:20:14,129 - WARNING - HuggingFace API returned status code 503
+2025-03-20 09:20:14,130 - INFO - Using SMMRY web service as fallback...
+2025-03-20 09:20:14,130 - INFO - Trying SMMRY web service...
+2025-03-20 09:20:14,566 - INFO - Using extractive summarization as final fallback...
+2025-03-20 09:20:14,570 - INFO - Generated summary (621 chars)
+2025-03-20 09:20:16,575 - INFO - Processing: ATP-LLa VA Adaptive Token Pruning for Large Vision Language Models 2412.00447v1
+2025-03-20 09:20:16,734 - INFO - Successfully validated abstract from downloaded_papers/ATP-LLaVA_Adaptive_Token_Pruning_for_Large_Vision_Language_Models_2412.00447v1.pdf
+2025-03-20 09:20:16,734 - INFO - Extracted abstract (1402 chars)
+2025-03-20 09:20:16,741 - INFO - Extracted method description (706 chars)
+2025-03-20 09:20:17,054 - WARNING - HuggingFace API returned status code 503
+2025-03-20 09:20:17,055 - INFO - Using SMMRY web service as fallback...
+2025-03-20 09:20:17,055 - INFO - Trying SMMRY web service...
+2025-03-20 09:20:17,424 - INFO - Using extractive summarization as final fallback...
+2025-03-20 09:20:17,427 - INFO - Generated summary (364 chars)
+2025-03-20 09:20:19,432 - INFO - Processing: What’s in the Image A Deep-Dive into the Vision of Vision Language Models 2411.17491v1
+2025-03-20 09:20:19,508 - INFO - Successfully validated abstract from downloaded_papers/What’s_in_the_Image_A_Deep-Dive_into_the_Vision_of_Vision_Language_Models_2411.17491v1.pdf
+2025-03-20 09:20:19,508 - INFO - Extracted abstract (1377 chars)
+2025-03-20 09:20:19,514 - INFO - Extracted method description (293 chars)
+2025-03-20 09:20:19,808 - WARNING - HuggingFace API returned status code 503
+2025-03-20 09:20:19,808 - INFO - Using SMMRY web service as fallback...
+2025-03-20 09:20:19,808 - INFO - Trying SMMRY web service...
+2025-03-20 09:20:20,197 - INFO - Using extractive summarization as final fallback...
+2025-03-20 09:20:20,199 - INFO - Generated summary (351 chars)
+2025-03-20 09:20:22,204 - INFO - Processing: Motion Bench Benchmarking and Improving Fine-grained Video Motion Understanding for Vision Language M 2501.02955v1
+2025-03-20 09:20:22,279 - INFO - Successfully validated abstract from downloaded_papers/MotionBench_Benchmarking_and_Improving_Fine-grained_Video_Motion_Understanding_for_Vision_Language_M_2501.02955v1.pdf
+2025-03-20 09:20:22,279 - INFO - Extracted abstract (1335 chars)
+2025-03-20 09:20:22,286 - INFO - Extracted method description (441 chars)
+2025-03-20 09:20:28,804 - INFO - Generated summary (642 chars)
+2025-03-20 09:20:30,810 - INFO - Processing: Lifelong Knowledge Editing for Vision Language Models with Low-Rank Mixture-of-Experts 2411.15432v2
+2025-03-20 09:20:30,920 - INFO - Successfully validated abstract from downloaded_papers/Lifelong_Knowledge_Editing_for_Vision_Language_Models_with_Low-Rank_Mixture-of-Experts_2411.15432v2.pdf
+2025-03-20 09:20:30,920 - INFO - Extracted abstract (1459 chars)
+2025-03-20 09:20:30,927 - INFO - Extracted method description (586 chars)
+2025-03-20 09:20:38,721 - INFO - Generated summary (583 chars)
+2025-03-20 09:20:40,727 - INFO - Processing: Mo VE-KD Knowledge Distillation for VLMs with Mixture of Visual Encoders 2501.01709v3
+2025-03-20 09:20:40,784 - INFO - Successfully validated abstract from downloaded_papers/MoVE-KD_Knowledge_Distillation_for_VLMs_with_Mixture_of_Visual_Encoders_2501.01709v3.pdf
+2025-03-20 09:20:40,785 - INFO - Extracted abstract (1284 chars)
+2025-03-20 09:20:40,793 - INFO - Extracted method description (993 chars)
+2025-03-20 09:20:47,546 - INFO - Generated summary (477 chars)
+2025-03-20 09:20:49,552 - INFO - Processing: Beyond Sight Towards Cognitive Alignment in LVLM via Enriched Visual Knowledge 2411.16824v1
+2025-03-20 09:20:49,658 - INFO - Successfully validated abstract from downloaded_papers/Beyond_Sight_Towards_Cognitive_Alignment_in_LVLM_via_Enriched_Visual_Knowledge_2411.16824v1.pdf
+2025-03-20 09:20:49,658 - INFO - Extracted abstract (1622 chars)
+2025-03-20 09:20:49,668 - INFO - Extracted method description (408 chars)
+2025-03-20 09:20:49,670 - INFO - Abstract is long (1622 chars), using chunk-based summarization
+2025-03-20 09:20:49,670 - INFO - Summarizing chunk 1/2
+2025-03-20 09:20:57,463 - INFO - Summarizing chunk 2/2
+2025-03-20 09:21:11,078 - INFO - Generated summary (570 chars)
+2025-03-20 09:21:13,085 - INFO - Processing: Doc VLM Make Your VLM an Efficient Reader 2412.08746v1
+2025-03-20 09:21:13,168 - INFO - Successfully validated abstract from downloaded_papers/DocVLM_Make_Your_VLM_an_Efficient_Reader_2412.08746v1.pdf
+2025-03-20 09:21:13,168 - INFO - Extracted abstract (1507 chars)
+2025-03-20 09:21:13,177 - INFO - Extracted method description (493 chars)
+2025-03-20 09:21:13,180 - INFO - Abstract is long (1507 chars), using chunk-based summarization
+2025-03-20 09:21:13,180 - INFO - Summarizing chunk 1/2
+2025-03-20 09:21:21,155 - INFO - Summarizing chunk 2/2
+2025-03-20 09:21:33,952 - INFO - Generated summary (527 chars)
+2025-03-20 09:21:35,957 - INFO - Processing: Towards Vision Language Models For Extra-Long Video Understanding 2409.14485v4
+2025-03-20 09:21:36,094 - INFO - Successfully validated abstract from downloaded_papers/Towards_Vision_Language_Models_For_Extra-Long_Video_Understanding_2409.14485v4.pdf
+2025-03-20 09:21:36,094 - INFO - Extracted abstract (867 chars)
+2025-03-20 09:21:36,099 - INFO - Extracted method description (501 chars)
+2025-03-20 09:21:43,072 - INFO - Generated summary (546 chars)
+2025-03-20 09:21:45,078 - INFO - Processing: Hal Loc Token-level Localization of Hallucinations for Vision Language Models 2403.16167v4
+2025-03-20 09:21:45,116 - WARNING - Using generic abstract detection for downloaded_papers/HalLoc_Token-level_Localization_of_Hallucinations_for_Vision_Language_Models_2403.16167v4.pdf
+2025-03-20 09:21:45,116 - WARNING - Couldn't identify abstract section in downloaded_papers/HalLoc_Token-level_Localization_of_Hallucinations_for_Vision_Language_Models_2403.16167v4.pdf, using first substantial paragraph
+2025-03-20 09:21:45,124 - INFO - Successfully validated abstract from downloaded_papers/HalLoc_Token-level_Localization_of_Hallucinations_for_Vision_Language_Models_2403.16167v4.pdf
+2025-03-20 09:21:45,124 - INFO - Extracted abstract (949 chars)
+2025-03-20 09:21:45,129 - INFO - Extracted method description (400 chars)
+2025-03-20 09:21:51,444 - INFO - Generated summary (590 chars)
+2025-03-20 09:21:53,452 - INFO - Processing: Fast VLM Efficient Vision Encoding for Vision Language Models 2412.13303v1
+2025-03-20 09:21:53,616 - INFO - Successfully validated abstract from downloaded_papers/FastVLM_Efficient_Vision_Encoding_for_Vision_Language_Models_2412.13303v1.pdf
+2025-03-20 09:21:53,616 - INFO - Extracted abstract (1626 chars)
+2025-03-20 09:21:53,626 - INFO - Extracted method description (446 chars)
+2025-03-20 09:21:53,630 - INFO - Abstract is long (1626 chars), using chunk-based summarization
+2025-03-20 09:21:53,630 - INFO - Summarizing chunk 1/2
+2025-03-20 09:21:59,933 - INFO - Summarizing chunk 2/2
+2025-03-20 09:22:16,746 - INFO - Generated summary (438 chars)
+2025-03-20 09:22:18,754 - INFO - Processing: Layout VLM Differentiable Optimization of 3D Layout via Vision-Language Models 2412.02193v3
+2025-03-20 09:22:18,825 - INFO - Successfully validated abstract from downloaded_papers/LayoutVLM_Differentiable_Optimization_of_3D_Layout_via_Vision-Language_Models_2412.02193v3.pdf
+2025-03-20 09:22:18,825 - INFO - Extracted abstract (740 chars)
+2025-03-20 09:22:18,833 - INFO - Extracted method description (366 chars)
+2025-03-20 09:22:24,549 - INFO - Generated summary (537 chars)
+2025-03-20 09:22:26,592 - INFO - Saved HTML summaries to paper_summaries.html
+2025-03-20 09:22:26,603 - INFO - Summary extraction complete!

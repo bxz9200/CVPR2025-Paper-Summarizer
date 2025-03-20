@@ -1,4 +1,4 @@
-Download started at 2025-03-19 20:52:06
+Download started at 2025-03-19 23:15:07
 Keywords: VLM, Vision Language Model
 
 
@@ -211,10 +211,6 @@ VLMs-Guided Representation Distillation for Efficient Vision-Based Reinforcement
 Authors: Haoran Xu · Peixi Peng · Guang Tan · Yiqian Chang · Luntong Li · Yonghong Tian
 Not found on arXiv
 
-Galaxy Walker: Geometry-aware VLMs For Galaxy-scale Understanding
-Authors: Tianyu Chen · Xingcheng Fu · Yisen Gao · Haodong Qian · Yuecen Wei · Kun Yan · Haoyi Zhou · Jianxin Li
-Not found on arXiv
-
 HalLoc: Token-level Localization of Hallucinations for Vision Language Models
 Authors: Eunkyu Park · Minyeong Kim · Gunhee Kim
 Downloaded: downloaded_papers/HalLoc_Token-level_Localization_of_Hallucinations_for_Vision_Language_Models_2403.16167v4.pdf
@@ -226,7 +222,21 @@ Ground-V: Teaching VLMs to Ground Complex Instructions in Pixels
 Authors: Yongshuo Zong · Qin ZHANG · DONGSHENG An · Zhihua Li · Xiang Xu · Linghan Xu · Zhuowen Tu · Yifan Xing · Onkar Dabeer
 Not found on arXiv
 
+Galaxy Walker: Geometry-aware VLMs For Galaxy-scale Understanding
+Authors: Tianyu Chen · Xingcheng Fu · Yisen Gao · Haodong Qian · Yuecen Wei · Kun Yan · Haoyi Zhou · Jianxin Li
+Not found on arXiv
+
+
+Verification Results:
+Verified papers: 22
+Deleted mismatched papers: 1
+
+Deleted Papers:
+- A_Stitch_in_Time_Saves_Nine_Small_VLM_is_a_Precise_Guidance_for_accelerating_Large_VLMs_2412.03324v2.pdf
+
 
 Summary: Found 41 papers with keywords out of 2745 total papers
 Successfully downloaded 23 papers
-Download completed at 2025-03-19 21:04:55
+Verified papers: 22
+Deleted mismatched papers: 1
+Download completed at 2025-03-19 23:35:36

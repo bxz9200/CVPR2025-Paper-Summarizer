@@ -9,6 +9,9 @@ import logging
 from typing import List, Tuple, Dict, Optional
 import PyPDF2
 import io
+import random
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 # Configure logging
 logging.basicConfig(
@@ -19,6 +22,45 @@ logging.basicConfig(
         logging.StreamHandler()
     ]
 )
+
+# Create a session with retry logic
+def create_robust_session(
+    retries=5, 
+    backoff_factor=0.5, 
+    status_forcelist=[429, 500, 502, 503, 504],
+    proxy=None
+):
+    """Create a requests session with retry capabilities."""
+    session = requests.Session()
+    
+    # Configure proxy if provided
+    if proxy:
+        session.proxies = {
+            "http": proxy,
+            "https": proxy,
+        }
+    
+    # Configure retry strategy
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+        allowed_methods=["GET", "POST"],
+    )
+    
+    # Mount the adapter to both http and https
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount("http://", adapter)
+    session.mount("https://", adapter)
+    
+    # Add a user agent to avoid being blocked
+    session.headers.update({
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    })
+    
+    return session
 
 def setup_download_directory() -> str:
     """Create and return the download directory path."""
@@ -188,71 +230,97 @@ def parse_arxiv_response(content) -> List[Dict]:
     
     return entries
 
-def search_arxiv_paper(title: str, authors: str = "") -> Tuple[Optional[str], Optional[str], Optional[str]]:
+def search_arxiv_paper(title: str, authors: str = "", proxy=None, max_retries=5) -> Tuple[Optional[str], Optional[str], Optional[str]]:
     """
     Search for papers on arXiv using the title and authors with improved matching.
+    Uses retry logic to handle connection issues and rate limiting.
     
     Args:
         title: Paper title
         authors: Paper authors (optional)
+        proxy: Optional proxy server to use for the request
+        max_retries: Maximum number of manual retries (beyond session retries)
         
     Returns:
         Tuple of (pdf_url, arxiv_title, arxiv_id) or (None, None, None) if not found
     """
     logging.info(f"Searching arXiv for: {title}")
-    try:
-        # Clean the title for search
-        query = normalize_title(title)
-        query = '+'.join(query.split())
-        
-        # Add first author if available to improve search accuracy
-        first_author = ""
-        if authors:
-            author_parts = re.split(r'[,;&]', authors)
-            if author_parts:
-                first_author = author_parts[0].strip()
-                if first_author:
-                    query += f"+author:{quote(first_author)}"
-        
-        arxiv_url = f"https://export.arxiv.org/api/query?search_query=all:{query}&start=0&max_results=5"
-        
-        response = requests.get(arxiv_url, timeout=30)
-        response.raise_for_status()
-        
-        # Parse the response with our more robust parser
-        entries = parse_arxiv_response(response.content)
-        
-        if not entries:
-            logging.warning("No entries found in arXiv response")
-            return None, None, None
-        
-        best_match = None
-        best_similarity = 0.0
-        
-        for entry in entries:
-            arxiv_title = entry['title']
-            # Calculate similarity between original title and arXiv title
-            similarity = title_similarity(title, arxiv_title)
-            
-            if similarity > best_similarity:
-                best_similarity = similarity
-                best_match = entry
-        
-        # Only consider it a match if similarity is above threshold
-        if best_match and best_similarity > 0.6:
-            pdf_url = best_match['pdf_url']
-            arxiv_id = best_match['id']
-            arxiv_title = best_match['title']
-            logging.info(f"Found paper on arXiv (similarity: {best_similarity:.2f}): {arxiv_title}")
-            return pdf_url, arxiv_title, arxiv_id
-        else:
-            logging.warning(f"No matching paper found on arXiv (best similarity: {best_similarity:.2f})")
-            return None, None, None
     
-    except Exception as e:
-        logging.error(f"Error searching arXiv: {str(e)}")
-        logging.error("If you're getting 'Couldn't find a tree builder with the features you requested: xml', install lxml with: pip install lxml")
-        return None, None, None
+    # Clean the title for search
+    query = normalize_title(title)
+    query = '+'.join(query.split())
+    
+    # Add first author if available to improve search accuracy
+    first_author = ""
+    if authors:
+        author_parts = re.split(r'[,;&]', authors)
+        if author_parts:
+            first_author = author_parts[0].strip()
+            if first_author:
+                query += f"+author:{quote(first_author)}"
+    
+    arxiv_url = f"https://export.arxiv.org/api/query?search_query=all:{query}&start=0&max_results=5"
+    
+    # Create a session with retry capabilities
+    session = create_robust_session(proxy=proxy)
+    
+    for attempt in range(max_retries):
+        try:
+            # Add jitter to avoid hitting rate limits
+            if attempt > 0:
+                jitter = random.uniform(2, 5) * attempt
+                logging.info(f"Retry attempt {attempt+1}/{max_retries} after {jitter:.2f}s")
+                time.sleep(jitter)
+            
+            response = session.get(arxiv_url, timeout=30)
+            response.raise_for_status()
+            
+            # Parse the response with our more robust parser
+            entries = parse_arxiv_response(response.content)
+            
+            if not entries:
+                logging.warning("No entries found in arXiv response")
+                return None, None, None
+            
+            best_match = None
+            best_similarity = 0.0
+            
+            for entry in entries:
+                arxiv_title = entry['title']
+                # Calculate similarity between original title and arXiv title
+                similarity = title_similarity(title, arxiv_title)
+                
+                if similarity > best_similarity:
+                    best_similarity = similarity
+                    best_match = entry
+            
+            # Only consider it a match if similarity is above threshold
+            if best_match and best_similarity > 0.6:
+                pdf_url = best_match['pdf_url']
+                arxiv_id = best_match['id']
+                arxiv_title = best_match['title']
+                logging.info(f"Found paper on arXiv (similarity: {best_similarity:.2f}): {arxiv_title}")
+                return pdf_url, arxiv_title, arxiv_id
+            else:
+                logging.warning(f"No matching paper found on arXiv (best similarity: {best_similarity:.2f})")
+                return None, None, None
+                
+        except requests.exceptions.ConnectionError as e:
+            logging.warning(f"Connection error on attempt {attempt+1}: {str(e)}")
+            if attempt == max_retries - 1:
+                logging.error(f"Failed to connect to ArXiv after {max_retries} attempts")
+                return None, None, None
+                
+        except requests.exceptions.RequestException as e:
+            logging.error(f"Request error on attempt {attempt+1}: {str(e)}")
+            if attempt == max_retries - 1:
+                logging.error(f"Failed to search ArXiv after {max_retries} attempts")
+                return None, None, None
+                
+        except Exception as e:
+            logging.error(f"Error searching arXiv: {str(e)}")
+            logging.error("If you're getting 'Couldn't find a tree builder with the features you requested: xml', install lxml with: pip install lxml")
+            return None, None, None
 
 def sanitize_filename(title: str, arxiv_id: Optional[str] = None) -> str:
     """
@@ -280,7 +348,7 @@ def sanitize_filename(title: str, arxiv_id: Optional[str] = None) -> str:
     else:
         return f"{clean_title}.pdf"
 
-def download_paper(pdf_url: str, save_path: str, title: str) -> bool:
+def download_paper(pdf_url: str, save_path: str, title: str, proxy=None) -> bool:
     """
     Download the paper PDF from arXiv with improved error handling.
     
@@ -288,6 +356,7 @@ def download_paper(pdf_url: str, save_path: str, title: str) -> bool:
         pdf_url: URL of the PDF to download
         save_path: Path where to save the PDF
         title: Paper title (for logging)
+        proxy: Optional proxy server to use for the request
         
     Returns:
         True if download was successful, False otherwise
@@ -297,11 +366,16 @@ def download_paper(pdf_url: str, save_path: str, title: str) -> bool:
         return False
     
     logging.info(f"Downloading paper: {title}")
+    
+    # Create a session with retry capabilities
+    session = create_robust_session(
+        retries=3,  # More retries for downloads
+        backoff_factor=1.0,  # Longer backoff for downloads
+        proxy=proxy
+    )
+    
     try:
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
-        response = requests.get(pdf_url, headers=headers, timeout=60)  # Longer timeout for PDF downloads
+        response = session.get(pdf_url, timeout=120)  # Even longer timeout for PDF downloads
         response.raise_for_status()
         
         with open(save_path, 'wb') as f:
@@ -419,13 +493,14 @@ def verify_downloaded_papers(download_dir: str, expected_titles: Dict[str, str])
     
     return verified_papers, deleted_papers
 
-def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thecvf.com/Conferences/2025/AcceptedPapers"):
+def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thecvf.com/Conferences/2025/AcceptedPapers", proxy=None):
     """
     Main function to download CVPR papers related to specified keywords.
     
     Args:
         keywords: List of keywords to filter papers
         cvpr_url: URL of the CVPR accepted papers page
+        proxy: Optional proxy server to use for requests
     """
     download_dir = setup_download_directory()
     log_file = os.path.join(download_dir, 'download_log.txt')
@@ -442,8 +517,59 @@ def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thec
     except Exception:
         logging.warning("XML parser not found. For better performance, install lxml: pip install lxml")
     
+    # Create a session with retry logic for the initial page fetch
+    session = create_robust_session(proxy=proxy)
+    
     # Scrape paper titles from CVPR
-    titles, authors = get_cvpr_paper_titles(cvpr_url)
+    try:
+        logging.info(f"Fetching papers from {cvpr_url}")
+        response = session.get(cvpr_url, timeout=30)
+        response.raise_for_status()
+        
+        soup = BeautifulSoup(response.text, 'html.parser')
+        titles = []
+        authors = []
+        
+        # Try multiple potential HTML structures (reusing previous logic)
+        paper_rows = soup.find_all('tr')
+        
+        if not paper_rows:
+            # Alternative structure: might be in divs or other containers
+            paper_containers = soup.find_all('div', class_=['paper', 'paper-container', 'publication'])
+            
+            if paper_containers:
+                for container in paper_containers:
+                    title_elem = container.find(['h2', 'h3', 'strong', 'div'], class_=['title', 'paper-title'])
+                    authors_elem = container.find(['div', 'p', 'span'], class_=['authors', 'paper-authors'])
+                    
+                    if title_elem:
+                        titles.append(title_elem.text.strip())
+                        if authors_elem:
+                            authors.append(authors_elem.text.strip())
+                        else:
+                            authors.append("")
+        else:
+            # Original structure (table rows)
+            for row in paper_rows:
+                title_cell = row.find('td')
+                if title_cell and title_cell.find('strong'):
+                    title_text = title_cell.find('strong').text.strip()
+                    titles.append(title_text)
+                    
+                    # Extract authors if available
+                    author_div = title_cell.find('div', class_='indented')
+                    if author_div and author_div.find('i'):
+                        authors.append(author_div.find('i').text.strip())
+                    else:
+                        authors.append("")
+        
+        logging.info(f"Found {len(titles)} papers")
+        
+    except Exception as e:
+        logging.error(f"Error fetching papers: {str(e)}")
+        with open(log_file, 'a') as f:
+            f.write(f"Error fetching papers: {str(e)}\n")
+        return
     
     if not titles:
         logging.error("No papers found. Please check if the webpage structure has changed.")
@@ -474,14 +600,16 @@ def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thec
                 f.write(f"\n{title}\n")
                 f.write(f"Authors: {author}\n")
             
-            pdf_url, arxiv_title, arxiv_id = search_arxiv_paper(title, author)
+            # Use our improved search function with retry logic
+            pdf_url, arxiv_title, arxiv_id = search_arxiv_paper(title, author, proxy=proxy)
             
             if pdf_url:
                 # Define a path to save the downloaded paper
                 filename = sanitize_filename(title, arxiv_id)
                 save_path = os.path.join(download_dir, filename)
                 
-                success = download_paper(pdf_url, save_path, title)
+                # Use our improved download function
+                success = download_paper(pdf_url, save_path, title, proxy=proxy)
                 if success:
                     downloaded_papers += 1
                     paper_data["status"] = "Downloaded"
@@ -506,8 +634,10 @@ def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thec
             
             paper_info.append(paper_data)
             
-            # Avoid overloading the server with requests
-            time.sleep(3)
+            # More intelligent delay between requests to avoid rate limiting
+            delay = random.uniform(3.0, 7.0)  # Randomized delay between 3-7 seconds
+            logging.info(f"Waiting {delay:.1f}s before next request...")
+            time.sleep(delay)
     
     # Verify downloaded papers
     if downloaded_papers > 0:
@@ -562,18 +692,20 @@ def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thec
         logging.error(f"Error creating CSV report: {str(e)}")
 
 def main():
-    """Main entry point with additional keyword options."""
+    """Main entry point with additional keyword options and proxy support."""
     # Extended keywords list for better coverage
     keywords = [
-        "VLM", "Vision Language Model", "Vision-Language", 
-        "Multimodal", "Multi-modal", "CLIP", "LLaVA", 
-        "Visual Instruction Tuning", "Visual Question Answering"
+        "VLM", "Vision Language Model"
     ]
     
     # Allow custom URL for testing or future conferences
     cvpr_url = "https://cvpr.thecvf.com/Conferences/2025/AcceptedPapers"
     
-    download_cvpr_papers(keywords, cvpr_url)
+    # Optional proxy configuration - uncomment and set if needed
+    # proxy = "http://your-proxy-server:port"
+    proxy = None
+    
+    download_cvpr_papers(keywords, cvpr_url, proxy=proxy)
 
 if __name__ == "__main__":
     main()
