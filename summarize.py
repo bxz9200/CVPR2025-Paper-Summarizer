@@ -336,6 +336,9 @@ def preprocess_abstract(abstract: str) -> str:
     # Remove "Project page" mentions common in abstracts
     cleaned = re.sub(r'(?i)project page (is|at|available).*?(\.|$)', '', cleaned)
     
+    # Remove any markdown formatting characters that could cause bold/italic styling
+    cleaned = cleaned.replace('**', '').replace('__', '').replace('*', '').replace('_', ' ')
+    
     # Final clean-up of any remaining artifacts
     cleaned = re.sub(r'\s+', ' ', cleaned).strip()
     cleaned = re.sub(r'^\s*abstract\s*[:\.]?\s*', '', cleaned, flags=re.IGNORECASE)  # Remove "Abstract:" again if still present
@@ -578,52 +581,142 @@ def split_abstract_into_chunks(abstract: str, max_length: int = MAX_ABSTRACT_LEN
     
     return chunks
 
-def summarize_with_huggingface(text: str, api_key: Optional[str] = None) -> Optional[str]:
-    """Call the Hugging Face API to summarize text with improved prompt engineering."""
-    try:
-        if api_key:
-            headers = {"Authorization": f"Bearer {api_key}"}
-        else:
-            # The API can be used without authentication for a limited number of requests
-            headers = {}
-        
-        API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
-        
-        # Enhanced prompt with method-focused instructions for better summarization
-        enhanced_prompt = (
-            "Summarize the following academic paper abstract into a coherent, logical paragraph "
-            "that captures the paper's main contributions, with special emphasis on the proposed method or approach. "
-            "Make sure to clearly explain WHAT method is proposed and HOW it works. "
-            "Include key technical details about the methodology while maintaining readability. "
-            "Also include significant results that validate the method's effectiveness.\n\n"
-            f"{text}"
-        )
-        
-        payload = {
-            "inputs": enhanced_prompt,
-            "parameters": {
-                "max_length": MAX_SUMMARY_LENGTH,
-                "min_length": min(100, MAX_SUMMARY_LENGTH//2),
-                "do_sample": False
+def summarize_with_huggingface(text: str, api_key: Optional[str] = None, max_retries: int = 3) -> Optional[str]:
+    """Call the Hugging Face API to summarize text with improved prompt engineering and retry logic."""
+    retries = 0
+    while retries < max_retries:
+        try:
+            if api_key:
+                headers = {"Authorization": f"Bearer {api_key}"}
+            else:
+                # The API can be used without authentication for a limited number of requests
+                headers = {}
+            
+            API_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
+            
+            # Extract any potential method description for separate inclusion
+            method_description = None
+            method_indicators = [
+                r'we propose', r'we present', r'we introduce', r'our approach', 
+                r'our method', r'we develop', r'our framework', r'our system'
+            ]
+            
+            for indicator in method_indicators:
+                # Find a sentence with method indicator
+                match = re.search(f'([^.!?]*{indicator}[^.!?]*[.!?])', text, re.IGNORECASE)
+                if match:
+                    method_description = match.group(1).strip()
+                    break
+            
+            # Place the instructions as a clear system directive, separated from the content
+            enhanced_prompt = (
+                "### INSTRUCTIONS ###\n"
+                "Summarize the following academic paper abstract into a coherent, logical paragraph.\n"
+                "Focus on explaining the proposed method/approach and how it works.\n"
+                "Include key technical details and significant results.\n\n"
+                "### ABSTRACT TO SUMMARIZE ###\n"
+                f"{text}\n\n"
+            )
+            
+            # Add the method description as a separate section if found
+            if method_description:
+                enhanced_prompt += f"### KEY METHOD INFORMATION ###\n{method_description}\n\n"
+            
+            enhanced_prompt += "### SUMMARY OUTPUT BELOW ###\n"
+            
+            payload = {
+                "inputs": enhanced_prompt,
+                "parameters": {
+                    "max_length": MAX_SUMMARY_LENGTH,
+                    "min_length": min(100, MAX_SUMMARY_LENGTH//2),
+                    "do_sample": False
+                }
             }
-        }
-        
-        response = requests.post(API_URL, headers=headers, json=payload, timeout=30)
-        
-        if response.status_code == 200:
-            result = response.json()
-            if isinstance(result, list) and len(result) > 0:
-                summary = result[0].get("summary_text", "").strip()
-                # Clean up the summary to remove any mention of "This paper" at the beginning
-                summary = re.sub(r'^(This paper|The paper|This abstract|The abstract)\s+', '', summary)
-                return summary
-        
-        logging.warning(f"HuggingFace API returned status code {response.status_code}")
-        return None
-        
-    except Exception as e:
-        logging.warning(f"Error with HuggingFace API: {str(e)}")
-        return None
+            
+            response = requests.post(API_URL, headers=headers, json=payload, timeout=30)
+            
+            if response.status_code == 200:
+                result = response.json()
+                if isinstance(result, list) and len(result) > 0:
+                    summary = result[0].get("summary_text", "").strip()
+                    
+                    # Remove any instruction markers that might appear in the output
+                    summary = re.sub(r'###.*?###', '', summary)
+                    
+                    # Clean up the summary to remove any mention of "This paper" at the beginning
+                    summary = re.sub(r'^(This paper|The paper|This abstract|The abstract)\s+', '', summary)
+                    
+                    # Remove any instructions that might have leaked into the output
+                    instruction_artifacts = [
+                        r'Make sure to include the proposed method',
+                        r'Include details about the proposed method',
+                        r'Include the method',
+                        r'Include significant results',
+                        r'Emphasize the method',
+                        r'Create a coherent summary',
+                        r'Make sure to clearly explain',
+                        r'Summarize the following academic paper abstract',
+                        r'Summarize this abstract',
+                        r'Provide a summary',
+                        r'Focus on explaining',
+                        r'Include key technical details',
+                        r'SUMMARY OUTPUT BELOW',
+                        r'INSTRUCTIONS',
+                        r'ABSTRACT TO SUMMARIZE',
+                        r'KEY METHOD INFORMATION'
+                    ]
+                    
+                    for artifact in instruction_artifacts:
+                        # Remove the artifact and anything following it if it appears at the end
+                        summary = re.sub(f'{artifact}.*?$', '', summary, flags=re.IGNORECASE)
+                        # Also try to remove it if it appears in the middle with a period or other delimiter
+                        summary = re.sub(f'(?:[.,;:!?] ){artifact}[^.!?]*?[.!?]', '. ', summary, flags=re.IGNORECASE)
+                    
+                    # Remove any sentences that look like they're part of the prompt
+                    summary_sentences = re.split(r'(?<=[.!?]) ', summary)
+                    filtered_sentences = []
+                    for sentence in summary_sentences:
+                        # Skip sentences that look like prompt instructions
+                        if (re.search(r'^summarize', sentence, re.IGNORECASE) or
+                            re.search(r'^provide a summary', sentence, re.IGNORECASE) or
+                            re.search(r'^focus on', sentence, re.IGNORECASE) or
+                            re.search(r'^include key', sentence, re.IGNORECASE) or
+                            re.search(r'^make sure', sentence, re.IGNORECASE) or
+                            re.search(r'the following academic paper', sentence, re.IGNORECASE)):
+                            continue
+                        filtered_sentences.append(sentence)
+                    
+                    # Rejoin the sentences
+                    summary = ' '.join(filtered_sentences)
+                    
+                    # Remove any arXiv identifiers and version numbers
+                    summary = re.sub(r'\s*\d{4}\.\d{5}v\d+', '', summary)
+                    summary = re.sub(r'\s*arXiv:\s*\d+\.\d+v\d+', '', summary)
+                    
+                    # Clean up any trailing artifacts
+                    summary = re.sub(r'\s*:\s*\.?\s*$', '.', summary)
+                    
+                    # Apply post-processing to clean any remaining issues
+                    summary = post_process_summary(summary)
+                    
+                    return summary
+            elif response.status_code == 503:
+                logging.warning(f"HuggingFace API returned status code 503 (attempt {retries+1}/{max_retries})")
+                # Exponential backoff
+                wait_time = 2 ** retries
+                logging.info(f"Waiting {wait_time} seconds before retrying...")
+                time.sleep(wait_time)
+                retries += 1
+            else:
+                logging.warning(f"HuggingFace API returned status code {response.status_code}")
+                return None
+                
+        except Exception as e:
+            logging.warning(f"Error with HuggingFace API: {str(e)}")
+            return None
+    
+    logging.warning(f"HuggingFace API unavailable after {max_retries} attempts")
+    return None
 
 def summarize_with_smmry(text: str) -> Optional[str]:
     """Use SMMRY web service to summarize text."""
@@ -886,6 +979,43 @@ def keywords_from_abstract(abstract: str, num_keywords: int = 5) -> List[str]:
         logging.warning(f"Error extracting keywords: {str(e)}")
         return []
 
+def fix_ml_acronyms(text: str) -> str:
+    """Fix common machine learning acronyms that might have been broken up with spaces."""
+    if not text:
+        return text
+        
+    # This ensures terminology like "VLMs" doesn't become "VL Ms"
+    ml_acronym_fixes = [
+        (r'V\s+L\s+Ms', 'VLMs'),
+        (r'V\s+L\s+M', 'VLM'),
+        (r'L\s+V\s+L\s+Ms', 'LVLMs'),
+        (r'L\s+V\s+L\s+M', 'LVLM'),
+        (r'V\s+Q\s+A', 'VQA'),
+        (r'G\s+P\s+T', 'GPT'),
+        (r'C\s+N\s+Ns', 'CNNs'),
+        (r'C\s+N\s+N', 'CNN'),
+        (r'L\s+L\s+Ms', 'LLMs'),
+        (r'L\s+L\s+M', 'LLM'),
+        (r'R\s+N\s+Ns', 'RNNs'),
+        (r'R\s+N\s+N', 'RNN'),
+        (r'G\s+A\s+Ns', 'GANs'),
+        (r'G\s+A\s+N', 'GAN'),
+        (r'M\s+L\s+Ps', 'MLPs'),
+        (r'M\s+L\s+P', 'MLP'),
+        (r'N\s+L\s+P', 'NLP'),
+        (r'C\s+V\s+P\s+R', 'CVPR'),
+        (r'I\s+C\s+C\s+V', 'ICCV'),
+        (r'E\s+C\s+C\s+V', 'ECCV'),
+        (r'N\s+e\s+u\s+r\s+I\s+P\s+S', 'NeurIPS'),
+        (r'B\s+E\s+R\s+T', 'BERT'),
+        (r'Meta\s+V\s+Q\s+A', 'Meta VQA'),  # Specific to the paper mentioned
+    ]
+    
+    for wrong, correct in ml_acronym_fixes:
+        text = re.sub(wrong, correct, text)
+        
+    return text
+
 def post_process_summary(summary: str) -> str:
     """
     Enhance the readability and coherence of generated summaries by performing various 
@@ -904,6 +1034,40 @@ def post_process_summary(summary: str) -> str:
     summary = re.sub(r'\s+', ' ', summary)
     summary = re.sub(r'\s([.,;:!?])', r'\1', summary)
     
+    # First, remove prompt instruction leakage that sometimes appears in the output
+    # Remove common instructional phrases like "Make sure to include the proposed method"
+    instruction_patterns = [
+        # Method inclusion instructions
+        r'\s*(?:As a solution,)?\s*Make sure to include (?:the )?proposed method:?\s*\.?\s*$',
+        r'\s*(?:Make sure to)?\s*include details about the proposed method:?\s*\.?\s*$',
+        r'\s*Please include (?:the )?(?:details about )?(?:the )?(?:proposed )?method:?\s*\.?\s*$',
+        r'\s*Include (?:the )?(?:proposed )?method:?\s*\.?\s*$',
+        r'\s*(?:Also )?(?:include|mention) (?:significant|key|important) results:?\s*\.?\s*$',
+        
+        # Emphasis instructions
+        r'\s*(?:Be sure to )?emphasize the (?:proposed )?method:?\s*\.?\s*$',
+        r'\s*(?:Please )?(?:explain|describe) (?:the |how )?(?:proposed )?method works:?\s*\.?\s*$',
+        r'\s*(?:Please )?(?:ensure|make sure) (?:the |that )?(?:summary is|text is) (?:coherent|clear|concise):?\s*\.?\s*$',
+        r'\s*Create a (?:coherent|concise|clear|unified) summary:?\s*\.?\s*$',
+        
+        # Full prompt instructions that might have leaked into the output
+        r'\s*Summarize the following academic paper abstract into a(?:n?)? (?:coherent|logical|concise)? ?(?:paragraph|summary)\.?\s*$',
+        r'\s*(?:Please )?summarize this abstract\.?\s*$',
+        r'\s*(?:Please )?provide a summary of this abstract\.?\s*$',
+        r'\s*(?:Focus|Focusing) on explaining the proposed method\/approach and how it works\.?\s*$',
+        r'\s*Include key technical details and significant results\.?\s*$',
+        r'\s*Capture the paper\'s main contributions\.?\s*$',
+        r'\s*Summarize the (?:above|following) (?:text|abstract|paper)\.?\s*$',
+        
+        # Artifacts from Hugging Face structure
+        r'\s*\#\#\#.*?\#\#\#\s*$',
+        r'\s*SUMMARY OUTPUT BELOW\s*$',
+        r'\s*INSTRUCTIONS\s*$',
+    ]
+    
+    for pattern in instruction_patterns:
+        summary = re.sub(pattern, '', summary, flags=re.IGNORECASE)
+    
     # Method-related phrases that should not be removed even if they seem redundant
     method_phrases = [
         'proposed method', 'proposed approach', 'introduces', 'presents', 
@@ -917,6 +1081,18 @@ def post_process_summary(summary: str) -> str:
     if len(sentences) > 1:
         unique_sentences = []
         for i, sentence in enumerate(sentences):
+            # Skip sentences that look like prompt instructions
+            if any(re.search(pattern, sentence, re.IGNORECASE) for pattern in instruction_patterns):
+                continue
+                
+            # Also check for sentences that look like they're instructing the model
+            if re.search(r'^(?:please|make sure to|be sure to|ensure that|remember to)\b', sentence, re.IGNORECASE):
+                continue
+                
+            # Check for sentences that look like they're asking to summarize
+            if re.search(r'^(?:summarize|provide a summary|create a summary)\b', sentence, re.IGNORECASE):
+                continue
+                
             is_duplicate = False
             is_method_sentence = False
             
@@ -959,6 +1135,9 @@ def post_process_summary(summary: str) -> str:
     if summary and summary[0].islower():
         summary = summary[0].upper() + summary[1:]
     
+    # Fix common machine learning acronyms that might have been broken up with spaces
+    summary = fix_ml_acronyms(summary)
+    
     # Improve transition from problem statement to method description
     # Often summaries jump abruptly from problem to method
     summary = re.sub(r'(\. )([Tt]o address this|[Tt]o solve this|[Tt]o tackle this)', r'. To address this', summary)
@@ -984,7 +1163,37 @@ def post_process_summary(summary: str) -> str:
         replacement = r'\1\2' + strong
         summary = re.sub(method_context, replacement, summary, flags=re.IGNORECASE)
     
-    return summary
+    # Double-check for any remaining instruction-like artifacts
+    final_check_patterns = [
+        r'\s*Make sure to include.*?$',
+        r'\s*Include (?:the |details about )?.*?$',
+        r'\s*Emphasize (?:the |how )?.*?$',
+        r'\s*Create a (?:coherent|concise|clear|unified) summary.*?$',
+        r'\s*with particular emphasis on.*?$',
+        r'\s*Make sure to.*?$',
+        r'\s*Summarize (?:the |this |following )?(?:abstract|paper|text).*?$',
+        r'\s*Focus on (?:explaining|describing).*?$',
+        r'(?:, |. |; )Summarize the following academic paper abstract.*?$',
+        r'(?:, |. |; )Provide a summary.*?$',
+    ]
+    
+    for pattern in final_check_patterns:
+        summary = re.sub(pattern, '.', summary, flags=re.IGNORECASE)
+    
+    # Clean up potential double periods that might occur from replacements
+    summary = re.sub(r'\.+', '.', summary)
+    
+    # Remove any text that appears after "arXiv:" as it might be paper identifiers that leaked in
+    summary = re.sub(r'\s*arXiv:.*?$', '.', summary, flags=re.IGNORECASE)
+    
+    # Remove any numbers that look like arXiv IDs at the end
+    summary = re.sub(r'\s*\d{4}\.\d{5}v\d+\.?$', '.', summary)
+    
+    # Ensure there's a period at the end
+    if not summary.endswith(('.', '!', '?')):
+        summary += '.'
+        
+    return summary.strip()
 
 def summarize_abstract_with_huggingface(abstract, api_key=None, title=None):
     """
@@ -1028,20 +1237,25 @@ def summarize_abstract_with_huggingface(abstract, api_key=None, title=None):
         
         # If abstract is short enough, summarize it directly
         if len(cleaned_abstract) <= MAX_ABSTRACT_LENGTH:
-            # Add method section context if identified
+            # Instead of adding method as an instruction, just include it directly in the text
+            # This helps prevent instruction leakage
+            input_text = context
             if method_section:
-                context += f"\n\nMake sure to include the proposed method: {method_section}"
+                # Include method information as part of the text, not as an instruction
+                if "we propose" not in input_text.lower() and "proposed method" not in input_text.lower():
+                    input_text = input_text + " " + method_section
                 
-            summary = summarize_with_huggingface(context, api_key)
+            summary = summarize_with_huggingface(input_text, api_key)
             
             if summary:
-                return summary
+                # Apply post-processing to clean up any remaining issues
+                return post_process_summary(summary)
                 
             # Fallback to SMMRY web service
             logging.info("Using SMMRY web service as fallback...")
             smmry_summary = summarize_with_smmry(context)
             if smmry_summary:
-                return smmry_summary
+                return post_process_summary(smmry_summary)
                 
             # Final fallback: Use improved extractive summarization
             logging.info("Using extractive summarization as final fallback...")
@@ -1069,28 +1283,26 @@ def summarize_abstract_with_huggingface(abstract, api_key=None, title=None):
             for i, chunk in enumerate(chunks):
                 logging.info(f"Summarizing chunk {i+1}/{len(chunks)}")
                 
-                # Add special instructions based on chunk position
-                chunk_type = ""
-                if i == 0:
-                    chunk_type = "This is the beginning of the abstract, covering the problem statement and context."
-                elif i == len(chunks) - 1:
-                    chunk_type = "This is the end of the abstract, likely covering results and conclusions."
-                    
-                # Add special treatment for method chunk
-                if i == method_chunk_idx:
-                    chunk_type += " This chunk contains the proposed method description, which should be preserved."
-                    
-                chunk_with_context = f"Title: {title}\n\nChunk {i+1}/{len(chunks)}: {chunk_type}\n\n{chunk}"
+                # Add position context to the chunk, not as instructions
+                chunk_with_context = f"Title: {title}\n\n"
                 
-                # If this is the method chunk, add explicit instruction
-                if i == method_chunk_idx:
-                    chunk_with_context += f"\n\nMake sure to include details about the proposed method: {method_section}"
+                # Add positional context as part of the text, not as instructions
+                if i == 0:
+                    chunk_with_context += chunk
+                elif i == len(chunks) - 1:
+                    chunk_with_context += chunk
+                else:
+                    chunk_with_context += chunk
+                    
+                # If this contains the method section, make sure it's included directly
+                if i == method_chunk_idx and method_section and method_section not in chunk_with_context:
+                    chunk_with_context += " " + method_section
                 
                 # Try HuggingFace API first
                 chunk_summary = summarize_with_huggingface(chunk_with_context, api_key)
                 
                 if chunk_summary:
-                    chunk_summaries.append(chunk_summary)
+                    chunk_summaries.append(post_process_summary(chunk_summary))
                 else:
                     # Fallback to improved extractive summarization
                     # Add transitions based on position
@@ -1117,16 +1329,16 @@ def summarize_abstract_with_huggingface(abstract, api_key=None, title=None):
                 else:
                     combined_text += " Furthermore, " + summary.lower() if summary[0].isupper() else summary
             
-            # Final pass to ensure coherent summary
-            title_context = f"Title: {title}\n\n" if title else ""
-            final_context = f"{title_context}Create a coherent, unified summary from these sections, emphasizing the proposed method:\n\n{combined_text}"
+            # Final pass to create a coherent summary from the combined text
+            # Avoiding any instructional language that might leak
+            final_context = f"{title}\n\n{combined_text}"
             
             final_summary = summarize_with_huggingface(final_context, api_key)
             if final_summary:
-                return final_summary
+                return post_process_summary(final_summary)
             
-            # If API fails for final summary, use the combined text
-            return combined_text
+            # If API fails for final summary, use the combined text with post-processing
+            return post_process_summary(combined_text)
         else:
             # First level: Summarize each chunk individually
             chunk_summaries = []
@@ -1137,29 +1349,18 @@ def summarize_abstract_with_huggingface(abstract, api_key=None, title=None):
                 # Add context about what this chunk represents and the paper title
                 chunk_context = f"Title: {title}\n\n"
                 
-                # Add position context for the chunk
-                if i == 0:
-                    chunk_context += "This is the beginning of the abstract, likely introducing the problem.\n\n"
-                elif i == len(chunks) - 1:
-                    chunk_context += "This is the end of the abstract, likely covering results and conclusions.\n\n"
-                else:
-                    # Middle chunks might contain method descriptions
-                    if i == method_chunk_idx or (method_chunk_idx == -1 and i == 1):  # If method chunk or likely method position
-                        chunk_context += "This part likely describes the proposed method.\n\n"
-                    else:
-                        chunk_context += "This is a middle section of the abstract.\n\n"
-                
+                # Direct inclusion of text
                 chunk_context += chunk
                 
-                # If this chunk contains the method section, add special instruction
-                if i == method_chunk_idx or (method_section and method_section in chunk):
-                    chunk_context += f"\n\nMake sure to include details about the proposed method: {method_section}"
+                # If this chunk contains the method section, ensure it's included
+                if i == method_chunk_idx and method_section and method_section not in chunk_context:
+                    chunk_context += " " + method_section
                 
                 # Try HuggingFace API first
                 chunk_summary = summarize_with_huggingface(chunk_context, api_key)
                 
                 if chunk_summary:
-                    chunk_summaries.append(chunk_summary)
+                    chunk_summaries.append(post_process_summary(chunk_summary))
                 else:
                     # Fallback to improved extractive summarization
                     chunk_summaries.append(extract_key_sentences(chunk))
@@ -1179,17 +1380,19 @@ def summarize_abstract_with_huggingface(abstract, api_key=None, title=None):
                     else:
                         combined_text += " Furthermore, " + summary.lower() if summary[0].isupper() else summary
             
-            meta_context = f"Title: {title}\n\nCreate a coherent, unified summary from these sections, with particular emphasis on the proposed method or approach:\n\n{combined_text}"
+            # Final summarization with combined text
+            meta_context = f"Title: {title}\n\n{combined_text}"
             
-            if method_section:
-                meta_context += f"\n\nMake sure to include this important method information: {method_section}"
+            # Include method information directly in the text
+            if method_section and method_section not in meta_context:
+                meta_context += " " + method_section
             
             final_summary = summarize_with_huggingface(meta_context, api_key)
             if final_summary:
-                return final_summary
+                return post_process_summary(final_summary)
             
             # If second-level summarization fails, use extractive approach on combined text
-            return extract_key_sentences(combined_text)
+            return post_process_summary(extract_key_sentences(combined_text))
     except Exception as e:
         logging.error(f"Error in summarize_abstract_with_huggingface: {str(e)}")
         return extract_key_sentences(abstract)
@@ -1198,11 +1401,11 @@ def summarize_abstract_with_huggingface(abstract, api_key=None, title=None):
     logging.info("Using SMMRY web service as fallback...")
     smmry_summary = summarize_with_smmry(context)
     if smmry_summary:
-        return smmry_summary
+        return post_process_summary(smmry_summary)
     
     # Final fallback: Use improved extractive summarization
     logging.info("Using extractive summarization as final fallback...")
-    return extract_key_sentences(cleaned_abstract)
+    return post_process_summary(extract_key_sentences(cleaned_abstract))
 
 def save_summaries_to_markdown(summaries, output_path):
     """Save the paper summaries in a markdown file."""
@@ -1214,6 +1417,35 @@ def save_summaries_to_markdown(summaries, output_path):
         for paper in summaries:
             f.write(f"## {paper['title']}\n\n")
             
+            # Add method description if available
+            if paper.get('method_description'):
+                f.write("### Proposed Method\n\n")
+                # Ensure method description doesn't contain any markdown formatting
+                # except for the method name which should stay bold
+                method_desc = paper['method_description']
+                # Keep only the specific bold method name if it exists
+                if "**" in method_desc:
+                    # The method name might be in bold, preserve just that instance
+                    name_pattern = re.compile(r'\*\*(.*?)\*\*')
+                    method_name_match = name_pattern.search(method_desc)
+                    if method_name_match:
+                        method_name = method_name_match.group(1)
+                        # Replace with non-bold version first
+                        method_desc = method_desc.replace(f"**{method_name}**", method_name)
+                else:
+                    # Remove all bold/emphasis markers
+                    method_desc = method_desc.replace('**', '').replace('__', '')
+                
+                # Fix ML acronyms
+                method_desc = fix_ml_acronyms(method_desc)
+                
+                # Format with nice wrapping
+                wrapped_method = textwrap.fill(method_desc, width=80)
+                # Create a blockquote for the method description to visually distinguish it
+                # Prefix each line with "> " to create a blockquote in markdown
+                quoted_method = '\n'.join([f"> {line}" for line in wrapped_method.split('\n')])
+                f.write(f"{quoted_method}\n\n")
+            
             # Add keywords if available
             if paper.get('keywords'):
                 f.write("### Keywords\n\n")
@@ -1222,15 +1454,32 @@ def save_summaries_to_markdown(summaries, output_path):
             
             if paper.get('abstract'):
                 f.write("### Original Abstract\n\n")
+                # Ensure abstract doesn't contain any markdown formatting characters
+                clean_abstract = paper['abstract']
+                # Remove any markdown formatting completely
+                clean_abstract = clean_abstract.replace('**', '').replace('__', '').replace('*', '').replace('_', ' ')
+                # Fix ML acronyms
+                clean_abstract = fix_ml_acronyms(clean_abstract)
                 # Format abstract with nice wrapping
-                wrapped_abstract = textwrap.fill(paper['abstract'], width=80)
-                f.write(f"{wrapped_abstract}\n\n")
+                wrapped_abstract = textwrap.fill(clean_abstract, width=80)
+                # Create a blockquote for the abstract to visually distinguish it
+                # Prefix each line with "> " to create a blockquote in markdown
+                quoted_abstract = '\n'.join([f"> {line}" for line in wrapped_abstract.split('\n')])
+                f.write(f"{quoted_abstract}\n\n")
             
             if paper.get('summary'):
                 f.write("### Summary\n\n")
+                # Ensure summary doesn't contain any unintended markdown formatting
+                clean_summary = paper['summary']
+                # Remove any markdown formatting completely
+                clean_summary = clean_summary.replace('**', '').replace('__', '').replace('*', '').replace('_', ' ')
+                # Fix ML acronyms
+                clean_summary = fix_ml_acronyms(clean_summary)
                 # Format summary with nice wrapping
-                wrapped_summary = textwrap.fill(paper['summary'], width=80)
-                f.write(f"{wrapped_summary}\n\n")
+                wrapped_summary = textwrap.fill(clean_summary, width=80)
+                # Create a blockquote for the summary to visually distinguish it
+                quoted_summary = '\n'.join([f"> {line}" for line in wrapped_summary.split('\n')])
+                f.write(f"{quoted_summary}\n\n")
             else:
                 f.write("*No summary available*\n\n")
             
@@ -1277,6 +1526,7 @@ def save_summaries_to_html(summaries, output_path):
             margin-bottom: 30px;
             font-size: 2.2em;
             text-align: center;
+            font-weight: bold;
         }
         
         h2 {
@@ -1285,6 +1535,7 @@ def save_summaries_to_html(summaries, output_path):
             font-size: 1.8em;
             border-left: 4px solid var(--secondary-color);
             padding-left: 15px;
+            font-weight: bold;
         }
         
         h3 {
@@ -1293,6 +1544,7 @@ def save_summaries_to_html(summaries, output_path):
             margin-top: 25px;
             border-bottom: 1px dotted var(--border-color);
             padding-bottom: 5px;
+            font-weight: bold;
         }
         
         .paper-container {
@@ -1317,6 +1569,7 @@ def save_summaries_to_html(summaries, output_path):
             margin-bottom: 20px;
             line-height: 1.7;
             border-left: 3px solid var(--secondary-color);
+            font-weight: normal;
         }
         
         .summary {
@@ -1327,6 +1580,7 @@ def save_summaries_to_html(summaries, output_path):
             line-height: 1.8;
             font-size: 1.05em;
             border-left: 3px solid var(--accent-color);
+            font-weight: normal;
         }
         
         .method-description {
@@ -1338,10 +1592,12 @@ def save_summaries_to_html(summaries, output_path):
             font-size: 1.05em;
             border-left: 3px solid var(--method-border);
             margin-bottom: 20px;
+            font-weight: normal;
         }
         
         .method-description strong {
             color: var(--method-border);
+            font-weight: bold;
         }
         
         .keywords {
@@ -1352,6 +1608,7 @@ def save_summaries_to_html(summaries, output_path):
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
+            font-weight: normal;
         }
         
         .keywords span {
@@ -1361,7 +1618,7 @@ def save_summaries_to_html(summaries, output_path):
             border-radius: 20px;
             font-size: 0.9em;
             color: var(--primary-color);
-            font-weight: 500;
+            font-weight: normal;
             transition: background-color 0.2s;
         }
         
@@ -1375,12 +1632,14 @@ def save_summaries_to_html(summaries, output_path):
             font-size: 0.9em;
             margin-bottom: 40px;
             text-align: center;
+            font-weight: normal;
         }
         
         .section-title {
             display: flex;
             align-items: center;
             margin-bottom: 10px;
+            font-weight: bold;
         }
         
         .section-title::before {
@@ -1431,6 +1690,11 @@ def save_summaries_to_html(summaries, output_path):
                 font-size: 1.5em;
             }
         }
+        
+        /* Fix for ML acronyms to prevent them from being broken */
+        .no-break {
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -1451,23 +1715,57 @@ def save_summaries_to_html(summaries, output_path):
             html_content += f'    </div>\n'
         
         # Add method description if available
-        if paper.get('abstract'):
+        if paper.get('method_description'):
+            html_content += f'    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>\n'
+            # Clean any existing formatting
+            method_desc = paper['method_description']
+            # Only keep bold for the method name if it exists
+            if "**" in method_desc:
+                # Replace markdown bold with HTML strong
+                method_desc = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', method_desc)
+            else:
+                # Remove any remaining markdown formatting
+                method_desc = method_desc.replace('**', '').replace('__', '')
+                
+            # Fix ML acronyms
+            method_desc = fix_ml_acronyms(method_desc)
+                
+            html_content += f'    <div class="method-description">{method_desc}</div>\n'
+        # Fallback to extracting method from abstract if not found directly
+        elif paper.get('abstract'):
             method_desc = extract_method_description(paper['abstract'])
             if method_desc:
                 html_content += f'    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>\n'
-                # Convert markdown-style bold to HTML bold
-                method_desc = method_desc.replace('**', '<strong>').replace('**', '</strong>')
+                # Replace markdown bold with HTML strong only for method name
+                if "**" in method_desc:
+                    method_desc = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', method_desc)
+                else:
+                    method_desc = method_desc.replace('**', '').replace('__', '')
+                
+                # Fix ML acronyms
+                method_desc = fix_ml_acronyms(method_desc)
+                
                 html_content += f'    <div class="method-description">{method_desc}</div>\n'
         
         # Add original abstract
         if paper.get('abstract'):
             html_content += f'    <div class="section-title"><h3>Original Abstract</h3></div>\n'
-            html_content += f'    <div class="abstract">{paper["abstract"]}</div>\n'
+            # Clean abstract of any potential formatting
+            clean_abstract = paper['abstract'].replace('**', '').replace('__', '').replace('*', '').replace('_', ' ')
+            # Fix ML acronyms
+            clean_abstract = fix_ml_acronyms(clean_abstract)
+            
+            html_content += f'    <div class="abstract">{clean_abstract}</div>\n'
         
         # Add summary
         if paper.get('summary'):
             html_content += f'    <div class="section-title"><h3>Summary</h3></div>\n'
-            html_content += f'    <div class="summary">{paper["summary"]}</div>\n'
+            # Clean summary of any potential formatting
+            clean_summary = paper['summary'].replace('**', '').replace('__', '').replace('*', '').replace('_', ' ')
+            # Fix ML acronyms
+            clean_summary = fix_ml_acronyms(clean_summary)
+            
+            html_content += f'    <div class="summary">{clean_summary}</div>\n'
         
         html_content += '</div>\n'
     
@@ -1486,93 +1784,51 @@ def get_huggingface_api_key():
         return hf_token
     return None
 
-def extract_method_description(abstract: str) -> Optional[str]:
+def extract_method_description(text):
     """
-    Extract and organize a detailed description of the method proposed in the abstract.
-    
-    Args:
-        abstract: The paper abstract text
-        
-    Returns:
-        A structured description of the proposed method, or None if no method is clearly described
+    Extract a possible method description from the abstract or full text.
+    Returns None if no method description can be confidently extracted.
     """
-    if not abstract:
+    # Don't process if text is None or empty
+    if not text:
         return None
         
-    # Clean the abstract
-    cleaned_abstract = preprocess_abstract(abstract)
-    
-    # Method-related indicators to look for
+    # Look for common patterns that indicate method descriptions
     method_indicators = [
-        r'we propose', r'we present', r'we introduce', r'our approach', 
-        r'our method', r'we develop', r'our framework', r'our system',
-        r'this paper proposes', r'this paper presents', r'this paper introduces',
-        r'proposed method', r'novel method', r'new approach', r'new framework',
-        r'we design', r'we create', r'we implement', r'we formulate',
-        r'called', r'named', r'termed'
+        r'we propose (.*?)(\.|\n)',
+        r'we present (.*?)(\.|\n)',
+        r'we introduce (.*?)(\.|\n)',
+        r'our approach (.*?)(\.|\n)',
+        r'our method (.*?)(\.|\n)',
+        r'this paper proposes (.*?)(\.|\n)',
+        r'this paper presents (.*?)(\.|\n)',
+        r'this paper introduces (.*?)(\.|\n)',
+        r'in this paper,?\s+we propose (.*?)(\.|\n)',
+        r'in this paper,?\s+we present (.*?)(\.|\n)',
+        r'in this paper,?\s+we introduce (.*?)(\.|\n)',
+        r'we develop (.*?)(\.|\n)'
     ]
     
-    # First try to find sentences with explicit method descriptions
-    sentences = re.split(r'(?<=[.!?])\s+', cleaned_abstract)
-    method_sentences = []
-    method_name = None
-    
-    # Look for the method name (often presented as "we propose X" or "called X")
-    for indicator in method_indicators:
-        # Different patterns for method name extraction
-        if 'called' in indicator or 'named' in indicator or 'termed' in indicator:
-            name_pattern = f'({indicator}\\s+)([A-Z]\\w*(?:-?\\w+)*)'
-        else:
-            name_pattern = f'({indicator}\\s+)(?:a|an|the)?\\s*(?:novel|new)?\\s*(?:method|approach|framework|system|model|technique)?(?:\\s+named|\\s+called)?\\s+([A-Z]\\w*(?:-?\\w+)*)'
-            
-        match = re.search(name_pattern, cleaned_abstract, re.IGNORECASE)
+    for pattern in method_indicators:
+        match = re.search(pattern, text, re.IGNORECASE)
         if match:
-            method_name = match.group(2).strip()
-            break
-    
-    # Extract sentences that describe the method
-    for i, sentence in enumerate(sentences):
-        # Check if sentence contains method indicators or the method name
-        if (any(re.search(f'{indicator}', sentence, re.IGNORECASE) for indicator in method_indicators) or
-            (method_name and method_name in sentence)):
-            method_sentences.append(sentence)
+            method_description = match.group(0)
+            # Check if the description is substantial enough
+            if len(method_description.split()) > 5:
+                # Fix ML acronyms in the method description
+                method_description = fix_ml_acronyms(method_description)
+                return method_description
+                
+    # Look for a longer method description
+    paragraphs = text.split('\n\n')
+    for paragraph in paragraphs:
+        # Check if this paragraph talks about the method
+        method_words = ['method', 'approach', 'framework', 'system', 'technique', 'algorithm']
+        if any(word in paragraph.lower() for word in method_words) and len(paragraph.split()) > 10:
+            # Fix ML acronyms in the paragraph
+            paragraph = fix_ml_acronyms(paragraph)
+            return paragraph
             
-            # Also include the next sentence for context if it's not the last sentence
-            if i < len(sentences) - 1 and len(sentences[i+1].split()) > 5:  # Only if next sentence is substantial
-                if not any(indicator in sentences[i+1].lower() for indicator in ['we evaluate', 'we compare', 'experiment']):
-                    method_sentences.append(sentences[i+1])
-    
-    # If we found method-related sentences, compile them into a description
-    if method_sentences:
-        # Remove duplicates while preserving order
-        seen = set()
-        unique_sentences = []
-        for s in method_sentences:
-            if s not in seen:
-                seen.add(s)
-                unique_sentences.append(s)
-                
-        method_description = ' '.join(unique_sentences)
-        
-        # If a method name was found, highlight it
-        if method_name:
-            header = f"The paper proposes a method called **{method_name}**.\n\n"
-            return header + method_description
-        else:
-            return "The paper proposes the following method:\n\n" + method_description
-    
-    # If no explicit method sentences were found, use a more general approach
-    if 'method' in cleaned_abstract.lower() or 'approach' in cleaned_abstract.lower():
-        # Find the most relevant sentence containing 'method' or 'approach'
-        method_sentence = None
-        for sentence in sentences:
-            if 'method' in sentence.lower() or 'approach' in sentence.lower():
-                method_sentence = sentence
-                break
-                
-        if method_sentence:
-            return "Method information extracted from abstract:\n\n" + method_sentence
-    
     return None
 
 def main():
