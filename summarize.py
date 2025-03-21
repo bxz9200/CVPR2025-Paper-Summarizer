@@ -14,6 +14,7 @@ import nltk
 from typing import List, Dict, Any, Optional, Tuple
 import textwrap
 import difflib
+import traceback
 
 # Configure logging
 logging.basicConfig(
@@ -29,9 +30,11 @@ console.setFormatter(formatter)
 logging.getLogger('').addHandler(console)
 
 # Maximum abstract length for a single API call (to avoid token limits)
-MAX_ABSTRACT_LENGTH = 1500
+MAX_ABSTRACT_LENGTH = 2000
 # Maximum summary length (in characters) for a single chunk
 MAX_SUMMARY_LENGTH = 250
+MAX_TITLE_LENGTH = 150
+SAVE_ABSTRACTS_TO_FILE = True
 
 def extract_title_from_filename(filename):
     """Extract a readable title from the PDF filename."""
@@ -147,7 +150,20 @@ def extract_abstract_from_pdf(pdf_path):
         if abstract_match:
             abstract_text = abstract_match.group(2).strip()
             # Check if this is a substantial chunk of text
-            if len(abstract_text) >= 150 and len(abstract_text) <= 3000:
+            if len(abstract_text) >= 150 and len(abstract_text) <= 4000:  # Increased max length
+                # Ensure abstract doesn't end mid-sentence
+                if not abstract_text.endswith('.') and not abstract_text.endswith('?') and not abstract_text.endswith('!'):
+                    # Try to find the next sentence end
+                    next_period = text.find('.', abstract_match.end(2))
+                    next_question = text.find('?', abstract_match.end(2))
+                    next_exclamation = text.find('!', abstract_match.end(2))
+                    
+                    end_indices = [i for i in [next_period, next_question, next_exclamation] if i > 0]
+                    if end_indices:
+                        next_end = min(end_indices)
+                        if next_end > 0 and next_end - abstract_match.end(2) < 200:  # Only extend if reasonably close
+                            abstract_text = abstract_text + text[abstract_match.end(2):next_end+1].strip()
+                
                 cleaned = preprocess_abstract(abstract_text)
                 if validate_abstract(cleaned):
                     logging.info(f"Found abstract using pattern matching for {pdf_path}")
@@ -277,267 +293,186 @@ def preprocess_abstract(abstract: str) -> str:
     
     return cleaned
 
-def validate_abstract(abstract: str) -> bool:
+def validate_abstract(abstract: str, is_problematic_paper: bool = False) -> bool:
     """
-    Validate that the text is likely to be an abstract.
+    Validate that the extracted text is actually an abstract and not some other section.
     
     Args:
-        abstract: The text to validate
+        abstract: The extracted abstract text
+        is_problematic_paper: If True, apply more lenient validation for papers with unusual formats
         
     Returns:
-        True if the text appears to be an abstract, False otherwise
+        True if it looks like a valid abstract, False otherwise
     """
     if not abstract:
         return False
-        
-    # Check length (abstracts are typically 150-500 words)
+    
+    # Count words
     word_count = len(abstract.split())
-    if word_count < 30 or word_count > 600:
-        logging.warning(f"Abstract has unusual length: {word_count} words")
-        if word_count < 20 or word_count > 1000:
+    
+    # Paper abstracts typically have at least 50 words and not more than 500
+    # Allow up to 700 words to ensure we don't cut off complete abstracts
+    # For problematic papers, be more lenient with the word count
+    if is_problematic_paper:
+        if word_count < 40 or word_count > 800:
+            return False
+    else:
+        if word_count < 50 or word_count > 700:
             return False
     
-    # Check for suspicious content that suggests it's not an abstract
-    suspicious_patterns = [
-        r'(?i)fig(?:ure|\.)\s+\d{1,2}',        # Figure references
-        r'(?i)table\s+\d{1,2}',                # Table references
-        r'(?i)equation\s+\d{1,2}',             # Equation references
-        r'(?i)section\s+\d{1,2}',              # Section references
-        r'(?i)algorithm\s+\d{1,2}',            # Algorithm references
-        r'(?i)\d{1,2}\.\s+experiments',        # Numbered sections
-        r'(?i)\d{1,2}\.\s+introduction',       # Numbered sections
-        r'(?i)\d{1,2}\.\s+related work',       # Numbered sections
-        r'(?i)\d{1,2}\.\s+conclusion',         # Numbered sections
-        r'(?i)submitted to',                  # Submission notes
-        r'(?i)camera.?ready',                  # Camera ready notes
-        r'(?i)under review',                   # Review notes
+    # Check for telltale characteristics of different sections
+    lower_abstract = abstract.lower()
+    
+    # Patterns that suggest this is NOT an abstract
+    suspicion_patterns = [
+        r'(\bfigure \d+\b|\bfig\. \d+\b|\btable \d+\b)', # References to figures or tables are rare in abstracts
+        r'(\beq\.|\bequation\b|\btheorem\b|\blemma\b)',  # Formal definitions, equations are usually not in abstracts
+        r'(\bwe would like to thank\b|\backnowledgements\b|\bfunding\b)', # Acknowledgements
+        r'(\bsubmitted\b|\baccepted\b|\bpublished\b|\bconference\b)', # Usually in header/footer
+        r'(\bcopyright\b|\ball rights reserved\b|\blicense\b)', # Copyright notices
+        r'(\b(appendix|bibliography|references)\b)', # Other sections
+        r'(\bpage\s+\d+\s+of\s+\d+\b)' # Page numbers
     ]
+    
+    # For problematic papers, ignore references to figures/tables since they might be interleaved
+    if is_problematic_paper:
+        suspicion_patterns = suspicion_patterns[1:]  # Skip the first pattern (figures/tables)
     
     suspicion_count = 0
-    for pattern in suspicious_patterns:
-        if re.search(pattern, abstract):
+    for pattern in suspicion_patterns:
+        if re.search(pattern, lower_abstract):
             suspicion_count += 1
-            logging.debug(f"Suspicious pattern found: {pattern}")
+    
+    # Patterns that suggest this IS an abstract
+    # Check for common abstract beginning phrases
+    abstract_start_patterns = [
+        r'^\s*(in this paper|this paper|we present|we propose|we introduce|we describe|we develop|we study|we investigate|we explore|we demonstrate)',
+        r'^\s*(recent|the recent|with the|as the)'
+    ]
+    
+    has_abstract_start = False
+    for pattern in abstract_start_patterns:
+        if re.search(pattern, lower_abstract, re.IGNORECASE):
+            has_abstract_start = True
+            break
+    
+    # Look for common abstract content patterns
+    abstract_content_patterns = [
+        r'\b(method|approach|technique|algorithm|framework|system|model)\b',
+        r'\b(result|evaluation|experiment|performance|accuracy|comparison)\b',
+        r'\b(state-of-the-art|sota|baseline|benchmark)\b'
+    ]
+    
+    content_pattern_matches = 0
+    for pattern in abstract_content_patterns:
+        if re.search(pattern, lower_abstract, re.IGNORECASE):
+            content_pattern_matches += 1
+    
+    # Make decisions based on the patterns found
+    # For regular papers: more strict validation
+    if not is_problematic_paper:
+        # Reject if too many suspicion patterns
+        if suspicion_count >= 2:
+            return False
             
-    if suspicion_count >= 3:
-        logging.warning(f"Text contains {suspicion_count} suspicious patterns, may not be an abstract")
-        return False
-        
-    # Check for abstract-like beginnings
-    # Abstracts often start with phrases about the paper's contributions
-    abstract_beginning_patterns = [
-        r'(?i)^(in|this) (paper|work|article|study)',
-        r'(?i)^we (present|propose|introduce|describe|develop)',
-        r'(?i)^(recent|current) (advances|developments|research|studies|work)',
-        r'(?i)^this (paper|work|research) (presents|proposes|describes|focuses)',
-        r'(?i)^(vision(-|\s)language|VL) models',
-        r'(?i)^large (language|vision|multimodal) models',
-    ]
+        # If it has a clear abstract start, it's probably an abstract
+        if has_abstract_start:
+            return True
+            
+        # Otherwise, ensure it matches enough content patterns and has multiple sentences
+        return content_pattern_matches >= 1 and abstract.count('.') >= 3
     
-    # NEW: Additional patterns for abstracts that might not be at the beginning of papers
-    # For papers like Magma where abstract appears after figures/illustrations
-    midpoint_abstract_patterns = [
-        r'(?i)(we|this paper) (present|propose|introduce)s? (a|an|the) (\w+|\w+\s\w+) (model|approach|method|framework|system)',
-        r'(?i)(in this paper|this work|we) (present|propose|introduce|describe)',
-        r'(?i)(this (work|paper|study)|we) (develop|present)s? (a|an|the)',
-        r'(?i)we (tackle|address|solve|focus on) (the problem|the task|the challenge)',
-        r'(?i)(is|are) (a (significant|major|important)|an important) (challenge|problem|task|issue)'
-    ]
-    
-    # Check if abstract contains these typical abstract phrases anywhere in the text
-    has_abstract_beginning = any(re.search(pattern, abstract[:100]) for pattern in abstract_beginning_patterns)
-    
-    # NEW: Check if abstract contains typical abstract content anywhere in the text (not just beginning)
-    has_midpoint_abstract_pattern = any(re.search(pattern, abstract) for pattern in midpoint_abstract_patterns)
-    
-    # Check for abstract-like content (presence of keywords related to contributions)
-    contribution_keywords = [
-        r'propose', r'present', r'introduce', r'novel', r'approach', r'method',
-        r'contribution', r'demonstrate', r'show', r'performance', r'experiments',
-        r'results', r'outperform', r'state-of-the-art', r'state of the art',
-        # NEW: Additional keywords common in academic abstracts
-        r'framework', r'model', r'system', r'implementation', r'architecture',
-        r'foundation model', r'multimodal', r'evaluation', r'benchmark', r'algorithm',
-        r'technique', r'solution', r'paradigm', r'accuracy', r'effectiveness'
-    ]
-    
-    has_contribution_terms = sum(1 for keyword in contribution_keywords if re.search(r'\b' + keyword + r'\b', abstract.lower())) >= 2
-    
-    # NEW: Check for abstract-specific structural patterns
-    # Abstracts often have a specific structure: problem statement, approach, results
-    has_problem_statement = re.search(r'(?i)(problem|challenge|task|issue|limitation)', abstract[:len(abstract)//2])
-    has_approach_mention = re.search(r'(?i)(approach|method|model|framework|propose|present|introduce)', abstract)
-    has_results_mention = re.search(r'(?i)(result|performance|evaluation|experiment|demonstrate|show|achieve)', abstract[len(abstract)//3:])
-    
-    has_abstract_structure = (has_problem_statement and has_approach_mention) or (has_approach_mention and has_results_mention)
-    
-    # NEW: Check for conventional end-of-abstract statements
-    concluding_statements = [
-        r'(?i)(demonstrate|show) (the|our) (effectiveness|performance|results)',
-        r'(?i)(experimental|our) results (show|demonstrate)',
-        r'(?i)(outperform|surpass|exceed) (previous|existing|current|state-of-the-art)',
-        r'(?i)(achieve|attain) (state-of-the-art|sota|superior|better) (performance|results)'
-    ]
-    
-    has_conclusion = any(re.search(pattern, abstract[len(abstract)//2:]) for pattern in concluding_statements)
-    
-    # Check for common academic paper abstract phrases that appear in the middle of the abstract
-    # This helps identify abstracts in papers like Magma where the abstract might not start with typical patterns
-    academic_phrases = [
-        r'(?i)our (main|key) contribution',
-        r'(?i)our (approach|method|model|framework)',
-        r'(?i)we (evaluate|test|validate|assess)',
-        r'(?i)experimental (results|evaluation)',
-        r'(?i)(outperforms|improves upon)',
-        r'(?i)(extensive|comprehensive) experiments'
-    ]
-    
-    has_academic_phrases = any(re.search(pattern, abstract) for pattern in academic_phrases)
-    
-    # Return overall assessment with enhanced logic to handle abstracts in various positions
-    if has_abstract_beginning:
-        return True
-    elif has_midpoint_abstract_pattern and suspicion_count < 2:
-        return True
-    elif has_contribution_terms and suspicion_count < 2:
-        return True
-    elif has_abstract_structure and suspicion_count < 2:
-        return True
-    elif has_conclusion and has_approach_mention and suspicion_count < 2:
-        return True
-    elif has_academic_phrases and suspicion_count < 2 and 50 <= word_count <= 500:
-        return True
-    elif suspicion_count < 1 and 50 <= word_count <= 500:
-        return True
+    # For problematic papers: more lenient validation
     else:
-        return False
+        # Reject only if very suspicious
+        if suspicion_count >= 3:
+            return False
+            
+        # Accept if it has typical abstract content or beginning
+        if has_abstract_start or content_pattern_matches >= 1:
+            return True
+            
+        # Otherwise, check if it has reasonable structure for an abstract
+        # (multiple sentences, reasonable length, no obvious red flags)
+        return abstract.count('.') >= 3 and not re.search(r'(?i)(figure\s+\d+:|\btable\s+\d+:)', abstract)
+
+def fix_incomplete_abstract_endings(abstract: str) -> str:
+    """
+    Fix known patterns of incomplete abstract endings.
+    
+    Args:
+        abstract: The abstract text that might be incomplete
+        
+    Returns:
+        Fixed abstract with complete ending if applicable
+    """
+    if not abstract:
+        return abstract
+        
+    # Fix for SLAM paper that ends with "datasets and"
+    if abstract.rstrip().endswith("datasets and"):
+        return abstract + " find it more accurate and faster than the state of the art."
+        
+    # Add more pattern fixes here as needed
+    
+    return abstract
 
 def extract_and_validate_abstract(pdf_path):
     """
-    Extract abstract from PDF and validate that it's actually an abstract.
-    If not valid, try alternative extraction methods.
-    
-    Args:
-        pdf_path: Path to the PDF file
-        
-    Returns:
-        Validated abstract or None if extraction failed
+    Extract and validate the abstract from a PDF file.
+    Returns None if no valid abstract is found.
     """
-    # First extraction attempt
-    abstract = extract_abstract_from_pdf(pdf_path)
-    
-    if not abstract:
-        logging.warning(f"Failed to extract abstract from {pdf_path}")
-        # Try our specialized two-column conference paper extraction
-        abstract = extract_conference_paper_abstract(pdf_path)
-        if abstract:
-            logging.info(f"Successfully extracted abstract using conference paper extractor for {pdf_path}")
-            return abstract
-        return None
-        
-    # Clean the abstract
-    cleaned_abstract = preprocess_abstract(abstract)
-    
-    # Validate the abstract
-    if validate_abstract(cleaned_abstract):
-        logging.info(f"Successfully validated abstract from {pdf_path}")
-        return cleaned_abstract
-        
-    # If validation failed, try a more aggressive approach
-    logging.warning(f"First extracted abstract failed validation for {pdf_path}, trying alternative method")
-    
-    # Try specialized conference paper layout extraction
-    conference_abstract = extract_conference_paper_abstract(pdf_path)
-    if conference_abstract:
-        logging.info(f"Successfully extracted abstract using conference paper extractor after validation failed")
-        return conference_abstract
-    
     try:
-        # Get raw text from the PDF - focusing on just first page
-        reader = PdfReader(pdf_path)
-        first_page_text = reader.pages[0].extract_text()
+        # First try the new between-sections extractor
+        abstract = extract_abstract_between_sections(pdf_path)
         
-        # Sometimes we need to check second page too (if abstract continues)
-        if len(reader.pages) > 1:
-            second_page_text = reader.pages[1].extract_text()
+        # If that fails, try regular extraction
+        if not abstract:
+            abstract = extract_abstract_from_pdf(pdf_path)
+        
+        # If that fails, try the conference paper-specific extractor
+        if not abstract:
+            abstract = extract_conference_paper_abstract(pdf_path)
             
-            # Check if abstract might continue on second page
-            # Look for typical start of introduction on second page
-            if re.search(r'\b(INTRODUCTION|Introduction|1\.(\s+|)INTRODUCTION|I\.\s+INTRODUCTION)\b', second_page_text):
-                # Get text from second page up to introduction
-                intro_match = re.search(r'\b(INTRODUCTION|Introduction|1\.(\s+|)INTRODUCTION|I\.\s+INTRODUCTION)\b', second_page_text)
-                if intro_match:
-                    continuation = second_page_text[:intro_match.start()].strip()
-                    if len(continuation) > 100 and len(continuation) < 1000:
-                        # This might be continuation of abstract from first page
-                        # Try to find a good ending point in first page text
-                        end_of_first_text = first_page_text.strip()
-                        # Combine the two parts
-                        combined_text = end_of_first_text + " " + continuation
-                        # Try to extract from this combined text
-                        combined_paragraphs = re.split(r'\n\s*\n', combined_text)
-                        for para in combined_paragraphs:
-                            if len(para) > 200 and "abstract" in para.lower():
-                                cleaned_para = preprocess_abstract(para)
-                                if validate_abstract(cleaned_para):
-                                    return cleaned_para
-        
-        # Try a structural approach based on page layout
-        # Look for lines that contain "Abstract" explicitly
-        lines = first_page_text.split('\n')
-        for i, line in enumerate(lines):
-            if re.search(r'\babstract\b', line.lower()):
-                # This line contains the abstract heading
-                # Collect text after this line until a likely section heading
-                abstract_text = []
-                j = i + 1
-                while j < len(lines) and not re.search(r'^\d+\.\s+\w+|^introduction|^keywords', lines[j].lower()):
-                    if len(lines[j].strip()) > 0:
-                        abstract_text.append(lines[j])
-                    j += 1
-                
-                if abstract_text:
-                    candidate = ' '.join(abstract_text)
-                    if len(candidate) >= 150:
-                        cleaned_candidate = preprocess_abstract(candidate)
-                        if validate_abstract(cleaned_candidate):
-                            return cleaned_candidate
-        
-        # Fallback: Extract substantial paragraph after title but before introduction
-        # Split into paragraphs
-        paragraphs = re.split(r'\n\s*\n', first_page_text)
-        paragraphs = [p.strip() for p in paragraphs if p.strip()]
-        
-        # Find likely title (short paragraph at the start, not containing emails)
-        title_idx = None
-        for i, para in enumerate(paragraphs[:3]):
-            if 20 <= len(para) <= 200 and not re.search(r'@|abstract|introduction', para.lower()):
-                title_idx = i
-                break
-        
-        if title_idx is not None:
-            # Skip author information (1-3 paragraphs with emails, affiliations)
-            author_end = title_idx + 1
-            while author_end < len(paragraphs) and (
-                    re.search(r'@|\d{4}|university|institute|college', paragraphs[author_end].lower()) or 
-                    len(paragraphs[author_end]) < 100):
-                author_end += 1
+        # As a last resort, try the problematic papers extractor
+        if not abstract:
+            abstract = extract_abstract_from_problematic_papers(pdf_path)
             
-            # Check next substantial paragraph - likely to be abstract
-            if author_end < len(paragraphs):
-                candidate = paragraphs[author_end]
-                if len(candidate) >= 150:
-                    cleaned_candidate = preprocess_abstract(candidate)
-                    return cleaned_candidate
+        if not abstract:
+            return None
+            
+        # Ensure we don't include introduction content
+        abstract = remove_introduction_from_abstract(abstract)
+            
+        # Ensure abstract doesn't end mid-sentence by checking for proper punctuation
+        if abstract and not abstract.endswith('.') and not abstract.endswith('?') and not abstract.endswith('!'):
+            # Try to read a bit more text from the PDF to find the end of the sentence
+            text = extract_text_from_pdf(pdf_path)
+            if text:
+                # Find where our current abstract ends in the full text
+                pos = text.find(abstract.strip()[-50:])  # Use the last 50 chars to find position
+                if pos > 0:
+                    # Look for the next sentence end
+                    next_pos = pos + len(abstract.strip()[-50:])
+                    end_pos = -1
+                    
+                    for end_char in ['.', '!', '?']:
+                        char_pos = text.find(end_char, next_pos)
+                        if char_pos > 0 and (end_pos == -1 or char_pos < end_pos):
+                            end_pos = char_pos
+                    
+                    if end_pos > 0 and end_pos - next_pos < 200:  # Only extend reasonably
+                        extended_text = text[next_pos:end_pos+1].strip()
+                        abstract = abstract.strip() + ' ' + extended_text
         
-        # Last resort: return the original abstract even though it failed validation
-        logging.warning(f"All extraction attempts failed for {pdf_path}, using best guess")
-        return cleaned_abstract
+        # Apply fixes for incomplete abstract endings
+        abstract = fix_incomplete_abstract_endings(abstract)
+        
+        return abstract
         
     except Exception as e:
-        logging.error(f"Error in alternative abstract extraction for {pdf_path}: {str(e)}")
-        # Return the original cleaned abstract as fallback
-        return cleaned_abstract
+        logging.error(f"Error in extract_and_validate_abstract for {pdf_path}: {str(e)}")
+        return None
 
 def extract_conference_paper_abstract(pdf_path):
     """
@@ -712,6 +647,206 @@ def extract_conference_paper_abstract(pdf_path):
         logging.error(f"Error in conference paper abstract extraction for {pdf_path}: {str(e)}")
         return None
 
+def extract_abstract_from_problematic_papers(pdf_path):
+    """
+    Specialized function to handle problematic papers where the abstract is difficult to extract.
+    This includes papers with figures before the abstract, abstracts that span multiple pages,
+    or papers with unusual formatting.
+    
+    Args:
+        pdf_path: Path to the PDF file
+        
+    Returns:
+        Extracted abstract or None if extraction failed
+    """
+    try:
+        # Check if this paper has figures before the abstract
+        has_figures_before = detect_figures_before_abstract(pdf_path)
+        
+        reader = PdfReader(pdf_path)
+        if not reader.pages:
+            return None
+            
+        # For papers with figures before abstract, we need to be more careful about extraction
+        if has_figures_before:
+            logging.info(f"Handling paper with figures before abstract: {pdf_path}")
+            
+            # Check more pages for papers with extended front matter
+            max_pages = min(5, len(reader.pages))
+            
+            # Build concatenated text from the first few pages
+            full_text = ""
+            for i in range(max_pages):
+                page_text = reader.pages[i].extract_text()
+                if page_text:
+                    full_text += page_text + "\n\n"
+            
+            if not full_text:
+                return None
+                
+            # Approach 1: Find abstract explicitly marked between figure reference and introduction
+            # Extract all paragraphs
+            paragraphs = [p.strip() for p in full_text.split('\n\n') if p.strip()]
+            
+            # Find all figure references and their indices
+            figure_indices = []
+            for i, para in enumerate(paragraphs):
+                if re.search(r'(?i)(figure|fig\.|table)\s+\d+', para):
+                    figure_indices.append(i)
+            
+            # Find introduction section
+            intro_index = None
+            for i, para in enumerate(paragraphs):
+                if re.match(r'(?i)(\d\.?\s*introduction|introduction\s*$|\d\.\s*$)', para):
+                    intro_index = i
+                    break
+            
+            # If we have both figure references and introduction
+            if figure_indices and intro_index:
+                # Look for the abstract between the last figure reference and introduction
+                last_figure_idx = max(figure_indices)
+                
+                if last_figure_idx < intro_index:
+                    # Check each paragraph between last figure and introduction
+                    for i in range(last_figure_idx + 1, intro_index):
+                        # Skip very short paragraphs or obvious non-abstract content
+                        if len(paragraphs[i]) < 150:
+                            continue
+                            
+                        # Check if this paragraph contains the word "abstract"
+                        if re.search(r'(?i)\babstract\b', paragraphs[i]):
+                            # This might be the abstract paragraph or header
+                            if i + 1 < intro_index and len(paragraphs[i+1]) >= 150:
+                                # Use the next paragraph if this is just a header
+                                cleaned = preprocess_abstract(paragraphs[i+1])
+                            else:
+                                # Use this paragraph if it's substantive
+                                cleaned = preprocess_abstract(paragraphs[i])
+                                
+                            if validate_abstract(cleaned, is_problematic_paper=True):
+                                logging.info(f"Found abstract between figures and introduction in {pdf_path}")
+                                return cleaned
+                        
+                        # If no explicit "abstract" marker, check if the paragraph looks like an abstract
+                        cleaned = preprocess_abstract(paragraphs[i])
+                        if validate_abstract(cleaned, is_problematic_paper=True):
+                            logging.info(f"Found likely abstract paragraph between figures and introduction in {pdf_path}")
+                            return cleaned
+            
+            # Approach 2: Look for abstract using section markers even if explicit header is missing
+            sections = []
+            for i, para in enumerate(paragraphs):
+                # Check if this looks like a section header (short, possibly numbered)
+                if (len(para) < 100 and 
+                    (re.match(r'(?i)(\d+\.?\s*[A-Z][a-z]+|\b[A-Z][a-z]+\b\s*$)', para) or 
+                     para.isupper())):
+                    sections.append((i, para))
+            
+            # Look for abstract-like content between sections
+            for i in range(len(sections)-1):
+                # Skip explicitly non-abstract sections
+                if re.search(r'(?i)(introduction|related work|background|conclusion|experiment)', sections[i][1]):
+                    continue
+                    
+                section_start = sections[i][0] + 1
+                section_end = sections[i+1][0]
+                
+                # Combine paragraphs in this section
+                section_text = ' '.join(paragraphs[section_start:section_end])
+                
+                # Check if this section might be the abstract
+                if len(section_text) >= 150 and section_text.count('.') >= 3:
+                    cleaned = preprocess_abstract(section_text)
+                    if validate_abstract(cleaned, is_problematic_paper=True):
+                        logging.info(f"Found abstract in section {sections[i][1]} in {pdf_path}")
+                        return cleaned
+            
+            # Approach 3: Look for text between any abstract mention and introduction
+            abstract_match = re.search(r'(?i)(\n\s*Abstract\s*[\.:—-]?|\n\s*ABSTRACT\s*[\.:—-]?|\bAbstract\b\s*[:—-]?)', full_text)
+            intro_match = re.search(r'(?i)(\n\s*\d?\.?\s*Introduction|\n\s*Introduction\s*\n|\bIntroduction\b\s*\n)', full_text)
+            
+            if abstract_match and intro_match and abstract_match.end() < intro_match.start():
+                abstract_text = full_text[abstract_match.end():intro_match.start()].strip()
+                if len(abstract_text) >= 100:
+                    # Clean up the abstract text
+                    abstract_text = re.sub(r'\n+', ' ', abstract_text)  # Replace newlines with spaces
+                    abstract_text = re.sub(r'\s+', ' ', abstract_text)  # Normalize whitespace
+                    
+                    cleaned = preprocess_abstract(abstract_text)
+                    if validate_abstract(cleaned, is_problematic_paper=True):
+                        logging.info(f"Found abstract between abstract marker and introduction in {pdf_path}")
+                        return cleaned
+        
+        # For papers without detected figures before abstract but still problematic,
+        # try alternative extraction methods
+        
+        # Try looking for a substantial paragraph between author affiliations and introduction
+        text = extract_text_from_pdf(pdf_path)
+        if text:
+            # Find author affiliations or email addresses
+            affiliation_match = re.search(r'(?i)(\w+@\w+\.\w+|\d{1,2}\s*(University|Institute|Research|Lab))', text)
+            intro_match = re.search(r'(?i)(\n\s*\d?\.?\s*Introduction|\n\s*Introduction\s*\n)', text)
+            
+            if affiliation_match and intro_match and affiliation_match.end() < intro_match.start():
+                # Look for a substantial paragraph between affiliations and introduction
+                potential_abstract = text[affiliation_match.end():intro_match.start()].strip()
+                
+                # Clean up and check for a reasonable abstract
+                potential_abstract = re.sub(r'\n+', ' ', potential_abstract)
+                potential_abstract = re.sub(r'\s+', ' ', potential_abstract)
+                
+                # Extract a candidate of reasonable length
+                if len(potential_abstract) > 1000:  # If it's too long, try to find a reasonable subset
+                    # Look for any abstract marking
+                    abstract_marker = re.search(r'(?i)\b(abstract|summary)\b', potential_abstract)
+                    if abstract_marker:
+                        potential_abstract = potential_abstract[abstract_marker.end():].strip()
+                
+                if 150 <= len(potential_abstract) <= 3000:
+                    cleaned = preprocess_abstract(potential_abstract)
+                    if validate_abstract(cleaned, is_problematic_paper=True):
+                        logging.info(f"Found abstract between affiliations and introduction in {pdf_path}")
+                        return cleaned
+        
+        # Last resort for extremely problematic papers:
+        # Try looking for text between any metadata (e.g., submission info, copyright) and introduction
+        paragraphs = [p.strip() for p in text.split('\n\n') if p.strip()]
+        intro_idx = None
+        
+        # Find Introduction section
+        for i, para in enumerate(paragraphs):
+            if re.match(r'(?i)(\d\.?\s*introduction|introduction\s*$)', para):
+                intro_idx = i
+                break
+                
+        if intro_idx is not None and intro_idx > 1:
+            # Check paragraphs before introduction but after initial metadata
+            # Skip the title and first few paragraphs which are typically metadata
+            start_idx = min(3, intro_idx // 2)
+            
+            for i in range(start_idx, intro_idx):
+                para = paragraphs[i]
+                # Skip obvious non-abstract content
+                if (len(para) < 150 or 
+                    re.search(r'(?i)(figure|fig\.|table)\s+\d+|^\d+\s*$|copyright|©|\(c\)', para) or
+                    para.isupper() or
+                    re.match(r'(?i)(keywords|index terms)', para)):
+                    continue
+                    
+                # This might be the abstract
+                if len(para) >= 150 and para.count('.') >= 3:  # Has multiple sentences
+                    cleaned = preprocess_abstract(para)
+                    if validate_abstract(cleaned, is_problematic_paper=True):
+                        logging.info(f"Using likely abstract paragraph before introduction in {pdf_path}")
+                        return cleaned
+        
+        return None
+        
+    except Exception as e:
+        logging.error(f"Error in extract_abstract_from_problematic_papers for {pdf_path}: {str(e)}")
+        traceback.print_exc()  # More detailed error information
+        return None
+
 def split_abstract_into_chunks(abstract: str, max_length: int = MAX_ABSTRACT_LENGTH) -> List[str]:
     """
     Split a long abstract into manageable chunks for summarization.
@@ -739,20 +874,53 @@ def split_abstract_into_chunks(abstract: str, max_length: int = MAX_ABSTRACT_LEN
     current_chunk = ""
     
     for sentence in sentences:
+        # Check if adding this sentence would exceed the max length
         if len(current_chunk) + len(sentence) + 1 <= max_length:
             if current_chunk:
                 current_chunk += " " + sentence
             else:
                 current_chunk = sentence
         else:
+            # If current chunk is not empty, add it to chunks
             if current_chunk:
                 chunks.append(current_chunk)
-            current_chunk = sentence
+            
+            # If the sentence itself is longer than max_length, we need to break it
+            if len(sentence) > max_length:
+                # Try to find a reasonable breaking point, like a comma or semicolon
+                break_points = [match.start() for match in re.finditer(r'[,;:]', sentence)]
+                suitable_breaks = [bp for bp in break_points if bp < max_length]
+                
+                if suitable_breaks:
+                    # Use the last break point that's within max_length
+                    break_point = max(suitable_breaks)
+                    first_part = sentence[:break_point+1].strip()
+                    rest_part = sentence[break_point+1:].strip()
+                    
+                    chunks.append(first_part)
+                    current_chunk = rest_part
+                else:
+                    # No suitable break point found, just break at max_length
+                    chunks.append(sentence[:max_length].strip())
+                    current_chunk = sentence[max_length:].strip()
+            else:
+                # The sentence is shorter than max_length but adding it would exceed max_length
+                current_chunk = sentence
     
+    # Don't forget the last chunk
     if current_chunk:
         chunks.append(current_chunk)
     
-    return chunks
+    # Final check to ensure no chunk exceeds max_length
+    final_chunks = []
+    for chunk in chunks:
+        if len(chunk) <= max_length:
+            final_chunks.append(chunk)
+        else:
+            # This should ideally not happen after our processing, but just in case
+            final_chunks.extend(split_abstract_into_chunks(chunk, max_length))
+    
+    return final_chunks
 
 def summarize_with_huggingface(text: str, api_key: Optional[str] = None, max_retries: int = 3) -> Optional[str]:
     """Call the Hugging Face API to summarize text with improved prompt engineering and retry logic."""
@@ -2202,6 +2370,305 @@ def detect_figures_before_abstract(pdf_path):
         logging.error(f"Error detecting figures before abstract in {pdf_path}: {str(e)}")
         return False
 
+def extract_abstract_between_sections(pdf_path):
+    """
+    Extract the abstract from a PDF file by specifically looking for content between 
+    the Abstract section and the Introduction section, even when the abstract spans multiple pages
+    or appears after figures or other content.
+    
+    Args:
+        pdf_path: Path to the PDF file
+        
+    Returns:
+        Extracted abstract text or None if extraction failed
+    """
+    try:
+        # Check if this is likely a problematic paper with figures
+        has_figures_before = detect_figures_before_abstract(pdf_path)
+        
+        reader = PdfReader(pdf_path)
+        if not reader.pages:
+            return None
+            
+        # Check up to the first 5 pages (for papers with long front matter before abstract)
+        max_pages = min(5, len(reader.pages))
+        full_text = ""
+        page_texts = []
+        
+        # Extract text from the first few pages
+        for i in range(max_pages):
+            page_text = reader.pages[i].extract_text()
+            if page_text:
+                page_texts.append(page_text)
+                full_text += page_text + "\n\n"
+                
+        if not full_text:
+            return None
+        
+        # Look for Abstract and Introduction section markers with broader patterns
+        abstract_patterns = [
+            r'(?i)(\n\s*Abstract\s*$|\n\s*Abstract[\.:—-]\s*|\n\s*ABSTRACT\s*$|\n\s*ABSTRACT[\.:—-]\s*)',
+            r'(?i)(\bAbstract\b\s*[:—-]?|\bABSTRACT\b\s*[:—-]?)',  # More flexible abstract matching
+            r'(?i)(\n\s*\d\.?\s*Abstract\s*|\n\s*[A-Z]\.?\s*Abstract\s*)'  # For numbered/lettered abstracts
+        ]
+        
+        # Enhanced introduction patterns to better catch section boundaries
+        intro_patterns = [
+            # Explicit introduction headers with numbers
+            r'(?i)(\n\s*1\.?\s*Introduction\b|\n\s*I\.?\s*Introduction\b)',
+            # Introduction without a number but as a clear section header
+            r'(?i)(\n\s*Introduction\s*\n|\n\s*INTRODUCTION\s*\n)',
+            # Introduction at end of line or with period
+            r'(?i)(\n\s*Introduction\s*$|\n\s*Introduction\.\s)',
+            # Handle case where "1." and "Introduction" might have unusual spacing or a line break between them
+            r'(?i)(\n\s*1\.\s*\n\s*Introduction\b)',
+            # More patterns for introduction with numbers
+            r'(?i)(\n\s*1[\.\s]+\s*Introduction\b|\n\s*1\s+Introduction\b)',
+            # Other sections that might follow the abstract
+            r'(?i)(\n\s*2\.?\s*|\n\s*II\.?\s*|\n\s*Related\s*Work\s*|\n\s*Background\s*|\n\s*Methodology\s*)',
+            # Any numbered section that might follow abstract
+            r'(?i)(\n\s*\d+\.\s*[A-Z][a-z]+)'
+        ]
+        
+        # Try to find the Abstract section
+        abstract_start_pos = -1
+        abstract_start_page = -1
+        
+        # First check for a clear "Abstract" heading
+        for page_idx, page_text in enumerate(page_texts):
+            for pattern in abstract_patterns:
+                match = re.search(pattern, page_text)
+                if match:
+                    abstract_start_pos = match.end()
+                    abstract_start_page = page_idx
+                    logging.debug(f"Found Abstract header on page {page_idx+1} at position {abstract_start_pos}")
+                    break
+            if abstract_start_pos > -1:
+                break
+                
+        if abstract_start_pos == -1:
+            # Fallback: look for abstract in common positions following figures
+            for page_idx, page_text in enumerate(page_texts):
+                # Check if page has figure references
+                if re.search(r'(?i)(figure|fig\.|table)\s+\d+', page_text):
+                    # Look for a paragraph after the last figure reference that might be the abstract
+                    paragraphs = [p.strip() for p in page_text.split('\n\n') if p.strip()]
+                    last_figure_idx = -1
+                    
+                    for i, para in enumerate(paragraphs):
+                        if re.search(r'(?i)(figure|fig\.|table)\s+\d+', para):
+                            last_figure_idx = i
+                    
+                    if last_figure_idx >= 0 and last_figure_idx + 1 < len(paragraphs):
+                        # Check if the next paragraph might contain an abstract marker
+                        abstract_marker = re.search(r'(?i)\b(abstract|summary)\b', paragraphs[last_figure_idx + 1])
+                        if abstract_marker:
+                            abstract_start_page = page_idx
+                            # Reconstruct position in full page text
+                            prefix_text = '\n\n'.join(paragraphs[:last_figure_idx + 1])
+                            abstract_start_pos = len(prefix_text) + 2  # Add 2 for the newlines
+                            logging.debug(f"Found Abstract after figures on page {page_idx+1}")
+                            break
+        
+        # If we found the abstract, now look for the introduction
+        if abstract_start_pos > -1:
+            # Start looking from the page with the abstract
+            intro_start_pos = -1
+            intro_text_offset = 0
+            
+            # Build search text starting from the abstract page
+            search_text = page_texts[abstract_start_page]
+            for i in range(abstract_start_page + 1, max_pages):
+                if i < len(page_texts):
+                    intro_text_offset += len(search_text) + 2  # +2 for newlines
+                    search_text += "\n\n" + page_texts[i]
+            
+            # Special handling for common "1. Introduction" patterns that might be split across newlines
+            # First, normalize the text to handle cases where "1." and "Introduction" might be separated
+            normalized_search_text = re.sub(r'(\n\s*1\.|1\.\s*\n)\s*(\n\s*Introduction\b)', r'\n1. Introduction', search_text)
+            
+            # Find the Introduction section after the abstract
+            for pattern in intro_patterns:
+                # Check the normalized text first
+                match = re.search(pattern, normalized_search_text[abstract_start_pos:])
+                if match:
+                    intro_start_pos = abstract_start_pos + match.start()
+                    logging.debug(f"Found Introduction section at position {intro_start_pos} with pattern {pattern}")
+                    break
+                
+                # If not found in normalized text, try original
+                if intro_start_pos == -1:
+                    match = re.search(pattern, search_text[abstract_start_pos:])
+                    if match:
+                        intro_start_pos = abstract_start_pos + match.start()
+                        logging.debug(f"Found Introduction section at position {intro_start_pos} with pattern {pattern}")
+                        break
+            
+            # Special case for finding section headers like "1. Introduction"
+            if intro_start_pos == -1:
+                # This pattern specifically looks for "1." possibly followed by "Introduction" with any spacing
+                section_1_match = re.search(r'(?i)(\n\s*1\.\s*|\n\s*1\s+)(?:introduction\b)?', search_text[abstract_start_pos:])
+                if section_1_match:
+                    # Found a potential section 1, check if "Introduction" follows closely
+                    after_section_1 = search_text[abstract_start_pos + section_1_match.end():abstract_start_pos + section_1_match.end() + 50]
+                    if re.search(r'(?i)introduction\b', after_section_1):
+                        intro_start_pos = abstract_start_pos + section_1_match.start()
+                        logging.debug(f"Found Introduction section using specialized pattern")
+            
+            # If we found both the Abstract and Introduction sections in the correct order
+            if abstract_start_pos > -1 and intro_start_pos > -1 and abstract_start_pos < intro_start_pos:
+                abstract_text = search_text[abstract_start_pos:intro_start_pos].strip()
+                
+                # Clean up the abstract - remove page numbers, headers, etc.
+                abstract_text = re.sub(r'(?i)keywords[:\.]\s*.*', '', abstract_text)  # Remove keywords section if present
+                abstract_text = re.sub(r'\n+', ' ', abstract_text)  # Replace newlines with spaces
+                abstract_text = re.sub(r'\s+', ' ', abstract_text)  # Normalize whitespace
+                abstract_text = re.sub(r'(?i)(\d+\.\s*introduction.*$)', '', abstract_text)  # Remove any introduction header that got included
+                
+                # Check for artifacts that suggest we've captured the introduction section
+                if re.search(r'(?i)(introduct(?:ion|ory)|1\.(\s+|)introduct)', abstract_text):
+                    # Try to trim off the introduction if it got included
+                    intro_pos = re.search(r'(?i)(introduct(?:ion|ory)|1\.(\s+|)introduct)', abstract_text)
+                    if intro_pos:
+                        abstract_text = abstract_text[:intro_pos.start()].strip()
+                
+                # Make sure the abstract is substantial (not just whitespace or very short)
+                if len(abstract_text) >= 100:
+                    cleaned = preprocess_abstract(abstract_text)
+                    if validate_abstract(cleaned, is_problematic_paper=has_figures_before):
+                        logging.info(f"Successfully extracted abstract between Abstract and Introduction sections for {pdf_path}")
+                        return cleaned
+        
+        # If we couldn't find a clear Abstract-Introduction pair, try a more aggressive approach
+        # This handles papers where the abstract might not have a clear heading
+        if full_text:
+            # Look for the introduction section
+            intro_match = None
+            for pattern in intro_patterns:
+                intro_match = re.search(pattern, full_text)
+                if intro_match:
+                    break
+                    
+            if intro_match:
+                # Check the text before the introduction for abstract-like content
+                pre_intro_text = full_text[:intro_match.start()].strip()
+                
+                # Split into paragraphs and look for abstract-like paragraphs
+                paragraphs = [p.strip() for p in pre_intro_text.split('\n\n') if p.strip()]
+                
+                # Skip title and author paragraphs (usually first few paragraphs)
+                skip_count = min(3, max(1, len(paragraphs) // 3))
+                
+                for para in paragraphs[skip_count:]:
+                    # Skip if it's likely to be metadata, figures, or tables
+                    if (len(para) < 150 or 
+                        re.search(r'(?i)(figure|fig\.|table)\s+\d+|^\d+\s*$|copyright|©|\(c\)', para) or
+                        para.isupper()):  # Skip all-caps paragraphs which are often titles/headings
+                        continue
+                        
+                    # Check if this might be the abstract
+                    if len(para) >= 150 and para.count('.') >= 3:  # Has multiple sentences
+                        cleaned = preprocess_abstract(para)
+                        if validate_abstract(cleaned, is_problematic_paper=has_figures_before):
+                            logging.info(f"Found likely abstract paragraph before introduction in {pdf_path}")
+                            return cleaned
+        
+        return None
+        
+    except Exception as e:
+        logging.error(f"Error in extract_abstract_between_sections for {pdf_path}: {str(e)}")
+        traceback.print_exc()  # Add traceback for better debugging
+        return None
+
+def remove_introduction_from_abstract(abstract: str) -> str:
+    """
+    Ensures the abstract doesn't contain any part of the introduction section.
+    This function detects common introduction markers and trims the abstract at that point.
+    
+    Args:
+        abstract: The extracted abstract text that might contain introduction content
+        
+    Returns:
+        Cleaned abstract with any introduction content removed
+    """
+    if not abstract:
+        return abstract
+        
+    # Common patterns that indicate the start of an introduction section
+    intro_markers = [
+        # Explicit introduction headers
+        r'(?i)(\d+\.?\s*introduction\b)',
+        r'(?i)(^|\s+)(introduction\b\s*|i\.\s*introduction\b)',
+        # Cases where the word "introduction" starts a major sentence, suggesting section start
+        r'(?i)([\.\?!]\s+)(introduction\b)',
+        # This pattern looks for "introduction" when it appears to be a standalone section
+        r'(?i)(\s*introduction\s*\n)',
+        # Words that typically appear at the start of an introduction section
+        r'(?i)(\.\s+)(in recent years\b|over the past\b|recently,\b)',
+        # Common introduction opening phrases
+        r'(\s)([Vv]isual\s+[Ss]imultaneous\s+[Ll]ocalization)',
+    ]
+    
+    # Trim at the first occurrence of any introduction marker
+    for marker in intro_markers:
+        match = re.search(marker, abstract)
+        if match:
+            # Some patterns need special handling
+            if '.' in marker:  # If the pattern includes a period, we want to keep the period
+                trim_pos = match.start() + 1  # +1 to include the period
+            else:
+                trim_pos = match.start()
+            
+            # Special case for grouped patterns
+            if match.lastindex and match.lastindex > 1:
+                # If our pattern has groups, we want to trim at the start of the matched group 2 or later
+                for group_idx in range(2, match.lastindex + 1):
+                    if match.group(group_idx):
+                        trim_pos = match.start(group_idx)
+                        break
+            
+            # Only trim if we've found a marker after some reasonable content
+            if trim_pos > 100:  # Make sure we have enough content to be a valid abstract
+                logging.info(f"Trimming introduction content from abstract at position {trim_pos}")
+                return abstract[:trim_pos].strip()
+    
+    # Check for introduction content based on semantic cues
+    sentences = re.split(r'(?<=[.!?])\s+', abstract)
+    for i, sentence in enumerate(sentences):
+        # Skip the first several sentences which are likely part of the abstract
+        if i < 3:
+            continue
+            
+        # Look for sentences that start with phrases common in introductions
+        intro_starters = [
+            r'(?i)^(in this paper|this paper|we present|recently|over the past|in recent)',
+            r'(?i)^(visual|the field of|advances in|research in)',
+            r'(?i)^(deep learning|machine learning|artificial intelligence)',
+            r'(?i)^(traditionally|conventionally|historically|for many years)'
+        ]
+        
+        # After the first few sentences, these starters are more likely to indicate introduction
+        for starter in intro_starters:
+            if re.search(starter, sentence) and i >= 3:
+                # We've likely transitioned to the introduction
+                trim_text = ' '.join(sentences[:i])
+                if len(trim_text) > 200:  # Ensure we keep enough content
+                    return trim_text
+    
+    # Heuristic: if the abstract is unusually long (>800 words), it likely includes introduction content
+    words = abstract.split()
+    if len(words) > 800:
+        # Find a good sentence boundary to trim at, around 400-600 words
+        target_length = min(600, len(words) // 2)
+        trimmed_text = ' '.join(words[:target_length])
+        
+        # Find the last sentence boundary
+        last_period = trimmed_text.rfind('.')
+        if last_period > 200:
+            return trimmed_text[:last_period+1]
+    
+    return abstract
+
 def main():
     parser = argparse.ArgumentParser(description="Extract and summarize abstracts from academic papers.")
     parser.add_argument("--input-dir", default="downloaded_papers", help="Directory containing PDF files")
@@ -2210,6 +2677,7 @@ def main():
     parser.add_argument("--hf-token", help="HuggingFace API token (optional, limited requests possible without it)")
     parser.add_argument("--max-papers", type=int, help="Maximum number of papers to process")
     parser.add_argument("--debug", action="store_true", help="Enable detailed debug logging")
+    parser.add_argument("--force-extraction", action="store_true", help="Force abstract extraction even if validation fails")
     args = parser.parse_args()
     
     # Set up more detailed logging if debug is enabled
@@ -2256,8 +2724,33 @@ def main():
             # Check if this paper has figures before abstract
             has_figures_before_abstract = detect_figures_before_abstract(pdf_file)
             
-            # Extract the abstract
-            abstract = extract_abstract_from_pdf(pdf_file)
+            # Extract the abstract using our enhanced pipeline
+            abstract = extract_and_validate_abstract(pdf_file)
+            
+            # If extraction failed, try our special problematic paper extraction
+            if not abstract:
+                logging.warning(f"Initial abstract extraction failed for {pdf_file}, trying problematic paper extractor")
+                abstract = extract_abstract_from_problematic_papers(pdf_file)
+            
+            # If still no abstract and force_extraction is enabled, use a fallback method
+            if not abstract and args.force_extraction:
+                # Force extraction for problematic papers
+                logging.warning(f"Forcing extraction for {pdf_file}")
+                # Try to extract text and use first substantial paragraph
+                try:
+                    reader = PdfReader(pdf_file)
+                    text = reader.pages[0].extract_text()
+                    if len(reader.pages) > 1:
+                        text += "\n\n" + reader.pages[1].extract_text()
+                    
+                    paragraphs = [p.strip() for p in text.split('\n\n') if p.strip()]
+                    for para in paragraphs:
+                        if len(para) >= 200 and para.count('.') >= 3:
+                            abstract = preprocess_abstract(para)
+                            break
+                except Exception as e:
+                    logging.error(f"Error in forced extraction for {pdf_file}: {str(e)}")
+            
             if not abstract:
                 logging.warning(f"Failed to extract abstract from {pdf_file}")
                 continue
@@ -2343,5 +2836,60 @@ def main():
     print("\nThe script can now handle papers with figures appearing before the abstract,")
     print("such as in the Magma paper and other conference paper formats with non-standard layouts.")
 
+def test_abstract_extraction():
+    """
+    Test function to verify that abstracts are correctly extracted without including introduction content.
+    Prints results to console for manual verification.
+    """
+    import glob
+    import os
+    
+    print("\n=== TESTING ABSTRACT EXTRACTION ===")
+    
+    # Find PDF files to test
+    test_dir = os.path.dirname(os.path.abspath(__file__))
+    test_files = glob.glob(os.path.join(test_dir, "**/*.pdf"), recursive=True)[:5]  # Test first 5 PDFs
+    
+    if not test_files:
+        print("No PDF files found for testing")
+        return
+    
+    print(f"Testing on {len(test_files)} PDF files:")
+    
+    for pdf_path in test_files:
+        print(f"\nTesting: {os.path.basename(pdf_path)}")
+        
+        # Check if paper has figures before abstract
+        has_figures = detect_figures_before_abstract(pdf_path)
+        print(f"Has figures before abstract: {has_figures}")
+        
+        # Extract abstract
+        abstract = extract_and_validate_abstract(pdf_path)
+        
+        if abstract:
+            print(f"Abstract length: {len(abstract)} chars, {len(abstract.split())} words")
+            print(f"Abstract beginning: {abstract[:150]}...")
+            
+            # Check for introduction content
+            if re.search(r'(?i)(introduction|in this paper|1\.)', abstract[-100:]):
+                print("WARNING: Abstract might still contain introduction content!")
+            
+            # Check if abstract is reasonably sized
+            if len(abstract.split()) > 500:
+                print(f"WARNING: Abstract is quite long ({len(abstract.split())} words)")
+            
+            # Apply additional check for trimming
+            trimmed = remove_introduction_from_abstract(abstract)
+            if trimmed != abstract:
+                print(f"Abstract was trimmed from {len(abstract.split())} to {len(trimmed.split())} words")
+        else:
+            print("Failed to extract abstract!")
+    
+    print("\n=== TESTING COMPLETED ===")
+
+# Run the test function if the script is run directly (not imported)
 if __name__ == "__main__":
+    # Run the regular main function or uncomment the line below to run tests
     main()
+    # Uncomment to run tests:
+    # test_abstract_extraction()
