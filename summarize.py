@@ -73,6 +73,55 @@ def extract_abstract_from_pdf(pdf_path):
         intro_section = re.compile(r'\b(INTRODUCTION|Introduction|1\.(\s+|)INTRODUCTION|I\.\s+INTRODUCTION)\b')
         section_headers = re.compile(r'(\n\s*\d{1,2}(\.\d{1,2})?[\.\s]+[A-Z][a-zA-Z\s]+|\n\s*[A-Z][A-Z\s]+\n)', re.MULTILINE)
         
+        # Method 0: New approach - Handle cases where Abstract is located after figures or other content
+        # Like in papers where there's a figure/diagram at the top before the abstract
+        try:
+            # Look for a clear "Abstract" header followed by substantial content
+            abstract_match = re.search(r'(?i)(\n\s*abstract\s*\n)(.*?)(?=\n\s*\d?\.?\s*introduction|\n\s*\d\.|$)', text, re.DOTALL)
+            if abstract_match:
+                abstract_text = abstract_match.group(2).strip()
+                # Check if this is a substantial chunk of text (not just the heading)
+                if len(abstract_text) >= 150 and len(abstract_text) <= 3000:
+                    cleaned = preprocess_abstract(abstract_text)
+                    if validate_abstract(cleaned):
+                        logging.info(f"Found abstract after other content in {pdf_path}")
+                        return cleaned
+            
+            # Try to find the abstract in a two-column layout where it might appear after figures
+            # This handles papers like Magma where abstract appears in a specific location
+            column_abstract = re.search(r'(?i)(Abstract\s*)((?:[^\n]+\n){2,15})(?=\s*\d?\.?\s*Introduction|\s*\d\.|$)', text)
+            if column_abstract:
+                abstract_text = column_abstract.group(2).strip()
+                if len(abstract_text) >= 150:
+                    cleaned = preprocess_abstract(abstract_text)
+                    if validate_abstract(cleaned):
+                        logging.info(f"Found abstract in column layout after other content in {pdf_path}")
+                        return cleaned
+                        
+            # Look for abstract marked with a specific pattern common in conference papers
+            # like the one shown in the Magma paper where the abstract appears under authors
+            conference_abstract = re.search(r'(?i)(?<=\n\s*abstract\s*\n)(.*?)(?=\n\s*\d?\.?\s*introduction|\n\s*keywords|\n\s*\d\.|$)', text, re.DOTALL)
+            if conference_abstract:
+                abstract_text = conference_abstract.group(1).strip()
+                if len(abstract_text) >= 150:
+                    cleaned = preprocess_abstract(abstract_text)
+                    if validate_abstract(cleaned):
+                        logging.info(f"Found conference-style abstract in {pdf_path}")
+                        return cleaned
+                        
+            # Look for abstracts that follow paper/author metadata but not immediately at the top
+            delayed_abstract = re.search(r'(?i)(?<=\d{1}\s*[a-zA-Z]+\s*(?:University|Institute|Research|Laboratory|Corporation|College).*?\n\s*abstract\s*[\.:—-]?\s*)([^.!?]*(?:[.!?][^.!?]*){3,15})', text, re.DOTALL)
+            if delayed_abstract:
+                abstract_text = delayed_abstract.group(1).strip()
+                if len(abstract_text) >= 150:
+                    cleaned = preprocess_abstract(abstract_text)
+                    if validate_abstract(cleaned):
+                        logging.info(f"Found abstract after author affiliations in {pdf_path}")
+                        return cleaned
+                
+        except Exception as e:
+            logging.debug(f"Error in new abstract extraction method: {str(e)}")
+        
         # Check for explicit abstract heading in the text
         try:
             abstract_match = re.search(r'(?i)(^|\n)\s*abstract\s*[:\.—-]?\s*\n+(.+?)(?=\n\s*\d?\.?\s*Introduction|\n\s*\d\.|$)', text, re.DOTALL)
@@ -402,21 +451,78 @@ def validate_abstract(abstract: str) -> bool:
         r'(?i)^large (language|vision|multimodal) models',
     ]
     
+    # NEW: Additional patterns for abstracts that might not be at the beginning of papers
+    # For papers like Magma where abstract appears after figures/illustrations
+    midpoint_abstract_patterns = [
+        r'(?i)(we|this paper) (present|propose|introduce)s? (a|an|the) (\w+|\w+\s\w+) (model|approach|method|framework|system)',
+        r'(?i)(in this paper|this work|we) (present|propose|introduce|describe)',
+        r'(?i)(this (work|paper|study)|we) (develop|present)s? (a|an|the)',
+        r'(?i)we (tackle|address|solve|focus on) (the problem|the task|the challenge)',
+        r'(?i)(is|are) (a (significant|major|important)|an important) (challenge|problem|task|issue)'
+    ]
+    
+    # Check if abstract contains these typical abstract phrases anywhere in the text
     has_abstract_beginning = any(re.search(pattern, abstract[:100]) for pattern in abstract_beginning_patterns)
+    
+    # NEW: Check if abstract contains typical abstract content anywhere in the text (not just beginning)
+    has_midpoint_abstract_pattern = any(re.search(pattern, abstract) for pattern in midpoint_abstract_patterns)
     
     # Check for abstract-like content (presence of keywords related to contributions)
     contribution_keywords = [
         r'propose', r'present', r'introduce', r'novel', r'approach', r'method',
         r'contribution', r'demonstrate', r'show', r'performance', r'experiments',
-        r'results', r'outperform', r'state-of-the-art', r'state of the art'
+        r'results', r'outperform', r'state-of-the-art', r'state of the art',
+        # NEW: Additional keywords common in academic abstracts
+        r'framework', r'model', r'system', r'implementation', r'architecture',
+        r'foundation model', r'multimodal', r'evaluation', r'benchmark', r'algorithm',
+        r'technique', r'solution', r'paradigm', r'accuracy', r'effectiveness'
     ]
     
     has_contribution_terms = sum(1 for keyword in contribution_keywords if re.search(r'\b' + keyword + r'\b', abstract.lower())) >= 2
     
-    # Return overall assessment
+    # NEW: Check for abstract-specific structural patterns
+    # Abstracts often have a specific structure: problem statement, approach, results
+    has_problem_statement = re.search(r'(?i)(problem|challenge|task|issue|limitation)', abstract[:len(abstract)//2])
+    has_approach_mention = re.search(r'(?i)(approach|method|model|framework|propose|present|introduce)', abstract)
+    has_results_mention = re.search(r'(?i)(result|performance|evaluation|experiment|demonstrate|show|achieve)', abstract[len(abstract)//3:])
+    
+    has_abstract_structure = (has_problem_statement and has_approach_mention) or (has_approach_mention and has_results_mention)
+    
+    # NEW: Check for conventional end-of-abstract statements
+    concluding_statements = [
+        r'(?i)(demonstrate|show) (the|our) (effectiveness|performance|results)',
+        r'(?i)(experimental|our) results (show|demonstrate)',
+        r'(?i)(outperform|surpass|exceed) (previous|existing|current|state-of-the-art)',
+        r'(?i)(achieve|attain) (state-of-the-art|sota|superior|better) (performance|results)'
+    ]
+    
+    has_conclusion = any(re.search(pattern, abstract[len(abstract)//2:]) for pattern in concluding_statements)
+    
+    # Check for common academic paper abstract phrases that appear in the middle of the abstract
+    # This helps identify abstracts in papers like Magma where the abstract might not start with typical patterns
+    academic_phrases = [
+        r'(?i)our (main|key) contribution',
+        r'(?i)our (approach|method|model|framework)',
+        r'(?i)we (evaluate|test|validate|assess)',
+        r'(?i)experimental (results|evaluation)',
+        r'(?i)(outperforms|improves upon)',
+        r'(?i)(extensive|comprehensive) experiments'
+    ]
+    
+    has_academic_phrases = any(re.search(pattern, abstract) for pattern in academic_phrases)
+    
+    # Return overall assessment with enhanced logic to handle abstracts in various positions
     if has_abstract_beginning:
         return True
+    elif has_midpoint_abstract_pattern and suspicion_count < 2:
+        return True
     elif has_contribution_terms and suspicion_count < 2:
+        return True
+    elif has_abstract_structure and suspicion_count < 2:
+        return True
+    elif has_conclusion and has_approach_mention and suspicion_count < 2:
+        return True
+    elif has_academic_phrases and suspicion_count < 2 and 50 <= word_count <= 500:
         return True
     elif suspicion_count < 1 and 50 <= word_count <= 500:
         return True
@@ -439,6 +545,11 @@ def extract_and_validate_abstract(pdf_path):
     
     if not abstract:
         logging.warning(f"Failed to extract abstract from {pdf_path}")
+        # Try our specialized two-column conference paper extraction
+        abstract = extract_conference_paper_abstract(pdf_path)
+        if abstract:
+            logging.info(f"Successfully extracted abstract using conference paper extractor for {pdf_path}")
+            return abstract
         return None
         
     # Clean the abstract
@@ -451,6 +562,12 @@ def extract_and_validate_abstract(pdf_path):
         
     # If validation failed, try a more aggressive approach
     logging.warning(f"First extracted abstract failed validation for {pdf_path}, trying alternative method")
+    
+    # Try specialized conference paper layout extraction
+    conference_abstract = extract_conference_paper_abstract(pdf_path)
+    if conference_abstract:
+        logging.info(f"Successfully extracted abstract using conference paper extractor after validation failed")
+        return conference_abstract
     
     try:
         # Get raw text from the PDF - focusing on just first page
@@ -538,6 +655,179 @@ def extract_and_validate_abstract(pdf_path):
         logging.error(f"Error in alternative abstract extraction for {pdf_path}: {str(e)}")
         # Return the original cleaned abstract as fallback
         return cleaned_abstract
+
+def extract_conference_paper_abstract(pdf_path):
+    """
+    Specialized function to extract abstracts from conference-style papers with 
+    two-column layouts, where the abstract might appear after figures or other content.
+    This is common in papers like the Magma paper where figures appear at the top.
+    
+    Args:
+        pdf_path: Path to the PDF file
+        
+    Returns:
+        Extracted abstract or None if extraction failed
+    """
+    try:
+        reader = PdfReader(pdf_path)
+        
+        # Conference papers often have abstracts on the first page, sometimes extending to second
+        first_page_text = reader.pages[0].extract_text()
+        full_text = first_page_text
+        
+        # Also check second page in case abstract continues
+        if len(reader.pages) > 1:
+            second_page_text = reader.pages[1].extract_text()
+            # Only include text before introduction if it exists on second page
+            intro_match = re.search(r'\b(INTRODUCTION|Introduction|1\.(\s+|)INTRODUCTION|I\.\s+INTRODUCTION)\b', second_page_text)
+            if intro_match:
+                continuation = second_page_text[:intro_match.start()].strip()
+                full_text += "\n\n" + continuation
+            else:
+                full_text += "\n\n" + second_page_text
+        
+        # Look for abstract header with specific patterns common in conference papers
+        # Pattern 1: Abstract appears after author affiliations with a clear header
+        abstract_header_match = re.search(r'(?i)(\n\s*Abstract\s*\n|\n\s*ABSTRACT\s*\n)', full_text)
+        if abstract_header_match:
+            header_pos = abstract_header_match.end()
+            # Look for text after the header until introduction or keywords section
+            abstract_end_match = re.search(r'(?i)(\n\s*\d?\.?\s*Introduction|\n\s*\d\.\s|\n\s*Keywords|\n\s*Index Terms)', full_text[header_pos:])
+            if abstract_end_match:
+                abstract_text = full_text[header_pos:header_pos + abstract_end_match.start()].strip()
+                if len(abstract_text) >= 150:
+                    cleaned = preprocess_abstract(abstract_text)
+                    if validate_abstract(cleaned):
+                        return cleaned
+            else:
+                # Try to extract a reasonable chunk of text (conference abstracts are typically 150-350 words)
+                # Take up to 3000 characters after the abstract header
+                abstract_text = full_text[header_pos:header_pos + 3000].strip()
+                # Try to find a logical endpoint (end of paragraph)
+                paragraph_end = re.search(r'\n\s*\n', abstract_text)
+                if paragraph_end:
+                    abstract_text = abstract_text[:paragraph_end.start()].strip()
+                    
+                if len(abstract_text) >= 150:
+                    cleaned = preprocess_abstract(abstract_text)
+                    if validate_abstract(cleaned):
+                        return cleaned
+        
+        # Pattern 2: Look for abstract in a column-based layout (common in IEEE/ACM/CVPR papers)
+        # First identify if there are author affiliations with superscripts/numbers
+        affiliation_pattern = re.search(r'(?i)(\d{1,2}|\*|†){1,3}(University|Institute|Research|Lab|Corporation|Inc\.|LLC)', full_text)
+        if affiliation_pattern:
+            # Find the end of affiliations section
+            lines = full_text.split('\n')
+            affiliation_end_idx = None
+            
+            for i, line in enumerate(lines):
+                if re.search(r'(?i)(\d{1,2}|\*|†){1,3}(University|Institute|Research|Lab|Corporation)', line):
+                    affiliation_end_idx = i
+            
+            if affiliation_end_idx is not None and affiliation_end_idx + 1 < len(lines):
+                # Look for abstract after affiliations
+                for i in range(affiliation_end_idx + 1, min(affiliation_end_idx + 10, len(lines))):
+                    if re.search(r'(?i)\b(abstract|ABSTRACT)\b', lines[i]):
+                        # Found the abstract header, collect text until next section
+                        abstract_lines = []
+                        j = i + 1
+                        while j < len(lines) and not re.search(r'(?i)(\d?\.?\s*Introduction|\d\.\s|Keywords|Index Terms)', lines[j]):
+                            abstract_lines.append(lines[j])
+                            j += 1
+                        
+                        if abstract_lines:
+                            abstract_text = ' '.join(abstract_lines).strip()
+                            if len(abstract_text) >= 150:
+                                cleaned = preprocess_abstract(abstract_text)
+                                if validate_abstract(cleaned):
+                                    return cleaned
+        
+        # Pattern 3: Look for a properly formatted abstract in a two-column layout
+        # This handles papers like the Magma paper where figures/diagrams appear before the abstract
+        # The abstract often appears in a specific formatted way in the left column
+        column_abstract_pattern = re.search(r'(?i)(\n\s*Abstract\s*[\.:—-]?\s*\n|\n\s*ABSTRACT\s*[\.:—-]?\s*\n)(.*?)(?=\n\s*\d?\.?\s*Introduction|\n\s*\d\.\s|\n\s*Keywords|\n\s*Index Terms|\n\s*\d\.\s*\n)', full_text, re.DOTALL)
+        if column_abstract_pattern:
+            abstract_text = column_abstract_pattern.group(2).strip()
+            if len(abstract_text) >= 150:
+                cleaned = preprocess_abstract(abstract_text)
+                if validate_abstract(cleaned):
+                    return cleaned
+        
+        # Pattern 4: Try a common conference paper format where Abstract appears on one line
+        # and the actual content follows on subsequent lines
+        abstract_line_pattern = re.search(r'(?i)(^|\n)(\s*)Abstract(\s*)\n', full_text)
+        if abstract_line_pattern:
+            start_pos = abstract_line_pattern.end()
+            # Get the indentation level of the abstract heading
+            abstract_indentation = len(abstract_line_pattern.group(2))
+            
+            # Find the next section which might have similar indentation
+            lines = full_text[start_pos:].split('\n')
+            abstract_lines = []
+            
+            for line in lines:
+                if line.strip() == '':  # Skip empty lines
+                    continue
+                    
+                line_indent = len(line) - len(line.lstrip())
+                
+                # If we find a line that looks like a section heading with similar indentation,
+                # we've reached the end of the abstract
+                if (line_indent <= abstract_indentation and 
+                    re.search(r'(?i)(\d?\.?\s*Introduction|\d\.\s|Keywords|Index Terms|Related Work)', line.strip())):
+                    break
+                
+                abstract_lines.append(line)
+                
+                # Don't collect too many lines - abstracts are typically not more than 20 lines
+                if len(abstract_lines) >= 20:
+                    break
+            
+            if abstract_lines:
+                abstract_text = ' '.join(abstract_lines).strip()
+                if len(abstract_text) >= 150:
+                    cleaned = preprocess_abstract(abstract_text)
+                    if validate_abstract(cleaned):
+                        return cleaned
+        
+        # If we couldn't find the abstract with specific patterns, try a generic approach
+        # Look for any substantial paragraph near author affiliations that looks like an abstract
+        paragraphs = re.split(r'\n\s*\n', full_text)
+        for i, para in enumerate(paragraphs):
+            # Check if this paragraph contains affiliation info
+            if re.search(r'(?i)(\d{1,2}|\*|†){1,3}(University|Institute|Research|Lab)', para):
+                # Check if the next substantial paragraph might be the abstract
+                for j in range(i+1, min(i+5, len(paragraphs))):
+                    candidate = paragraphs[j]
+                    # Skip paragraphs that look like section headings or figure captions
+                    if (re.search(r'(?i)^(Introduction|Keywords|Index Terms|\d\.\s)', candidate) or 
+                        re.search(r'(?i)^(Fig|Figure|Table)\s*\d', candidate) or
+                        len(candidate) < 150):
+                        continue
+                    
+                    # This could be an abstract - check if it contains abstract-like content
+                    cleaned = preprocess_abstract(candidate)
+                    if validate_abstract(cleaned):
+                        return cleaned
+                        
+                # If we haven't found an abstract yet, check if one of the prior paragraphs
+                # might be the abstract (sometimes it appears before affiliations)
+                for j in range(max(0, i-3), i):
+                    candidate = paragraphs[j]
+                    # Skip short paragraphs or those that look like titles
+                    if len(candidate) < 150 or len(candidate.split()) < 30:
+                        continue
+                    
+                    cleaned = preprocess_abstract(candidate)
+                    if validate_abstract(cleaned):
+                        return cleaned
+        
+        return None
+        
+    except Exception as e:
+        logging.error(f"Error in conference paper abstract extraction for {pdf_path}: {str(e)}")
+        return None
 
 def split_abstract_into_chunks(abstract: str, max_length: int = MAX_ABSTRACT_LENGTH) -> List[str]:
     """
@@ -1409,13 +1699,24 @@ def summarize_abstract_with_huggingface(abstract, api_key=None, title=None):
 
 def save_summaries_to_markdown(summaries, output_path):
     """Save the paper summaries in a markdown file."""
+    # Track papers with non-standard layouts
+    non_standard_layout_papers = []
+    
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write("# AI-Generated Paper Summaries\n\n")
         f.write("*Summaries of papers in the downloaded_papers folder*\n\n")
         f.write("Generated on: " + time.strftime("%Y-%m-%d %H:%M:%S") + "\n\n")
         
         for paper in summaries:
-            f.write(f"## {paper['title']}\n\n")
+            f.write(f"## {paper['title']}")
+            
+            # Add layout badge for papers with figures before abstract
+            if paper.get('has_figures_before_abstract'):
+                f.write(" 📊\n\n")
+                f.write("*This paper has figures appearing before the abstract*\n\n")
+                non_standard_layout_papers.append(paper["title"])
+            else:
+                f.write("\n\n")
             
             # Add method description if available
             if paper.get('method_description'):
@@ -1483,7 +1784,39 @@ def save_summaries_to_markdown(summaries, output_path):
             else:
                 f.write("*No summary available*\n\n")
             
+            # Add paper layout information if available
+            if paper.get('abstract_position') or paper.get('has_figures_before_abstract'):
+                f.write("### Paper Layout\n\n")
+                layout_info = []
+                
+                if paper.get('abstract_position') and paper.get('abstract_position') != "unknown":
+                    layout_info.append(f"Abstract position: {paper.get('abstract_position')}")
+                    
+                if paper.get('has_figures_before_abstract'):
+                    layout_info.append("Has figures before abstract: Yes")
+                
+                for item in layout_info:
+                    f.write(f"- {item}\n")
+                
+                f.write("\n")
+            
             f.write("---\n\n")
+        
+        # Add summary statistics at the end
+        f.write("## Summary Statistics\n\n")
+        f.write(f"- Total papers processed: {len(summaries)}\n")
+        f.write(f"- Papers with abstracts: {sum(1 for s in summaries if s.get('abstract'))}\n")
+        f.write(f"- Papers with summaries: {sum(1 for s in summaries if s.get('summary'))}\n")
+        
+        # Add non-standard layout statistics
+        if non_standard_layout_papers:
+            f.write(f"- Papers with figures before abstract: {len(non_standard_layout_papers)}\n\n")
+            
+            # List non-standard layout papers
+            f.write("### Papers with Non-Standard Layouts\n\n")
+            for paper_title in non_standard_layout_papers:
+                f.write(f"- {paper_title}\n")
+            f.write("\n")
     
     logging.info(f"Saved summaries to {output_path}")
 
@@ -1507,6 +1840,7 @@ def save_summaries_to_html(summaries, output_path):
             --light-text: #7f8c8d;
             --method-bg: #ebf5eb;
             --method-border: #28a745;
+            --layout-badge: #9b59b6;
         }
         
         body {
@@ -1558,6 +1892,29 @@ def save_summaries_to_html(summaries, output_path):
         
         .paper-container:hover {
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .paper-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        .paper-title {
+            flex: 1;
+            margin: 0;
+        }
+        
+        .layout-badge {
+            display: inline-block;
+            background-color: var(--layout-badge);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 10px;
         }
         
         .abstract {
@@ -1656,6 +2013,25 @@ def save_summaries_to_html(summaries, output_path):
             background-color: var(--method-border);
         }
         
+        .paper-metadata {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 10px 15px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .paper-metadata ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 5px 0;
+        }
+        
+        .paper-metadata li {
+            margin: 3px 0;
+        }
+        
         details {
             margin-top: 15px;
             background-color: #f5f5f5;
@@ -1702,9 +2078,22 @@ def save_summaries_to_html(summaries, output_path):
     <p class="generation-info">Generated on: """ + time.strftime("%Y-%m-%d %H:%M:%S") + """</p>
 """
     
+    # Track papers with non-standard layouts
+    non_standard_layout_papers = []
+    
     for paper in summaries:
         html_content += f'<div class="paper-container">\n'
-        html_content += f'    <h2>{paper["title"]}</h2>\n'
+        
+        # Create header with title and possibly layout badge
+        html_content += f'    <div class="paper-header">\n'
+        html_content += f'        <h2 class="paper-title">{paper["title"]}</h2>\n'
+        
+        # Add layout badge if this paper has figures before abstract
+        if paper.get('has_figures_before_abstract'):
+            html_content += f'        <span class="layout-badge">Figures before Abstract</span>\n'
+            non_standard_layout_papers.append(paper["title"])
+            
+        html_content += f'    </div>\n'
         
         # Add keywords if available
         if paper.get('keywords'):
@@ -1767,7 +2156,50 @@ def save_summaries_to_html(summaries, output_path):
             
             html_content += f'    <div class="summary">{clean_summary}</div>\n'
         
+        # Add paper metadata including layout information
+        if paper.get('abstract_position') or paper.get('has_figures_before_abstract'):
+            html_content += f'    <div class="paper-metadata">\n'
+            html_content += f'        <details>\n'
+            html_content += f'            <summary>Paper Layout Information</summary>\n'
+            html_content += f'            <ul>\n'
+            
+            if paper.get('abstract_position'):
+                html_content += f'                <li>Abstract position: {paper.get("abstract_position", "unknown")}</li>\n'
+                
+            if paper.get('has_figures_before_abstract'):
+                html_content += f'                <li>Has figures before abstract: Yes</li>\n'
+                
+            html_content += f'            </ul>\n'
+            html_content += f'        </details>\n'
+            html_content += f'    </div>\n'
+        
         html_content += '</div>\n'
+    
+    # Add summary statistics at the bottom
+    html_content += '<div class="paper-metadata">\n'
+    html_content += '    <h3>Summary Statistics</h3>\n'
+    html_content += '    <ul>\n'
+    html_content += f'        <li>Total papers processed: {len(summaries)}</li>\n'
+    html_content += f'        <li>Papers with abstracts: {sum(1 for s in summaries if s.get("abstract"))}</li>\n'
+    html_content += f'        <li>Papers with summaries: {sum(1 for s in summaries if s.get("summary"))}</li>\n'
+    
+    # Add non-standard layout statistics
+    if non_standard_layout_papers:
+        html_content += f'        <li>Papers with figures before abstract: {len(non_standard_layout_papers)}</li>\n'
+        
+    html_content += '    </ul>\n'
+    
+    # List non-standard layout papers if any
+    if non_standard_layout_papers:
+        html_content += '    <details>\n'
+        html_content += '        <summary>Papers with Non-Standard Layouts</summary>\n'
+        html_content += '        <ul>\n'
+        for paper_title in non_standard_layout_papers:
+            html_content += f'            <li>{paper_title}</li>\n'
+        html_content += '        </ul>\n'
+        html_content += '    </details>\n'
+        
+    html_content += '</div>\n'
     
     html_content += "</body>\n</html>"
     
@@ -1831,6 +2263,65 @@ def extract_method_description(text):
             
     return None
 
+def detect_figures_before_abstract(pdf_path):
+    """
+    Specialized detection for papers like Magma where figures appear before the abstract.
+    This helps identify cases where abstract extraction needs special handling.
+    
+    Args:
+        pdf_path: Path to the PDF file
+        
+    Returns:
+        Tuple of (has_figures_before_abstract: bool, abstract_position: str)
+    """
+    try:
+        reader = PdfReader(pdf_path)
+        first_page_text = reader.pages[0].extract_text()
+        
+        # Check for image/figure indicators in the first portion of the text
+        has_early_figures = bool(re.search(r'(?i)(Figure|Fig\.|image|diagram|illustration)\s*\d', first_page_text[:len(first_page_text)//3]))
+        
+        # Check if "Abstract" appears after potential figure text
+        abstract_pos = re.search(r'(?i)\n\s*abstract\s*\n', first_page_text)
+        
+        # Check for author affiliations with superscripts (common in papers like Magma)
+        has_affiliations = bool(re.search(r'(?i)(\d{1,2}|\*|†){1,3}(University|Institute|Research|Lab|Corporation)', first_page_text))
+        
+        # Check for title-like content
+        has_title = bool(re.search(r'^.{10,150}$', first_page_text.split('\n')[0]))
+        
+        abstract_position = "unknown"
+        
+        if abstract_pos:
+            # Calculate position as percentage through the first page
+            abstract_rel_pos = abstract_pos.start() / len(first_page_text)
+            
+            if abstract_rel_pos < 0.2:
+                abstract_position = "top"
+            elif abstract_rel_pos < 0.5:
+                abstract_position = "upper_middle"
+            elif abstract_rel_pos < 0.8:
+                abstract_position = "lower_middle"
+            else:
+                abstract_position = "bottom"
+                
+            # Check if figures likely appear before abstract
+            if has_early_figures and abstract_rel_pos > 0.3:
+                return True, abstract_position
+                
+            # Check for specific multi-column layout with figures at top (like in Magma)
+            if has_title and has_affiliations and abstract_rel_pos > 0.3:
+                # This pattern matches papers like Magma with figures before abstract
+                lines_before_abstract = first_page_text[:abstract_pos.start()].count('\n')
+                if lines_before_abstract > 15:  # Many lines before abstract suggests figures/content
+                    return True, abstract_position
+        
+        return has_early_figures, abstract_position
+        
+    except Exception as e:
+        logging.error(f"Error detecting figures-before-abstract in {pdf_path}: {str(e)}")
+        return False, "error"
+
 def main():
     parser = argparse.ArgumentParser(description="Extract and summarize abstracts from academic papers.")
     parser.add_argument("--input-dir", default="downloaded_papers", help="Directory containing PDF files")
@@ -1838,7 +2329,16 @@ def main():
     parser.add_argument("--html", action="store_true", help="Generate HTML output instead of markdown")
     parser.add_argument("--hf-token", help="HuggingFace API token (optional, limited requests possible without it)")
     parser.add_argument("--max-papers", type=int, help="Maximum number of papers to process")
+    parser.add_argument("--debug", action="store_true", help="Enable detailed debug logging")
     args = parser.parse_args()
+    
+    # Set up more detailed logging if debug is enabled
+    if args.debug:
+        logging.getLogger().setLevel(logging.DEBUG)
+        # Add more detailed formatting
+        for handler in logging.getLogger().handlers:
+            if isinstance(handler, logging.StreamHandler):
+                handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
     
     input_dir = args.input_dir
     output_path = args.output
@@ -1867,10 +2367,17 @@ def main():
         logging.info(f"Found {len(pdf_files)} PDF files in {input_dir}")
     
     summaries = []
+    non_standard_layout_papers = []
     
     for pdf_file in pdf_files:
         title = extract_title_from_filename(pdf_file)
         logging.info(f"Processing: {title}")
+        
+        # Check for papers with figures before abstract (like Magma)
+        has_figures_before_abstract, abstract_position = detect_figures_before_abstract(pdf_file)
+        if has_figures_before_abstract:
+            logging.info(f"Detected figures before abstract in {title} (position: {abstract_position})")
+            non_standard_layout_papers.append((title, "figures_before_abstract", abstract_position))
         
         # Use improved abstract extraction with validation
         abstract = extract_and_validate_abstract(pdf_file)
@@ -1904,7 +2411,9 @@ def main():
             "abstract": abstract,
             "summary": summary,
             "keywords": keywords,
-            "method_description": method_description
+            "method_description": method_description,
+            "has_figures_before_abstract": has_figures_before_abstract,
+            "abstract_position": abstract_position
         }
         
         summaries.append(paper_info)
@@ -1928,6 +2437,13 @@ def main():
     print(f"Abstracts successfully identified: {abstracts_found} ({abstracts_found/len(summaries)*100:.1f}%)")
     print(f"Abstracts passing validation: {abstracts_validated} ({abstracts_validated/len(summaries)*100:.1f}%)")
     print(f"Summaries generated: {summaries_generated} ({summaries_generated/len(summaries)*100:.1f}%)")
+    
+    # Report on papers with non-standard layouts
+    if non_standard_layout_papers:
+        print(f"\nDetected {len(non_standard_layout_papers)} papers with non-standard layouts:")
+        for title, layout_type, position in non_standard_layout_papers:
+            print(f"  - {title}: {layout_type} (abstract position: {position})")
+    
     print(f"\nOutput saved to: {output_path}")
     
     if abstracts_found < len(summaries):
@@ -1938,6 +2454,8 @@ def main():
     print("and clean academic paper abstracts across various formats including arXiv and")
     print("conference papers. Abstracts are validated to ensure they contain actual abstract")
     print("content rather than other sections of the paper.")
+    print("\nThe script can now handle papers with figures appearing before the abstract,")
+    print("such as in the Magma paper and other conference paper formats with non-standard layouts.")
 
 if __name__ == "__main__":
     main()

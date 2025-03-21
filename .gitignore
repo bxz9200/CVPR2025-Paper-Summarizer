@@ -1,1 +1,14 @@
-#
+# Exclude test scripts
+test_*.py
+
+# Exclude directories
+*/
+__pycache__/
+
+# Exclude sensitive information
+*.log
+.DS_Store
+
+# Keep API keys and other sensitive data out of the repo
+run_with_api_key.sh
+*_api_key*

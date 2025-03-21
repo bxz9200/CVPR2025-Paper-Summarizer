@@ -1,3 +1,19 @@
+"""
+CVPR Paper Downloader
+
+A tool to download CVPR papers based on keywords from the titles.
+
+Usage examples:
+    # Run interactively (prompt for keywords)
+    python download.py --interactive
+    
+    # Download papers with specific keywords
+    python download.py --keywords "Diffusion" "Text-to-Image"
+    
+    # Specify download directory and conference URL
+    python download.py -k "Vision Language Model" -d "my_papers" -u "https://cvpr.thecvf.com/Conferences/2024/AcceptedPapers"
+"""
+
 import requests
 from bs4 import BeautifulSoup
 import time
@@ -10,6 +26,7 @@ from typing import List, Tuple, Dict, Optional
 import PyPDF2
 import io
 import random
+import argparse
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
@@ -62,12 +79,11 @@ def create_robust_session(
     
     return session
 
-def setup_download_directory() -> str:
+def setup_download_directory(directory: str = 'downloaded_papers') -> str:
     """Create and return the download directory path."""
-    download_dir = 'downloaded_papers'
-    if not os.path.exists(download_dir):
-        os.makedirs(download_dir)
-    return download_dir
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    return directory
 
 def normalize_title(title: str) -> str:
     """Normalize title for comparison by removing special characters and extra spaces."""
@@ -493,7 +509,7 @@ def verify_downloaded_papers(download_dir: str, expected_titles: Dict[str, str])
     
     return verified_papers, deleted_papers
 
-def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thecvf.com/Conferences/2025/AcceptedPapers", proxy=None):
+def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thecvf.com/Conferences/2025/AcceptedPapers", proxy=None, download_dir: str = 'downloaded_papers'):
     """
     Main function to download CVPR papers related to specified keywords.
     
@@ -501,8 +517,9 @@ def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thec
         keywords: List of keywords to filter papers
         cvpr_url: URL of the CVPR accepted papers page
         proxy: Optional proxy server to use for requests
+        download_dir: Directory to save downloaded papers
     """
-    download_dir = setup_download_directory()
+    download_dir = setup_download_directory(download_dir)
     log_file = os.path.join(download_dir, 'download_log.txt')
     
     # Create a log file
@@ -523,6 +540,7 @@ def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thec
     # Scrape paper titles from CVPR
     try:
         logging.info(f"Fetching papers from {cvpr_url}")
+        print(f"Fetching papers from CVPR website...")
         response = session.get(cvpr_url, timeout=30)
         response.raise_for_status()
         
@@ -564,15 +582,18 @@ def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thec
                         authors.append("")
         
         logging.info(f"Found {len(titles)} papers")
+        print(f"Found {len(titles)} papers on the CVPR website")
         
     except Exception as e:
         logging.error(f"Error fetching papers: {str(e)}")
+        print(f"Error fetching papers: {str(e)}")
         with open(log_file, 'a') as f:
             f.write(f"Error fetching papers: {str(e)}\n")
         return
     
     if not titles:
         logging.error("No papers found. Please check if the webpage structure has changed.")
+        print("No papers found. Please check if the webpage structure has changed.")
         with open(log_file, 'a') as f:
             f.write("No papers found. Please check if the webpage structure has changed.\n")
         return
@@ -582,6 +603,11 @@ def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thec
     paper_info = []  # To collect information about each paper
     expected_titles = {}  # Map file paths to expected titles
     
+    # Print header for progress display
+    print(f"\n{'='*80}")
+    print(f"Searching for papers with keywords: {', '.join(keywords)}")
+    print(f"{'='*80}")
+    
     # Iterate over each title and search for the paper on arXiv
     for i, title in enumerate(titles):
         author = authors[i] if i < len(authors) else ""
@@ -589,6 +615,9 @@ def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thec
         if has_keyword_in_title(title, keywords):
             papers_with_keywords += 1
             logging.info(f"\nFound paper with keyword: {title}")
+            print(f"\n[{papers_with_keywords}] Found paper with keyword:")
+            print(f"Title: {title}")
+            print(f"Authors: {author}")
             
             paper_data = {
                 "title": title,
@@ -601,14 +630,17 @@ def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thec
                 f.write(f"Authors: {author}\n")
             
             # Use our improved search function with retry logic
+            print(f"Searching on arXiv... ", end="", flush=True)
             pdf_url, arxiv_title, arxiv_id = search_arxiv_paper(title, author, proxy=proxy)
             
             if pdf_url:
+                print(f"Found! (arXiv ID: {arxiv_id})")
                 # Define a path to save the downloaded paper
                 filename = sanitize_filename(title, arxiv_id)
                 save_path = os.path.join(download_dir, filename)
                 
                 # Use our improved download function
+                print(f"Downloading paper... ", end="", flush=True)
                 success = download_paper(pdf_url, save_path, title, proxy=proxy)
                 if success:
                     downloaded_papers += 1
@@ -620,28 +652,36 @@ def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thec
                     # Store the expected title for verification
                     expected_titles[save_path] = arxiv_title or title
                     
+                    print(f"Success!")
                     with open(log_file, 'a') as f:
                         f.write(f"Downloaded: {save_path}\n")
                         f.write(f"arXiv Title: {arxiv_title}\n")
                         f.write(f"arXiv ID: {arxiv_id}\n")
                 else:
                     paper_data["status"] = "Download failed"
+                    print(f"Failed!")
                     with open(log_file, 'a') as f:
                         f.write(f"Failed to download\n")
             else:
+                print(f"Not found on arXiv")
                 with open(log_file, 'a') as f:
                     f.write(f"Not found on arXiv\n")
             
             paper_info.append(paper_data)
             
+            # Print progress information
+            print(f"Progress: {papers_with_keywords} papers found, {downloaded_papers} downloaded")
+            
             # More intelligent delay between requests to avoid rate limiting
             delay = random.uniform(3.0, 7.0)  # Randomized delay between 3-7 seconds
-            logging.info(f"Waiting {delay:.1f}s before next request...")
+            print(f"Waiting {delay:.1f}s before next request...")
             time.sleep(delay)
     
     # Verify downloaded papers
     if downloaded_papers > 0:
         logging.info("\nVerifying downloaded papers...")
+        print(f"\n{'='*80}")
+        print(f"Verifying {downloaded_papers} downloaded papers...")
         verified_papers, deleted_papers = verify_downloaded_papers(download_dir, expected_titles)
         
         with open(log_file, 'a') as f:
@@ -665,9 +705,21 @@ def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thec
     # Log the summary
     logging.info(f"\nSummary: Found {papers_with_keywords} papers with keywords out of {len(titles)} total papers")
     logging.info(f"Successfully downloaded {downloaded_papers} papers")
+    
+    # Print final summary
+    print(f"\n{'='*80}")
+    print(f"DOWNLOAD SUMMARY")
+    print(f"{'='*80}")
+    print(f"Total CVPR papers: {len(titles)}")
+    print(f"Papers matching keywords: {papers_with_keywords}")
+    print(f"Papers successfully downloaded: {downloaded_papers}")
+    
     if downloaded_papers > 0:
         logging.info(f"Verified papers: {len(verified_papers)}")
         logging.info(f"Deleted mismatched papers: {len(deleted_papers)}")
+        print(f"Verified papers: {len(verified_papers)}")
+        print(f"Deleted mismatched papers: {len(deleted_papers)}")
+        print(f"\nAll papers have been saved to: {os.path.abspath(download_dir)}")
     
     with open(log_file, 'a') as f:
         f.write(f"\n\nSummary: Found {papers_with_keywords} papers with keywords out of {len(titles)} total papers\n")
@@ -688,24 +740,69 @@ def download_cvpr_papers(keywords: List[str], cvpr_url: str = "https://cvpr.thec
             for paper in paper_info:
                 writer.writerow({k: paper.get(k, '') for k in fieldnames})
         logging.info(f"Detailed paper information saved to {csv_path}")
+        print(f"Detailed paper information saved to {csv_path}")
     except Exception as e:
         logging.error(f"Error creating CSV report: {str(e)}")
+        print(f"Error creating CSV report: {str(e)}")
+    
+    print(f"\nLog file saved to: {log_file}")
+    print(f"{'='*80}")
 
 def main():
-    """Main entry point with additional keyword options and proxy support."""
-    # Extended keywords list for better coverage
-    keywords = [
-        "VLM", "Vision Language Model"
-    ]
+    """Main entry point with command-line argument parsing for keywords and other options."""
+    # Create description with examples
+    description = """
+    Download CVPR papers based on keywords in the paper titles.
     
-    # Allow custom URL for testing or future conferences
-    cvpr_url = "https://cvpr.thecvf.com/Conferences/2025/AcceptedPapers"
+    Examples:
+      python download.py --interactive
+      python download.py --keywords "Diffusion" "Text-to-Image"
+      python download.py -k "Vision Language Model" -d "my_papers"
+    """
     
-    # Optional proxy configuration - uncomment and set if needed
-    # proxy = "http://your-proxy-server:port"
-    proxy = None
+    # Set up argument parser
+    parser = argparse.ArgumentParser(
+        description=description,
+        formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    parser.add_argument('--keywords', '-k', nargs='+',
+                      help='Keywords to search for in paper titles (multiple keywords can be provided)')
+    parser.add_argument('--url', '-u', default="https://cvpr.thecvf.com/Conferences/2025/AcceptedPapers",
+                      help='URL of the CVPR accepted papers page')
+    parser.add_argument('--proxy', '-p', default=None,
+                      help='Proxy server to use for requests (e.g., "http://your-proxy-server:port")')
+    parser.add_argument('--dir', '-d', default='downloaded_papers',
+                      help='Directory to save downloaded papers')
+    parser.add_argument('--interactive', '-i', action='store_true',
+                      help='Enable interactive mode to enter keywords')
     
-    download_cvpr_papers(keywords, cvpr_url, proxy=proxy)
+    # Parse arguments
+    args = parser.parse_args()
+    
+    # Handle keywords input
+    keywords = args.keywords
+    if keywords is None or args.interactive:
+        # If no keywords provided or interactive mode enabled, prompt user
+        print("Enter keywords to search for in paper titles (comma-separated):")
+        print("Examples: VLM, Vision Language Model, Diffusion, etc.")
+        user_input = input("> ")
+        if user_input.strip():
+            # Split by comma and strip whitespace
+            keywords = [k.strip() for k in user_input.split(',') if k.strip()]
+    
+    # If still no keywords, use defaults
+    if not keywords:
+        keywords = ["VLM", "Vision Language Model"]
+        print(f"Using default keywords: {', '.join(keywords)}")
+    
+    # Print configuration information
+    logging.info(f"Starting download with keywords: {', '.join(keywords)}")
+    logging.info(f"Using CVPR URL: {args.url}")
+    logging.info(f"Saving papers to: {args.dir}")
+    if args.proxy:
+        logging.info(f"Using proxy: {args.proxy}")
+    
+    download_cvpr_papers(keywords, args.url, proxy=args.proxy, download_dir=args.dir)
 
 if __name__ == "__main__":
     main()
