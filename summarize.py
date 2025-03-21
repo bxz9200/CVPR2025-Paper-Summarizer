@@ -46,263 +46,146 @@ def extract_title_from_filename(filename):
     title = re.sub(r'_\d+\.\d+.*$', '', title)
     return title
 
-def extract_abstract_from_pdf(pdf_path):
-    """Extract the abstract section from a PDF file with improved accuracy."""
+def extract_text_from_pdf(pdf_path):
+    """
+    Extract text content from a PDF file.
+    
+    Args:
+        pdf_path: Path to the PDF file
+        
+    Returns:
+        Extracted text as a string
+    """
     try:
         reader = PdfReader(pdf_path)
         text = ""
-        # Usually the abstract is in the first 2-3 pages
+        # Usually academic paper abstracts are in the first 3 pages
         for i in range(min(3, len(reader.pages))):
             text += reader.pages[i].extract_text()
-        
-        # Try to extract abstract from document metadata first
-        try:
-            info = reader.metadata
-            if info and hasattr(info, 'subject') and info.subject and len(info.subject) > 100:
-                # Some PDFs store the abstract in metadata
-                abstract_candidate = info.subject
-                cleaned = preprocess_abstract(abstract_candidate)
-                if validate_abstract(cleaned):
-                    logging.info(f"Using abstract from PDF metadata for {pdf_path}")
-                    return cleaned
-        except Exception as e:
-            logging.debug(f"Error reading PDF metadata: {str(e)}")
-        
-        # Precompile regex patterns for better performance and readability
-        abstract_section = re.compile(r'\bABSTRACT\b|\babstract\b', re.IGNORECASE)
-        intro_section = re.compile(r'\b(INTRODUCTION|Introduction|1\.(\s+|)INTRODUCTION|I\.\s+INTRODUCTION)\b')
-        section_headers = re.compile(r'(\n\s*\d{1,2}(\.\d{1,2})?[\.\s]+[A-Z][a-zA-Z\s]+|\n\s*[A-Z][A-Z\s]+\n)', re.MULTILINE)
-        
-        # Method 0: New approach - Handle cases where Abstract is located after figures or other content
-        # Like in papers where there's a figure/diagram at the top before the abstract
-        try:
-            # Look for a clear "Abstract" header followed by substantial content
-            abstract_match = re.search(r'(?i)(\n\s*abstract\s*\n)(.*?)(?=\n\s*\d?\.?\s*introduction|\n\s*\d\.|$)', text, re.DOTALL)
-            if abstract_match:
-                abstract_text = abstract_match.group(2).strip()
-                # Check if this is a substantial chunk of text (not just the heading)
-                if len(abstract_text) >= 150 and len(abstract_text) <= 3000:
-                    cleaned = preprocess_abstract(abstract_text)
-                    if validate_abstract(cleaned):
-                        logging.info(f"Found abstract after other content in {pdf_path}")
-                        return cleaned
+        return text
+    except Exception as e:
+        logging.error(f"Error extracting text from PDF {pdf_path}: {str(e)}")
+        return ""
+
+def extract_abstract_from_pdf(pdf_path):
+    """
+    Extract the abstract from a PDF file.
+    
+    This function focuses on finding the text between Abstract and Introduction sections,
+    even when figures or other content appear before the abstract.
+    """
+    try:
+        # Read the PDF file
+        text = extract_text_from_pdf(pdf_path)
+        if not text:
+            return None
             
-            # Try to find the abstract in a two-column layout where it might appear after figures
-            # This handles papers like Magma where abstract appears in a specific location
-            column_abstract = re.search(r'(?i)(Abstract\s*)((?:[^\n]+\n){2,15})(?=\s*\d?\.?\s*Introduction|\s*\d\.|$)', text)
-            if column_abstract:
-                abstract_text = column_abstract.group(2).strip()
-                if len(abstract_text) >= 150:
-                    cleaned = preprocess_abstract(abstract_text)
-                    if validate_abstract(cleaned):
-                        logging.info(f"Found abstract in column layout after other content in {pdf_path}")
-                        return cleaned
-                        
-            # Look for abstract marked with a specific pattern common in conference papers
-            # like the one shown in the Magma paper where the abstract appears under authors
-            conference_abstract = re.search(r'(?i)(?<=\n\s*abstract\s*\n)(.*?)(?=\n\s*\d?\.?\s*introduction|\n\s*keywords|\n\s*\d\.|$)', text, re.DOTALL)
-            if conference_abstract:
-                abstract_text = conference_abstract.group(1).strip()
-                if len(abstract_text) >= 150:
-                    cleaned = preprocess_abstract(abstract_text)
-                    if validate_abstract(cleaned):
-                        logging.info(f"Found conference-style abstract in {pdf_path}")
-                        return cleaned
-                        
-            # Look for abstracts that follow paper/author metadata but not immediately at the top
-            delayed_abstract = re.search(r'(?i)(?<=\d{1}\s*[a-zA-Z]+\s*(?:University|Institute|Research|Laboratory|Corporation|College).*?\n\s*abstract\s*[\.:—-]?\s*)([^.!?]*(?:[.!?][^.!?]*){3,15})', text, re.DOTALL)
-            if delayed_abstract:
-                abstract_text = delayed_abstract.group(1).strip()
-                if len(abstract_text) >= 150:
-                    cleaned = preprocess_abstract(abstract_text)
-                    if validate_abstract(cleaned):
-                        logging.info(f"Found abstract after author affiliations in {pdf_path}")
-                        return cleaned
-                
-        except Exception as e:
-            logging.debug(f"Error in new abstract extraction method: {str(e)}")
-        
-        # Check for explicit abstract heading in the text
+        # Get reader for metadata extraction later
+        reader = None
         try:
-            abstract_match = re.search(r'(?i)(^|\n)\s*abstract\s*[:\.—-]?\s*\n+(.+?)(?=\n\s*\d?\.?\s*Introduction|\n\s*\d\.|$)', text, re.DOTALL)
-            if abstract_match:
-                abstract_text = abstract_match.group(2).strip()
-                if 100 <= len(abstract_text) <= 3000:
-                    cleaned = preprocess_abstract(abstract_text)
-                    if validate_abstract(cleaned):
-                        return cleaned
+            reader = PdfReader(pdf_path)
         except Exception as e:
-            logging.debug(f"Error in primary abstract extraction: {str(e)}")
+            logging.debug(f"Error creating PDF reader for metadata: {str(e)}")
         
-        # Split text into paragraphs
-        paragraphs = re.split(r'\n\s*\n', text)
-        paragraphs = [p.strip() for p in paragraphs if p.strip()]
+        # Split into paragraphs
+        paragraphs = [p.strip() for p in text.split('\n\n') if p.strip()]
         
-        # Method 1: Find abstract section with explicit "Abstract" header
-        # This is common in most academic papers
-        abstract_found = False
-        abstract_text = ""
+        # Define patterns for section headings
+        abstract_pattern = r'(?i)^\s*Abstract\s*$|^\s*Abstract\s*[.:]|^\s*ABSTRACT\s*$|^\s*ABSTRACT\s*[.:]'
+        intro_pattern = r'(?i)^\s*1\.?\s*Introduction\s*$|^\s*I\.?\s*Introduction\s*$|^\s*Introduction\s*$'
         
-        for i, para in enumerate(paragraphs):
-            # Look for a paragraph that contains only the word "Abstract"
-            if abstract_section.match(para) and len(para) < 30:
-                abstract_found = True
-                # The abstract is likely the next paragraph
-                if i + 1 < len(paragraphs):
-                    next_para = paragraphs[i + 1]
-                    # Make sure it's not a section heading
-                    if not intro_section.match(next_para) and len(next_para) > 100:
-                        cleaned = preprocess_abstract(next_para)
-                        if validate_abstract(cleaned):
-                            return cleaned
-            # Look for paragraph starting with "Abstract" followed by content
-            elif abstract_section.match(para) and len(para) >= 30:
-                # Extract everything after "Abstract"
-                match = abstract_section.search(para)
-                start_pos = match.end()
-                abstract_text = para[start_pos:].strip()
-                if len(abstract_text) > 100:
-                    cleaned = preprocess_abstract(abstract_text)
-                    if validate_abstract(cleaned):
-                        return cleaned
+        abstract_section = re.compile(abstract_pattern)
+        intro_section = re.compile(intro_pattern)
         
-        # Method 2: Find abstract by looking at text structure
-        # Look for text between title/authors and introduction
-        # First, try to find the introduction section
+        # Find Abstract and Introduction section indices
+        abstract_index = None
         intro_index = None
+        
         for i, para in enumerate(paragraphs):
-            if intro_section.match(para):
+            # Check for Abstract section
+            if abstract_section.match(para):
+                abstract_index = i
+            # Check for Introduction section
+            elif intro_section.match(para):
                 intro_index = i
-                break
-        
-        if intro_index is not None and intro_index > 0:
-            # Look for the abstract before the introduction
-            # We'll check the 3 paragraphs before the introduction
-            for i in range(max(0, intro_index - 3), intro_index):
-                # Potential abstract should be substantial and not contain author info
-                if (len(paragraphs[i]) > 100 and 
-                    not re.search(r'@|\buniversity\b|\binstitute\b|professor|faculty', paragraphs[i].lower()) and
-                    not re.match(r'^\d+\.', paragraphs[i])):
-                    cleaned = preprocess_abstract(paragraphs[i])
-                    if validate_abstract(cleaned):
-                        return cleaned
-        
-        # Method 3: ArXiv-style papers often have a specific structure
-        # Title, authors, abstract, then sections
-        # First, find potential title (short first paragraph)
-        title_idx = None
-        for i, para in enumerate(paragraphs[:3]):
-            if 10 <= len(para) <= 150 and not re.search(r'@|abstract', para.lower()):
-                title_idx = i
-                break
-        
-        if title_idx is not None:
-            # Skip author information (1-2 paragraphs after title)
-            # Authors section typically contains emails, affiliations
-            potential_abstract_idx = title_idx + 1
-            while potential_abstract_idx < len(paragraphs):
-                para = paragraphs[potential_abstract_idx]
-                if re.search(r'@|\buniversity\b|\binstitute\b|department', para.lower()) or len(para) < 100:
-                    potential_abstract_idx += 1
-                else:
+                # Once we found the Introduction, we can stop searching if we already found the Abstract
+                if abstract_index is not None:
                     break
+        
+        # If we found both Abstract and Introduction sections in the correct order
+        if abstract_index is not None and intro_index is not None and abstract_index < intro_index:
+            # The abstract content starts from the paragraph after abstract_index
+            # and continues until just before intro_index
+            abstract_content = []
             
-            if potential_abstract_idx < len(paragraphs):
-                # Check if this paragraph has abstract-like content
-                abstract_candidate = paragraphs[potential_abstract_idx]
-                # Abstract should be substantial, not have section numbering, and come before introduction
-                if (100 <= len(abstract_candidate) <= 3000 and 
-                    not re.match(r'^\d+[\.\s]', abstract_candidate) and
-                    not intro_section.match(abstract_candidate)):
-                    
-                    # Extra check: if the text contains "abstract:" at the start, remove it
-                    abstract_candidate = re.sub(r'^abstract[\s\.:]+', '', abstract_candidate, flags=re.IGNORECASE).strip()
+            # If the Abstract heading contains content (in-line with the heading)
+            if len(paragraphs[abstract_index]) > 20:  # If it contains more than just "Abstract"
+                # Extract everything after "Abstract"
+                match = abstract_section.search(paragraphs[abstract_index])
+                if match:
+                    abstract_text = paragraphs[abstract_index][match.end():].strip()
+                    if abstract_text:
+                        abstract_content.append(abstract_text)
+            
+            # Add all paragraphs between Abstract and Introduction
+            for i in range(abstract_index + 1, intro_index):
+                # Skip any figure captions or very short paragraphs that might be noise
+                if len(paragraphs[i]) > 20 and not re.match(r'^(Figure|Table|Fig\.)\s+\d+', paragraphs[i]):
+                    abstract_content.append(paragraphs[i])
+            
+            if abstract_content:
+                full_abstract = ' '.join(abstract_content)
+                cleaned = preprocess_abstract(full_abstract)
+                if validate_abstract(cleaned):
+                    logging.info(f"Successfully extracted abstract between Abstract and Introduction sections for {pdf_path}")
+                    return cleaned
+        
+        # Try alternative methods if the above approach didn't work
+        
+        # Look for abstract marked with a specific pattern
+        abstract_match = re.search(r'(?i)(\n\s*abstract\s*\n)(.*?)(?=\n\s*\d?\.?\s*introduction|\n\s*\d\.|$)', text, re.DOTALL)
+        if abstract_match:
+            abstract_text = abstract_match.group(2).strip()
+            # Check if this is a substantial chunk of text
+            if len(abstract_text) >= 150 and len(abstract_text) <= 3000:
+                cleaned = preprocess_abstract(abstract_text)
+                if validate_abstract(cleaned):
+                    logging.info(f"Found abstract using pattern matching for {pdf_path}")
+                    return cleaned
+        
+        # Try to extract from metadata as a last resort
+        if reader:
+            try:
+                info = reader.metadata
+                if info and hasattr(info, 'subject') and info.subject and len(info.subject) > 100:
+                    abstract_candidate = info.subject
                     cleaned = preprocess_abstract(abstract_candidate)
                     if validate_abstract(cleaned):
+                        logging.info(f"Using abstract from PDF metadata for {pdf_path}")
                         return cleaned
+            except Exception as e:
+                logging.debug(f"Error reading PDF metadata: {str(e)}")
         
-        # Method 4: Look for content positioned like an abstract (after title, before sections)
-        # Find all section headers in the text
-        section_matches = list(section_headers.finditer(text))
-        
-        if section_matches and len(section_matches) >= 2:
-            # Assume first section is after abstract
-            first_section_pos = section_matches[0].start()
-            # Look for text before the first section
-            start_text = text[:first_section_pos].strip()
-            # Split into paragraphs
-            early_paragraphs = re.split(r'\n\s*\n', start_text)
-            early_paragraphs = [p.strip() for p in early_paragraphs if p.strip()]
-            
-            # Skip title and authors, find first substantial paragraph
-            for para in early_paragraphs:
-                if (len(para) >= 200 and 
-                    not re.search(r'@|\buniversity\b|\binstitute\b', para.lower()) and
-                    not re.match(r'^\d+\.', para)):
-                    cleaned = preprocess_abstract(para)
-                    if validate_abstract(cleaned):
-                        return cleaned
-        
-        # Method 5: Multi-paragraph abstract handling
-        # Some papers have abstracts split into multiple paragraphs
-        # Look for paragraphs that seem to continue from an abstract
-        for i, para in enumerate(paragraphs):
-            if abstract_section.search(para):
-                # Check if this contains "Abstract:" followed by text
-                abstract_pos = abstract_section.search(para).end()
-                start_abstract = para[abstract_pos:].strip()
-                
-                # If this paragraph continues to the next, collect them
-                if start_abstract and i + 1 < len(paragraphs):
-                    # Check next paragraph - if it's short and doesn't look like a section header
-                    next_para = paragraphs[i + 1]
-                    if (len(next_para) < 300 and 
-                        not intro_section.match(next_para) and
-                        not re.match(r'^\d+\.', next_para) and
-                        not re.search(r'keywords:|index terms:', next_para, re.IGNORECASE)):
-                        
-                        # This might be a continuation of the abstract
-                        combined_abstract = start_abstract + " " + next_para
-                        if len(combined_abstract) >= 200:
-                            cleaned = preprocess_abstract(combined_abstract)
-                            if validate_abstract(cleaned):
-                                return cleaned
-        
-        # Method 6: CVPR-style papers often have abstract at the top
-        # Try another format common in conference papers
-        try:
-            cvpr_abstract = re.search(r'(?i)(?<=\n\s*)\S.{100,2000}?(?=\n\s*\d?\.?\s*introduction|\n\s*\d\.\s)', text)
-            if cvpr_abstract:
-                abstract_text = cvpr_abstract.group(0).strip()
-                if 150 <= len(abstract_text) <= 3000:
-                    cleaned = preprocess_abstract(abstract_text)
-                    if validate_abstract(cleaned):
-                        return cleaned
-        except Exception as e:
-            logging.debug(f"Error in CVPR-style abstract extraction: {str(e)}")
-        
-        # Method 7: Generic abstract detection approach
-        # Just find the first substantial paragraph that's not the title, authors, or a section heading
-        logging.warning(f"Using generic abstract detection for {pdf_path}")
-        for para in paragraphs[:15]:  # Check first 15 paragraphs only
+        # Fallback: Use a generic approach to find abstract-like text
+        for i, para in enumerate(paragraphs[:15]):  # Check first 15 paragraphs only
             if (200 <= len(para) <= 3000 and 
                 not re.search(r'@|\buniversity\b|\binstitute\b|department|figure|fig\.|table', para.lower()) and
                 not re.match(r'^\d+\.', para) and 
-                not intro_section.match(para) and
-                abstract_section.search(para) is None):  # Not the "Abstract" label alone
+                not intro_section.match(para)):
                 cleaned = preprocess_abstract(para)
                 if validate_abstract(cleaned):
+                    logging.info(f"Using generic abstract detection for {pdf_path}")
                     return cleaned
         
-        # Fallback: If all else fails, just get first substantial paragraph
+        # Last resort: Just use the first substantial paragraph
         logging.warning(f"Couldn't identify abstract section in {pdf_path}, using first substantial paragraph")
         for para in paragraphs:
             if len(para.strip()) >= 200 and len(para.strip()) <= 3000:
                 cleaned = preprocess_abstract(para.strip())
                 return cleaned
         
-        return preprocess_abstract(text[:1000].strip())
-    
+        return None
+        
     except Exception as e:
         logging.error(f"Error extracting abstract from {pdf_path}: {str(e)}")
         return None
@@ -2265,62 +2148,59 @@ def extract_method_description(text):
 
 def detect_figures_before_abstract(pdf_path):
     """
-    Specialized detection for papers like Magma where figures appear before the abstract.
-    This helps identify cases where abstract extraction needs special handling.
+    Detect if a paper has figures that appear before the abstract section.
+    This checks if the paper follows the "Figures before Abstract" pattern
+    which is common in some conferences and journals.
     
     Args:
         pdf_path: Path to the PDF file
         
     Returns:
-        Tuple of (has_figures_before_abstract: bool, abstract_position: str)
+        True if figures likely appear before abstract, False otherwise
     """
     try:
-        reader = PdfReader(pdf_path)
-        first_page_text = reader.pages[0].extract_text()
-        
-        # Check for image/figure indicators in the first portion of the text
-        has_early_figures = bool(re.search(r'(?i)(Figure|Fig\.|image|diagram|illustration)\s*\d', first_page_text[:len(first_page_text)//3]))
-        
-        # Check if "Abstract" appears after potential figure text
-        abstract_pos = re.search(r'(?i)\n\s*abstract\s*\n', first_page_text)
-        
-        # Check for author affiliations with superscripts (common in papers like Magma)
-        has_affiliations = bool(re.search(r'(?i)(\d{1,2}|\*|†){1,3}(University|Institute|Research|Lab|Corporation)', first_page_text))
-        
-        # Check for title-like content
-        has_title = bool(re.search(r'^.{10,150}$', first_page_text.split('\n')[0]))
-        
-        abstract_position = "unknown"
-        
-        if abstract_pos:
-            # Calculate position as percentage through the first page
-            abstract_rel_pos = abstract_pos.start() / len(first_page_text)
+        text = extract_text_from_pdf(pdf_path)
+        if not text:
+            return False
             
-            if abstract_rel_pos < 0.2:
-                abstract_position = "top"
-            elif abstract_rel_pos < 0.5:
-                abstract_position = "upper_middle"
-            elif abstract_rel_pos < 0.8:
-                abstract_position = "lower_middle"
-            else:
-                abstract_position = "bottom"
-                
-            # Check if figures likely appear before abstract
-            if has_early_figures and abstract_rel_pos > 0.3:
-                return True, abstract_position
-                
-            # Check for specific multi-column layout with figures at top (like in Magma)
-            if has_title and has_affiliations and abstract_rel_pos > 0.3:
-                # This pattern matches papers like Magma with figures before abstract
-                lines_before_abstract = first_page_text[:abstract_pos.start()].count('\n')
-                if lines_before_abstract > 15:  # Many lines before abstract suggests figures/content
-                    return True, abstract_position
+        # Split into paragraphs
+        paragraphs = [p.strip() for p in text.split('\n\n') if p.strip()]
         
-        return has_early_figures, abstract_position
+        # Define patterns
+        abstract_pattern = r'(?i)^\s*Abstract\s*$|^\s*Abstract\s*[.:]|^\s*ABSTRACT\s*$|^\s*ABSTRACT\s*[.:]'
+        figure_pattern = r'(?i)^(Figure|Fig\.)\s+\d+|^(Table)\s+\d+'
+        
+        abstract_section = re.compile(abstract_pattern)
+        figure_section = re.compile(figure_pattern)
+        
+        # Find Abstract and any Figure/Table references in the first few paragraphs
+        abstract_index = None
+        figure_index = None
+        
+        # Only check the first 15 paragraphs
+        for i, para in enumerate(paragraphs[:15]):
+            if abstract_section.match(para):
+                abstract_index = i
+                break
+            if figure_section.match(para) or re.search(r'(?i)(figure|fig\.|table)\s+\d+', para):
+                figure_index = i
+        
+        # If we found a figure reference before the abstract
+        if figure_index is not None and (abstract_index is None or figure_index < abstract_index):
+            logging.info(f"Detected figures before abstract in {pdf_path}")
+            return True
+            
+        # Alternative approach: check for keywords that suggest figures at the top
+        first_paragraph = paragraphs[0] if paragraphs else ""
+        if re.search(r'(?i)(overview|architecture|framework|pipeline|approach|model)\s+(figure|diagram|fig\.)', first_paragraph):
+            logging.info(f"Detected likely figure reference in the first paragraph of {pdf_path}")
+            return True
+            
+        return False
         
     except Exception as e:
-        logging.error(f"Error detecting figures-before-abstract in {pdf_path}: {str(e)}")
-        return False, "error"
+        logging.error(f"Error detecting figures before abstract in {pdf_path}: {str(e)}")
+        return False
 
 def main():
     parser = argparse.ArgumentParser(description="Extract and summarize abstracts from academic papers.")
@@ -2367,59 +2247,62 @@ def main():
         logging.info(f"Found {len(pdf_files)} PDF files in {input_dir}")
     
     summaries = []
-    non_standard_layout_papers = []
     
     for pdf_file in pdf_files:
-        title = extract_title_from_filename(pdf_file)
-        logging.info(f"Processing: {title}")
-        
-        # Check for papers with figures before abstract (like Magma)
-        has_figures_before_abstract, abstract_position = detect_figures_before_abstract(pdf_file)
-        if has_figures_before_abstract:
-            logging.info(f"Detected figures before abstract in {title} (position: {abstract_position})")
-            non_standard_layout_papers.append((title, "figures_before_abstract", abstract_position))
-        
-        # Use improved abstract extraction with validation
-        abstract = extract_and_validate_abstract(pdf_file)
-        
-        if not abstract:
-            logging.warning(f"Could not extract abstract from {pdf_file}")
-            summaries.append({"title": title})
+        try:
+            title = extract_title_from_filename(pdf_file)
+            logging.info(f"Processing: {title}")
+            
+            # Check if this paper has figures before abstract
+            has_figures_before_abstract = detect_figures_before_abstract(pdf_file)
+            
+            # Extract the abstract
+            abstract = extract_abstract_from_pdf(pdf_file)
+            if not abstract:
+                logging.warning(f"Failed to extract abstract from {pdf_file}")
+                continue
+                
+            # If paper has figures before abstract, include this information
+            summary_info = {
+                "title": title,
+                "abstract": abstract,
+                "pdf_path": pdf_file,
+                "has_figures_before_abstract": has_figures_before_abstract,
+            }
+            
+            # Extract potential keywords from abstract
+            keywords = keywords_from_abstract(abstract)
+            
+            # Get the proposed method description
+            method_description = extract_method_description(abstract)
+            if method_description:
+                logging.info(f"Extracted method description ({len(method_description)} chars)")
+            
+            # Get the summary with improved approach
+            summary = summarize_abstract_with_huggingface(abstract, api_key, title)
+            
+            # Apply post-processing to enhance summary quality
+            if summary:
+                summary = post_process_summary(summary)
+                logging.info(f"Generated summary ({len(summary)} chars)")
+            
+            # Store all the information
+            paper_info = {
+                "title": title,
+                "abstract": abstract,
+                "summary": summary,
+                "keywords": keywords,
+                "method_description": method_description,
+                "has_figures_before_abstract": has_figures_before_abstract,
+            }
+            
+            summaries.append(paper_info)
+            
+            # Add a small delay to avoid API rate limits
+            time.sleep(2)
+        except Exception as e:
+            logging.error(f"Error processing {pdf_file}: {str(e)}")
             continue
-        
-        logging.info(f"Extracted abstract ({len(abstract)} chars)")
-        
-        # Extract potential keywords from abstract
-        keywords = keywords_from_abstract(abstract)
-        
-        # Get the proposed method description
-        method_description = extract_method_description(abstract)
-        if method_description:
-            logging.info(f"Extracted method description ({len(method_description)} chars)")
-        
-        # Get the summary with improved approach
-        summary = summarize_abstract_with_huggingface(abstract, api_key, title)
-        
-        # Apply post-processing to enhance summary quality
-        if summary:
-            summary = post_process_summary(summary)
-            logging.info(f"Generated summary ({len(summary)} chars)")
-        
-        # Store all the information
-        paper_info = {
-            "title": title,
-            "abstract": abstract,
-            "summary": summary,
-            "keywords": keywords,
-            "method_description": method_description,
-            "has_figures_before_abstract": has_figures_before_abstract,
-            "abstract_position": abstract_position
-        }
-        
-        summaries.append(paper_info)
-        
-        # Add a small delay to avoid API rate limits
-        time.sleep(2)
     
     if args.html:
         save_summaries_to_html(summaries, output_path)
@@ -2430,6 +2313,7 @@ def main():
     abstracts_found = sum(1 for s in summaries if s.get('abstract'))
     abstracts_validated = sum(1 for s in summaries if s.get('abstract') and validate_abstract(s.get('abstract')))
     summaries_generated = sum(1 for s in summaries if s.get('summary'))
+    papers_with_figures_before_abstract = sum(1 for s in summaries if s.get('has_figures_before_abstract'))
     
     logging.info("Summary extraction complete!")
     print("\nSummary Extraction Report:")
@@ -2437,12 +2321,14 @@ def main():
     print(f"Abstracts successfully identified: {abstracts_found} ({abstracts_found/len(summaries)*100:.1f}%)")
     print(f"Abstracts passing validation: {abstracts_validated} ({abstracts_validated/len(summaries)*100:.1f}%)")
     print(f"Summaries generated: {summaries_generated} ({summaries_generated/len(summaries)*100:.1f}%)")
+    print(f"Papers with figures before abstract: {papers_with_figures_before_abstract} ({papers_with_figures_before_abstract/len(summaries)*100:.1f}%)")
     
     # Report on papers with non-standard layouts
-    if non_standard_layout_papers:
-        print(f"\nDetected {len(non_standard_layout_papers)} papers with non-standard layouts:")
-        for title, layout_type, position in non_standard_layout_papers:
-            print(f"  - {title}: {layout_type} (abstract position: {position})")
+    if papers_with_figures_before_abstract > 0:
+        print("\nPapers with figures before abstract:")
+        for s in summaries:
+            if s.get('has_figures_before_abstract'):
+                print(f"  - {s['title']}")
     
     print(f"\nOutput saved to: {output_path}")
     

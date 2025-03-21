@@ -16,6 +16,7 @@
             --light-text: #7f8c8d;
             --method-bg: #ebf5eb;
             --method-border: #28a745;
+            --layout-badge: #9b59b6;
         }
         
         body {
@@ -67,6 +68,29 @@
         
         .paper-container:hover {
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .paper-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        .paper-title {
+            flex: 1;
+            margin: 0;
+        }
+        
+        .layout-badge {
+            display: inline-block;
+            background-color: var(--layout-badge);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-left: 10px;
         }
         
         .abstract {
@@ -165,6 +189,25 @@
             background-color: var(--method-border);
         }
         
+        .paper-metadata {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 10px 15px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .paper-metadata ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 5px 0;
+        }
+        
+        .paper-metadata li {
+            margin: 3px 0;
+        }
+        
         details {
             margin-top: 15px;
             background-color: #f5f5f5;
@@ -208,26 +251,12 @@
 </head>
 <body>
     <h1>AI-Generated Paper Summaries</h1>
-    <p class="generation-info">Generated on: 2025-03-21 09:12:05</p>
+    <p class="generation-info">Generated on: 2025-03-21 12:20:42</p>
 <div class="paper-container">
-    <h2>MAGi C-SLAM Multi-Agent Gaussian Globally Consistent SLAM 2411.16785v1</h2>
-    <div class="section-title"><h3>Keywords</h3></div>
-    <div class="keywords">
-        <span>c-slam</span>
-        <span>gaussian</span>
-        <span>slam</span>
-        <span>agent</span>
-        <span>baseline</span>
+    <div class="paper-header">
+        <h2 class="paper-title">MAC-Ego3D Multi-Agent Gaussian Consensus for Real-Time Collaborative Ego-Motion and Photorealistic 3 2412.09723v1</h2>
+        <span class="layout-badge">Figures before Abstract</span>
     </div>
-    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
-    <div class="method-description">Our method effectively utilizes information from multiple agents to achieve centimeter-level tracking accuracy.</div>
-    <div class="section-title"><h3>Original Abstract</h3></div>
-    <div class="abstract">MAGi C-SLAM: Multi-Agent Gaussian Globally Consistent SLAM Vladimir Yugay Theo Gevers Martin R. Oswald University of Amsterdam, Netherlands {vladimir.yugay, th.gevers, m.r.oswald }@uva.nl vladimiryugay.github.io/magic slam Agent 1 Render Novel Views Ground -Truth . . . Agent N MAGi C -SLAM ATE RMSE MAGi C-SLAM : 1cm SOTA Baseline: XPSNR: MAGi C-SLAM : 23d B SOTA Baseline: 10d B Depth L1 : MAGi C-SLAM : 3cm SOTA Baseline: 15cm Figure 1. MAGi C-SLAM is a multi-agent SLAM method capable of novel view synthesis. Given single-camera RGBD input streams from multiple simultaneously operating agents MAGi C-SLAM estimates their trajectories and reconstructs a 3D Gaussian map that can be rendered from previously unseen viewpoints. We showcase the high-fidelity 3D Gaussian map of a real-world environment alongside multiple agent trajectories (depicted in green, yellow, and blue) within it. Our method effectively utilizes information from multiple agents to achieve centimeter-level tracking accuracy. Our</div>
-    <div class="section-title"><h3>Summary</h3></div>
-    <div class="summary">MAGi C-SLAM is a multi-agent SLAM method capable of novel view synthesis. Given single-camera RGBD input streams from multiple simultaneously operating agents MAGi C -SLAM estimates their trajectories and reconstructs a 3D Gaussian map that can be rendered from previously unseen viewpoints. We showcase the high-fidelity 3DGaussian map of a real-world environment alongside multiple agent trajectories (depicted in green, yellow, and blue) within it. Our method effectively utilizes information from multiple agents to achieve centimeter-level tracking accuracy.</div>
-</div>
-<div class="paper-container">
-    <h2>MAC-Ego3D Multi-Agent Gaussian Consensus for Real-Time Collaborative Ego-Motion and Photorealistic 3 2412.09723v1</h2>
     <div class="section-title"><h3>Keywords</h3></div>
     <div class="keywords">
         <span>gaussian</span>
@@ -242,26 +271,20 @@
     <div class="abstract">Real-time multi-agent collaboration for ego-motion estimation and high-fidelity 3D reconstruction is vital for scalable spatial intelligence. However, traditional methods produce sparse, low-detail maps, while recent dense mapping approaches struggle with high latency. To overcome these challenges, we present MAC-Ego3D, a novel framework for real-time collaborative photorealistic 3D reconstruction via Multi-Agent Gaussian Consensus. MAC-Ego3D enables agents to independently construct, align, and iteratively refine local maps using a unified Gaussian splat representation. Through Intra-Agent Gaussian Consensus, it enforces spatial coherence among neighboring Gaussian splats within an agent. For global alignment, parallelized Inter-Agent Gaussian Consensus, which asynchronously aligns and optimizes local maps by regularizing multi-agent Gaussian splats, seamlessly integrates them into a high-fidelity 3D model. Leveraging Gaussian primitives, MAC-Ego3D supports efficient RGB-D rendering, enabling rapid inter-agent Gaussian association and alignment. MAC-Ego3D bridges local precision and global coherence, delivering higher efficiency, largely reducing localization error, and improving mapping fidelity. It establishes a new SOTA on synthetic and real-world benchmarks, achieving a 15×increase in inference speed,order-of-magnitude reductions in ego-motion estimation error for partial cases, and RGB PSNR gains of 4 to 10 d B . Our code will be made publicly available at [URL] .</div>
     <div class="section-title"><h3>Summary</h3></div>
     <div class="summary">MAC-Ego3D is a novel framework for real-time collaborative photorealistic 3D reconstruction via Multi-Agent Gaussian Consensus. It enables agents to independently construct, align, and iteratively refine local maps using a unified Gaussian splat representation. It establishes a new SOTA on synthetic and real-world benchmarks, achieving a 15×increase in inference speed, order-of-magnitude reductions in ego-motion estimation error for partial cases, and RGB PSNR gains of 4 to 10 d B.</div>
-</div>
-<div class="paper-container">
-    <h2>Sketch Agent Language-Driven Sequential Sketch Generation 2411.17673v1</h2>
-    <div class="section-title"><h3>Keywords</h3></div>
-    <div class="keywords">
-        <span>sketch</span>
-        <span>sketches</span>
-        <span>methods</span>
-        <span>agent</span>
-        <span>generation</span>
+    <div class="paper-metadata">
+        <details>
+            <summary>Paper Layout Information</summary>
+            <ul>
+                <li>Has figures before abstract: Yes</li>
+            </ul>
+        </details>
     </div>
-    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
-    <div class="method-description">We present an intuitive sketching language, introduced to the model through in-context examples, enabling it to “draw” using string-based actions.</div>
-    <div class="section-title"><h3>Original Abstract</h3></div>
-    <div class="abstract">this work, we introduce Sketch Agent, a language-driven, sequential sketch generation method that enables users to create, modify, and refine sketches through dynamic, conversational interactions. Our approach requires no training or fine-tuning. Instead, we leverage the sequential nature and rich prior knowledge of off-the-shelf multimodal large language models (LLMs). We present an intuitive sketching language, introduced to the model through in-context examples, enabling it to “draw” using string-based actions. These are processed into vector graphics and then rendered to create a sketch on a pixel canvas, which can be accessed again for further tasks. By drawing stroke by stroke, our agent captures the evolving, dynamic qualities intrinsic to sketching. We demonstrate that Sketch Agent can generate sketches from diverse prompts, engage in dialogue-driven drawing, and collaborate meaningfully with human users.1. Introduction Sketching is a powerful tool for distilling ideas into their simplest form. Its fluid and spontaneous nature makes sketching a uniquely versatile tool for visualization, rapid ideation, and communication across cultures, generations, and disciplines [113]. For example, designers use sketches to explore new ideas [114], scientists employ them to formulate problems [82], and children engage in sketching to learn and express themselves [33] (see Fig. 2). Artificial systems, in principle, have the potential to support and enhance human creativity, problem-solving, and visual expression through sketching, adapting flexibly to their exploratory nature [133]. Traditionally, sketch generation methods rely on humandrawn datasets to train generative models [67]. However, fully capturing the diversity of sketches within datasets remains challenging, limiting these methods in both scale and diversity. Recent advancements in vision-language models, such as CLIP and text-to-image diffusion, have enabled sketch generation methods that reduce reliance on human-drawn datasets [116]. These methods leverage pre trained model guidance and differentiable rendering to optimize parametric curves, creating sketches that go beyond predefined styles and categories. 1ar Xiv: [cs.CV] 26 Nov</div>
-    <div class="section-title"><h3>Summary</h3></div>
-    <div class="summary">Sketch Agent is a language-driven, sequential sketch generation method. It enables users to create, modify, and refine sketches through dynamic, conversational interactions. By drawing stroke by stroke, our agent captures the evolving, dynamic qualities intrinsic to sketching. We demonstrate that Sketch Agent can generate sketches from diverse prompts, engage in dialogue-driven drawing, and collaborate meaningfully with human users. We present an intuitive sketching language, introduced to the model through in-context examples, enabling it to “draw” utilizing string-based actions. Artificial systems have the potential to support and enhance human creativity, problem-solving, and visual expression through sketching. Traditionally, sketch generation methods rely on humandrawn datasets to train generative models. Recent advancements in vision-language models, such as CLIP and text-to-image diffusion, have enabled sketchgeneration methods that reduce reliance on human-drawn datasets. These methods leverage pre trained model guidance and differentiable rendering to optimize parametric curves, creating sketches that go beyond predefined styles and categories.</div>
 </div>
 <div class="paper-container">
-    <h2>From Multimodal LLMs to Generalist Embodied Agents Methods and Lessons 2412.08442v1</h2>
+    <div class="paper-header">
+        <h2 class="paper-title">From Multimodal LLMs to Generalist Embodied Agents Methods and Lessons 2412.08442v1</h2>
+        <span class="layout-badge">Figures before Abstract</span>
+    </div>
     <div class="section-title"><h3>Keywords</h3></div>
     <div class="keywords">
         <span>models</span>
@@ -275,25 +298,21 @@
     <div class="section-title"><h3>Original Abstract</h3></div>
     <div class="abstract">We examine the capability of Multimodal Large Language Models (MLLMs) to tackle diverse domains that extend beyond the traditional language and vision tasks these models are typically trained on. Specifically, our focus lies in areas such as Embodied AI, Games, UI Control, and Planning. To this end, we introduce a process of adapting an MLLM to a Generalist Embodied Agent (GEA). GEA is a single unified model capable of grounding itself across these varied domains through a multi-embodiment action tokenizer. GEA is trained with supervised learning on a large dataset of embodied experiences and with online RL in interactive simulators. We explore the data and algorithmic choices necessary to develop such a model. Our findings reveal the importance of training with cross-domain data and online RL for building generalist agents. The final GEA model achieves strong generalization performance to unseen tasks across diverse benchmarks compared to other generalist models and benchmark-specific approaches.</div>
     <div class="section-title"><h3>Summary</h3></div>
-    <div class="summary">We examine the capability of Multimodal Large Language Models (MLLMs) to tackle diverse domains that extend beyond the traditional language and vision tasks these models are typically trained on. To this end, we introduce a process of adapting an MLLM to a Generalist Embodied Agent (GEA). The final GEA model achieves strong generalization performance to unseen tasks across diverse benchmarks compared to other generalist models and benchmark-specific approaches.</div>
-</div>
-<div class="paper-container">
-    <h2>Magma A Foundation Model for Multimodal AI Agents 2502.13130v1</h2>
-    <div class="section-title"><h3>Keywords</h3></div>
-    <div class="keywords">
-        <span>magma</span>
-        <span>block</span>
-        <span>animal</span>
-        <span>multimodal</span>
-        <span>user</span>
+    <div class="summary">We examine the capability of Multimodal Large Language Models to tackle diverse domains that extend beyond the traditional language and vision tasks these models are typically trained on. To this end, we introduce a process of adapting an MLLM to a Generalist Embodied Agent (GEA) GEA is a single unified model capable of grounding itself across these varied domains through a multi-embodiment action tokenizer. We explore the data and algorithmic choices necessary to develop such a model. Our findings reveal the importance of training with cross-domain data and online RL for building generalist agents.</div>
+    <div class="paper-metadata">
+        <details>
+            <summary>Paper Layout Information</summary>
+            <ul>
+                <li>Has figures before abstract: Yes</li>
+            </ul>
+        </details>
     </div>
-    <div class="section-title"><h3>Original Abstract</h3></div>
-    <div class="abstract">Magma: A Foundation Model for Multimodal AI Agents Jianwei Yang†Reuben Tan Qianhui Wu Ruijie Zheng2‡Baolin Peng2‡Yongyuan Liang2‡ Yu Gu1Mu Cai3Seonghyeon Ye4Joel Jang5Yuquan Deng5Lars Liden1Jianfeng Gao1▽ 1Microsoft Research,-Madison 4KAIST,[URL] Multimodal Understanding Spatial User : What is unusual thing about this image? Magma: The unusual aspect of this image is that a man is ironing clothes on the back of a yellow taxi. …. User : How to increase the sound? Magma: Tap on the "Volume" icon. Then, slide the volume up to increase the volume.User : The figure represents a 5x5 grid containing various animals, where each 1x1 square is considered a block and each block contains an animal from ['cat', 'dog', 'elephant', 'giraffe', 'rabbit']. What is the animal of the block located at the first row, second column of the grid? Magma: The animal is a cat. Multimoda</div>
-    <div class="section-title"><h3>Summary</h3></div>
-    <div class="summary">Magma: A Foundation Model for Multimodal AI Agents. .</div>
 </div>
 <div class="paper-container">
-    <h2>Unlocking Video-LLM via Agent-of-Thoughts Distillation 2412.01694v2</h2>
+    <div class="paper-header">
+        <h2 class="paper-title">Unlocking Video-LLM via Agent-of-Thoughts Distillation 2412.01694v2</h2>
+        <span class="layout-badge">Figures before Abstract</span>
+    </div>
     <div class="section-title"><h3>Keywords</h3></div>
     <div class="keywords">
         <span>models</span>
@@ -308,9 +327,20 @@
     <div class="abstract">This paper tackles the problem of video question answering (Video QA), a task that often requires multi-step reasoning and a profound understanding of spatial-temporal dynamics. While large video-language models perform well on benchmarks, they often lack explainability and spatialtemporal grounding. In this paper, we propose Agentof-Thoughts Distillation ( Ao TD ), a method that enhances models by incorporating automatically generated Chainof-Thoughts (Co Ts) into the instruction-tuning process. Specifically, we leverage an agent-based system to decompose complex questions into sub-tasks, and address them with specialized vision models, the intermediate results are then treated as reasoning chains. We also introduce a verification mechanism using a large language model (LLM) to ensure the reliability of generated Co Ts. Extensive experiments demonstrate that Ao TD improves the performance on multiple-choice and open-ended benchmarks.</div>
     <div class="section-title"><h3>Summary</h3></div>
     <div class="summary">Tackles the problem of video question answering (Video QA), a task that often requires multi-step reasoning and a profound understanding of spatial-temporal dynamics. While large video-language models perform well on benchmarks, they often lack explainability and spatialtemporal grounding. In this paper, we propose Agentof-Thoughts Distillation ( Ao TD ), a method that enhances models by incorporating automatically generated Chain of Thoughts (Co Ts) into the instruction-tuning process. We also introduce a verification mechanism using a large language model (LLM) to ensure the reliability of generated Co Ts.</div>
+    <div class="paper-metadata">
+        <details>
+            <summary>Paper Layout Information</summary>
+            <ul>
+                <li>Has figures before abstract: Yes</li>
+            </ul>
+        </details>
+    </div>
 </div>
 <div class="paper-container">
-    <h2>Learning to Detect Objects from Multi-Agent Li DAR Scans without Manual Labels 2503.08421v2</h2>
+    <div class="paper-header">
+        <h2 class="paper-title">Learning to Detect Objects from Multi-Agent Li DAR Scans without Manual Labels 2503.08421v2</h2>
+        <span class="layout-badge">Figures before Abstract</span>
+    </div>
     <div class="section-title"><h3>Keywords</h3></div>
     <div class="keywords">
         <span>labels</span>
@@ -325,9 +355,20 @@
     <div class="abstract">Unsupervised 3D object detection serves as an important solution for offline 3D object annotation. However, due to the data sparsity and limited views, the clusteringbased label fitting in unsupervised object detection often generates low-quality pseudo-labels. Multi-agent collaborative dataset, which involves the sharing of complementary observations among agents, holds the potential to break through this bottleneck. In this paper, we introduce a novel unsupervised method that learns to Detect Objects from Mul ti-Agent Li DAR scans, termed DOt A, without using labels from external. DOt A first uses the internally shared ego-pose and ego-shape of collaborative agents to initialize the detector, leveraging the generalization performance of neural networks to infer preliminary labels. Subsequently, DOt A uses the complementary observations between agents to perform multi-scale encoding on preliminary labels, then decodes high-quality and low-quality labels. These labels are further used as prompts to guide a correct feature learning process, thereby enhancing the performance of the unsupervised object detection task. Extensive experiments on the V2V4Real and OPV2V datasets show that our DOt A outperforms state-of-the-art unsupervised 3D object detection methods. Additionally, we also validate the effectiveness of the DOt A labels under various collaborative perception frameworks. The code is available at[URL] A .</div>
     <div class="section-title"><h3>Summary</h3></div>
     <div class="summary">Unsupervised object detection often generates low-quality pseudo-labels. As a solution, As a solution, As a solution, We introduce a novel unsupervised method that learns to Detect Objects from Mul ti-Agent Li DAR scans, termed DOt A, throughout utilizing labels from external. Extensive experiments on the V2V4Real and OPV2V datasets show that our method outperforms state-of-the-art 3D object detection methods. The code is available at[URL] A. As a solution, As a solution, As a solution, In this paper, we introduce a new method to learn to detect 3D objects throughout the use of manual labels.</div>
+    <div class="paper-metadata">
+        <details>
+            <summary>Paper Layout Information</summary>
+            <ul>
+                <li>Has figures before abstract: Yes</li>
+            </ul>
+        </details>
+    </div>
 </div>
 <div class="paper-container">
-    <h2>NADER Neural Architecture Design via Multi-Agent Collaboration 2412.19206v1</h2>
+    <div class="paper-header">
+        <h2 class="paper-title">NADER Neural Architecture Design via Multi-Agent Collaboration 2412.19206v1</h2>
+        <span class="layout-badge">Figures before Abstract</span>
+    </div>
     <div class="section-title"><h3>Keywords</h3></div>
     <div class="keywords">
         <span>neural</span>
@@ -342,26 +383,20 @@
     <div class="abstract">Designing effective neural architectures poses a significant challenge in deep learning. While Neural Architecture Search (NAS) automates the search for optimal architectures, existing methods are often constrained by predetermined search spaces and may miss critical neural architectures. In this paper, we introduce NADER (Neural Architecture Design via multi-ag Ent collabo Ration), a novel framework that formulates neural architecture design (NAD) as a LLM-based multi-agent collaboration problem. NADER employs a team of specialized agents to enhance a base architecture through iterative modification. Current LLMbased NAD methods typically operate independently, lacking the ability to learn from past experiences, which results in repeated mistakes and inefficient exploration. To address this issue, we propose the Reflector, which effectively learns from immediate feedback and long-term experiences. Additionally, unlike previous LLM-based methods that use code to represent neural architectures, we utilize a graph-based representation. This approach allows agents to focus on design aspects without being distracted by coding. We demonstrate the effectiveness of NADER in discovering high-performing architectures beyond predetermined search spaces through extensive experiments on benchmark tasks, showcasing its advantages over state-of-the-art methods. The codes will be released soon.</div>
     <div class="section-title"><h3>Summary</h3></div>
     <div class="summary">NADER (Neural Architecture Design via multi-ag Ent collabo Ration) is a novel framework that formulates neural architecture design as a LLM-based multi-agent collaboration problem. Current LLMbased NAD methods typically operate independently, lacking the ability to learn from past experiences, which results in repeated mistakes and inefficient exploration. To address this issue, we propose the Reflector, which effectively learns from immediate feedback and long-term experiences. This approach allows agents to focus on design aspects throughout being distracted by coding.</div>
-</div>
-<div class="paper-container">
-    <h2>Mo Manip VLA Transferring Vision-language-action Models for General Mobile Manipulation 2503.13446v1</h2>
-    <div class="section-title"><h3>Keywords</h3></div>
-    <div class="keywords">
-        <span>manipulation</span>
-        <span>models</span>
-        <span>mobile</span>
-        <span>tasks</span>
-        <span>generalization</span>
+    <div class="paper-metadata">
+        <details>
+            <summary>Paper Layout Information</summary>
+            <ul>
+                <li>Has figures before abstract: Yes</li>
+            </ul>
+        </details>
     </div>
-    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
-    <div class="method-description">we propose an efficient policy adaptation framework named Mo Manip VLA to transfer pre-trained VLA models of fixbase manipulation to mobile manipulation, so that high generalization ability across tasks and environments can be achieved in mobile manipulation policy.</div>
-    <div class="section-title"><h3>Original Abstract</h3></div>
-    <div class="abstract">Mobile manipulation is the fundamental challenge for robotics to assist humans with diverse tasks and environments in everyday life. However, conventional mobile manipulation approaches often struggle to generalize across different tasks and environments because of the lack of large-scale training. In contrast, recent advances in visionlanguage-action (VLA) models have shown impressive generalization capabilities, but these foundation models are developed for fixed-base manipulation tasks. Therefore, we propose an efficient policy adaptation framework named Mo Manip VLA to transfer pre-trained VLA models of fixbase manipulation to mobile manipulation, so that high generalization ability across tasks and environments can be achieved in mobile manipulation policy. Specifically, we utilize pre-trained VLA models to generate waypoints of the end-effector with high generalization ability. We de-sign motion planning objectives for the mobile base and the robot arm, which aim at maximizing the physical feasibility of the trajectory. Finally, we present an efficient bi-level objective optimization framework for trajectory generation, where the upper-level optimization predicts waypoints for base movement to enhance the manipulator policy space, and the lower-level optimization selects the optimal endeffector trajectory to complete the manipulation task. In this way, Mo Manip VLA can adjust the position of the robot base in a zero-shot manner, thus making the waypoints predicted from the fixed-base VLA models feasible. Extensive experimental results on OVMM and the real world demonstrate that Mo Manip VLA achieves a 4.2% higher success rate than the state-of-the-art mobile manipulation, and only requires 50 training cost for real world deployment due to the strong generalization ability in the pre-trained VLA models. Our project homepage can be found at here.ar Xiv: [cs.RO] 17 Mar</div>
-    <div class="section-title"><h3>Summary</h3></div>
-    <div class="summary">Mo Manip VLA Transferring Vision-language-action Models for General Mobile Manipulation. Conventional mobile manipulation approaches often struggle to generalize. Extensive experimental results on OVMM and the real world demonstrate that Mo Manip Vla achieves a 2% higher success rate than the state-of-the-art mobile manipulation. Only requires 50 training cost for real world deployment due to the strong generalization ability in the pre-trained VLA model.</div>
 </div>
 <div class="paper-container">
-    <h2>Optimus-2 Mulitimodal Minecraft Agent with Goal-Observation-Action Conditioned Policy 2502.19902v2</h2>
+    <div class="paper-header">
+        <h2 class="paper-title">Optimus-2 Mulitimodal Minecraft Agent with Goal-Observation-Action Conditioned Policy 2502.19902v2</h2>
+        <span class="layout-badge">Figures before Abstract</span>
+    </div>
     <div class="section-title"><h3>Keywords</h3></div>
     <div class="keywords">
         <span>tasks</span>
@@ -376,9 +411,20 @@
     <div class="abstract">Building an agent that can mimic human behavior patterns to accomplish various open-world tasks is a longterm goal. To enable agents to effectively learn behavioral patterns across diverse tasks, a key challenge lies in modeling the intricate relationships among observations, actions, and language. To this end, we propose Optimus-a novel Minecraft agent that incorporates a Multimodal Large Language Model (MLLM) for highlevel planning, alongside a Goal-Observation Action Conditioned Policy (GOAP) for low-level control. GOAP contains (1) an Action-guided Behavior Encoder that models causal relationships between observations and actions at each timestep, then dynamically interacts with the historical observation-action sequence, consolidating it into fixedlength behavior tokens, and (2) an MLLM that aligns behavior tokens with open-ended language instructions to predict actions auto-regressively. Moreover, we introduce a high-quality Minecraft Goal-Observation Action (MGOA) dataset, which contains 000 videos across 8 atomic tasks, providing about 30M goal-observation-action pairs. The automated construction method, along with the MGOA dataset, can contribute to the community’s efforts to train Minecraft agents. Extensive experimental results demonstrate that Optimus-2 exhibits superior performance across atomic tasks, long-horizon tasks, and open-ended instruction tasks in Minecraft. Please see the</div>
     <div class="section-title"><h3>Summary</h3></div>
     <div class="summary">Optimus-2 is a novel Minecraft agent that incorporates a Multimodal Large Language Model (MLLM) for highlevel planning, alongside a Goal-Observation Action Conditioned Policy (GOAP) for low-level control. GOAP contains an Action-guided Behavior Encoder that models causal relationships between observations and actions at each timestep. Extensive experimental results demonstrate that Optimus-2 exhibits superior performance across atomic tasks, long-horizon tasks, and open-ended instruction tasks in Minecraft.</div>
+    <div class="paper-metadata">
+        <details>
+            <summary>Paper Layout Information</summary>
+            <ul>
+                <li>Has figures before abstract: Yes</li>
+            </ul>
+        </details>
+    </div>
 </div>
 <div class="paper-container">
-    <h2>Show UI One Vision-Language-Action Model for GUI Visual Agent 2411.17465v1</h2>
+    <div class="paper-header">
+        <h2 class="paper-title">Show UI One Vision-Language-Action Model for GUI Visual Agent 2411.17465v1</h2>
+        <span class="layout-badge">Figures before Abstract</span>
+    </div>
     <div class="section-title"><h3>Keywords</h3></div>
     <div class="keywords">
         <span>visual</span>
@@ -393,9 +439,19 @@
     <div class="abstract">Building Graphical User Interface (GUI) assistants holds significant promise for enhancing human workflow productivity. While most agents are language-based, relying on closed-source API with text-rich meta-information (e.g., HTML or accessibility tree), they show limitations in perceiving UI visuals as humans do, highlighting the need for GUI visual agents. In this work, we develop a visionlanguage-action model in digital world, namely Show UI, which features the following innovations: (i) UI-Guided Visual Token Selection to reduce computational costs by formulating screenshots as an UI connected graph, adaptively identifying their redundant relationship and serve as the criteria for token selection during self-attention blocks; (ii) Interleaved Vision-Language-Action Streaming that flexibly unifies diverse needs within GUI tasks, enabling effective management of visual-action history in navigation or pairing multi-turn query-action sequences per screenshot to enhance training efficiency; (iii) Small-scale High quality GUI Instruction-following Datasets by careful data curation and employing a resampling strategy to address significant data type imbalances. With above components, Show UI, a lightweight 2B model using 256K data, achieves a strong 75.1% accuracy in zero-shot screenshot grounding. Its UI-guided token selection further reduces 33% of redundant visual tokens during training and speeds up the performance by 1.4×. Navigation experiments across web, mobile, and online environments further underscore the effectiveness and potential of our model in advancing GUI visual agents. The models are available at [URL] UI .</div>
     <div class="section-title"><h3>Summary</h3></div>
     <div class="summary">The academic paper abstract is broken down into a coherent, logical paragraph. It includes key technical details and significant results. For more information on the models, visit the UI website or go to: http: //www. ibm. com/uibm/ui/ui-vision-language-action-model. The models are available at [URL] UI. Back to Mail Online home. back to the page you came from. The article was published on November 14, 2013.</div>
+    <div class="paper-metadata">
+        <details>
+            <summary>Paper Layout Information</summary>
+            <ul>
+                <li>Has figures before abstract: Yes</li>
+            </ul>
+        </details>
+    </div>
 </div>
 <div class="paper-container">
-    <h2>RL-RC-Do T A Block-level RL agent for Task-Aware Video Compression 2501.12216v1</h2>
+    <div class="paper-header">
+        <h2 class="paper-title">RL-RC-Do T A Block-level RL agent for Task-Aware Video Compression 2501.12216v1</h2>
+    </div>
     <div class="section-title"><h3>Keywords</h3></div>
     <div class="keywords">
         <span>task</span>
@@ -412,7 +468,10 @@
     <div class="summary">Video encoders optimize compression for human perception by minimizing reconstruction error under bit-rate constraints. We address this challenge by controlling the Quantization Parameters (QPs) at the macro-block level to optimize the downstream task. This granular control allows us to prioritize encoding for task-relevant regions within each frame. Our approach improves task performance for a given bit rate compared to traditional taskagnostic encoding methods, paving the way for more efficient task-aware video compression. We demonstrate significant improvements in two tasks, car detection, and ROI (saliency) encoding.</div>
 </div>
 <div class="paper-container">
-    <h2>Spirit Sight Agent Advanced GUI Agent with One Look 2503.03196v1</h2>
+    <div class="paper-header">
+        <h2 class="paper-title">Spirit Sight Agent Advanced GUI Agent with One Look 2503.03196v1</h2>
+        <span class="layout-badge">Figures before Abstract</span>
+    </div>
     <div class="section-title"><h3>Keywords</h3></div>
     <div class="keywords">
         <span>spirit</span>
@@ -427,26 +486,20 @@
     <div class="abstract">Graphical User Interface (GUI) agents show amazing abilities in assisting human-computer interaction, automating human user’s navigation on digital devices. An ideal GUI agent is expected to achieve high accuracy, low latency, and compatibility for different GUI platforms. Recent visionbased approaches have shown promise by leveraging advanced Vision Language Models (VLMs). While they generally meet the requirements of compatibility and low latency, these vision-based GUI agents tend to have low accuracy due to their limitations in element grounding. To address this issue, we propose Spirit Sight, a vision-based, end-to-end GUI agent that excels in GUI navigation tasks across various GUI platforms. First, we create a multilevel, large-scale, high-quality GUI dataset called GUILasagne using scalable methods, empowering Spirit Sight with robust GUI understanding and grounding capabilities. Second, we introduce the Universal Block Parsing (UBP) method to resolve the ambiguity problem in dynamic high-resolution of visual inputs, further enhancing Spirit Sight’s ability to ground GUI objects. Through these efforts, Spirit Sight agent outperforms other advanced methods on diverse GUI benchmarks, demonstrating its superior capability and compatibility in GUI navigation tasks. Models are available at [URL] Sense LLM/Spirit Sight-Agent-8B .</div>
     <div class="section-title"><h3>Summary</h3></div>
     <div class="summary">Graphical User Interface (GUI) agents show amazing abilities in assisting human-computer interaction, automating human user’s navigation on digital devices. An ideal GUI agent is expected to achieve high accuracy, low latency, and compatibility for different GUI platforms. To address this issue, we propose Spirit Sight, a vision-based, end-to-end GUI agent that excels in GUI navigation tasks across various platforms. We create a multilevel, large-scale, high-quality GUI dataset called GUILasagne using scalable methods, empowering Spirit Sight with robust GUI understanding and grounding capabilities.</div>
-</div>
-<div class="paper-container">
-    <h2>Visual Agentic AI for Spatial Reasoning with a Dynamic API 2502.06787v1</h2>
-    <div class="section-title"><h3>Keywords</h3></div>
-    <div class="keywords">
-        <span>reasoning</span>
-        <span>visual</span>
-        <span>agentic</span>
-        <span>spatial</span>
-        <span>queries</span>
+    <div class="paper-metadata">
+        <details>
+            <summary>Paper Layout Information</summary>
+            <ul>
+                <li>Has figures before abstract: Yes</li>
+            </ul>
+        </details>
     </div>
-    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
-    <div class="method-description">we propose a training-free agentic approach, V ADAR, that dynamically generates new skills in Python and thus can handle a wider range of queries compared to prior methods.</div>
-    <div class="section-title"><h3>Original Abstract</h3></div>
-    <div class="abstract">Visual Agentic AI for Spatial Reasoning with a Dynamic API Damiano Marsili∗Rohun Agrawal∗Yisong Yue Georgia Gkioxari California Institute of Technology Figure 1. Spatial reasoning in 3D is challenging as it requires multiple steps of grounding and inference. We introduce a benchmark for 3D understanding with complex queries; an example is shown here. To tackle these queries we propose a training-free agentic approach, V ADAR, that dynamically generates new skills in Python and thus can handle a wider range of queries compared to prior methods. Abstract Visual reasoning – the ability to interpret the visual world – is crucial for embodied agents that operate within three-dimensional scenes. Progress in AI has led to vision and language models capable of answering questions from images. However, their performance declines when tasked with 3D spatial reasoning. To tackle the complexity of such reasoning problems, we introduce an agentic program synthesis approach where LLM agents collabor</div>
-    <div class="section-title"><h3>Summary</h3></div>
-    <div class="summary">Spatial reasoning in 3D is challenging as it requires multiple steps of grounding and inference. We propose a training-free agentic approach, V ADAR, that dynamically generates new skills in Python and thus can handle a wider range of queries compared to prior methods. We introduce a benchmark for 3D understanding with complex queries; an example is shown here. To tackle the complexity of such reasoning problems, we introduce an agentic program synthesis approach where LLM agents collaboratively solve the problem.</div>
 </div>
 <div class="paper-container">
-    <h2>TANGO Training-free Embodied AI Agents for Open-world Tasks 2412.10402v1</h2>
+    <div class="paper-header">
+        <h2 class="paper-title">TANGO Training-free Embodied AI Agents for Open-world Tasks 2412.10402v1</h2>
+        <span class="layout-badge">Figures before Abstract</span>
+    </div>
     <div class="section-title"><h3>Keywords</h3></div>
     <div class="keywords">
         <span>tasks</span>
@@ -461,26 +514,20 @@
     <div class="abstract">Large Language Models (LLMs) have demonstrated excellent capabilities in composing various modules together to create programs that can perform complex reasoning tasks on images. In this paper, we propose TANGO, an approach that extends the program composition via LLMs already observed for images, aiming to integrate those capabilities into embodied agents capable of observing and acting in the world. Specifically, by employing a simple Point Goal Navigation model combined with a memory-based exploration policy as a foundational primitive for guiding an agent through the world, we show how a single model can address diverse tasks without additional training. We task an LLM with composing the provided primitives to solve a specific task, using only a few in-context examples in the prompt. We evaluate our approach on three key Embodied AI tasks: Open-Set Object Goal Navigation, Multi Modal Lifelong Navigation, and Open Embodied Question Answering, achieving state-of-the-art results without any specific fine-tuning in challenging zero-shot scenarios.</div>
     <div class="section-title"><h3>Summary</h3></div>
     <div class="summary">TANGO is an approach that extends the program composition via LLMs already observed for images. We use a simple Point Goal Navigation model combined through a memory-based exploration policy as a foundational primitive for guiding an agent through the world. We show how a single model can address diverse tasks throughout additional training. We evaluate our approach on three key Embodied AI tasks: Open-Set Object Goal Navigation, Multi Modal Lifelong Navigation, and Open Embodied Question Answering, achieving state-of-the-art results throughout any specific fine-tuning.</div>
-</div>
-<div class="paper-container">
-    <h2>Seg Agent Exploring Pixel Understanding Capabilities in MLLMs by Imitating Human Annotator Trajectori 2503.08625v1</h2>
-    <div class="section-title"><h3>Keywords</h3></div>
-    <div class="keywords">
-        <span>pixel</span>
-        <span>capabilities</span>
-        <span>mllms</span>
-        <span>understanding</span>
-        <span>pixel-level</span>
+    <div class="paper-metadata">
+        <details>
+            <summary>Paper Layout Information</summary>
+            <ul>
+                <li>Has figures before abstract: Yes</li>
+            </ul>
+        </details>
     </div>
-    <div class="section-title method-section-title"><h3>Proposed Method</h3></div>
-    <div class="method-description">Seg Agent: Exploring Pixel Understanding Capabilities in MLLMs by Imitating Human Annotator Trajectories Muzhi Zhu2Yuzhuo Tian1Hao Chen Chunluan Zhou2 Qingpei Guo Yang Liu1Ming Yang2Chunhua Shen1Zhejiang University, China2Ant Group. Abstract While MLLMs have demonstrated adequate image understanding capabilities, they still struggle with pixel-level comprehension, limiting their practical applications. Current evaluation tasks like VQA and visual grounding remain too coarse to assess fine-grained pixel comprehension accurately. Though segmentation is foundational for pixellevel understanding, existing methods often require MLLMs to generate implicit tokens, decoded through external pixel decoders. This approach disrupts the MLLM’s text output space, potentially compromising language capabilities and reducing flexibility and extensibility, while failing to reflect the model’s intrinsic pixel-level understanding. Thus, We introduce the Human-Like Mask Annotation Task (HLMAT</div>
-    <div class="section-title"><h3>Original Abstract</h3></div>
-    <div class="abstract">Seg Agent: Exploring Pixel Understanding Capabilities in MLLMs by Imitating Human Annotator Trajectories Muzhi Zhu2Yuzhuo Tian1Hao Chen Chunluan Zhou2 Qingpei Guo Yang Liu1Ming Yang2Chunhua Shen1Zhejiang University, China2Ant Group. Abstract While MLLMs have demonstrated adequate image understanding capabilities, they still struggle with pixel-level comprehension, limiting their practical applications. Current evaluation tasks like VQA and visual grounding remain too coarse to assess fine-grained pixel comprehension accurately. Though segmentation is foundational for pixellevel understanding, existing methods often require MLLMs to generate implicit tokens, decoded through external pixel decoders. This approach disrupts the MLLM’s text output space, potentially compromising language capabilities and reducing flexibility and extensibility, while failing to reflect the model’s intrinsic pixel-level understanding. Thus, We introduce the Human-Like Mask Annotation Task (HLMAT</div>
-    <div class="section-title"><h3>Summary</h3></div>
-    <div class="summary">Seg Agent: Exploring Pixel Understanding Capabilities in MLLMs by Imitating Human Annotator Trajectories Muzhi Zhu2Yuzhuo Tian1Hao Chen Chunluan Zhou2 Qingpei Guo Yang Liu1Ming Yang2Chunhua Shen1Zhejiang University, China2Ant Group. We introduce the Human-Like Mask Annotation Task (HLMAT) to test MLLM's pixel-level comprehension.</div>
 </div>
 <div class="paper-container">
-    <h2>Reasoning in visual navigation of end-to-end trained agents a dynamical systems approach 2503.08306v3</h2>
+    <div class="paper-header">
+        <h2 class="paper-title">Reasoning in visual navigation of end-to-end trained agents a dynamical systems approach 2503.08306v3</h2>
+        <span class="layout-badge">Figures before Abstract</span>
+    </div>
     <div class="section-title"><h3>Keywords</h3></div>
     <div class="keywords">
         <span>agent</span>
@@ -493,9 +540,20 @@
     <div class="abstract">Progress in Embodied AI has made it possible for end-toend-trained agents to navigate in photo-realistic environments with high-level reasoning and zero-shot or languageconditioned behavior, but benchmarks are still dominated by simulation. In this work, we focus on the fine-grained behavior of fast-moving real robots and present a largescale experimental study involving 262 navigation episodes in a real environment with a physical robot, where we analyze the type of reasoning emerging from end-to-end training. In particular, we study the presence of realistic dynamics which the agent learned for open-loop forecasting, and their interplay with sensing. We analyze the way the agent uses latent memory to hold elements of the scene structure and information gathered during exploration. We probe the planning capabilities of the agent, and find in its memory evidence for somewhat precise plans over a limited horizon. Furthermore, we show in a post-hoc analysis that the value function learned by the agent relates to long-term planning. Put together, our experiments paint a new picture on how using tools from computer vision and sequential decision making have led to new capabilities in robotics and control. An interactive tool is available [here].</div>
     <div class="section-title"><h3>Summary</h3></div>
     <div class="summary">Was published in the journal Embodied AI. An interactive tool is available to help students with reading comprehension and vocabulary. The abstract is as follows: Summarize the academic paper abstract into a coherent, logical paragraph. .</div>
+    <div class="paper-metadata">
+        <details>
+            <summary>Paper Layout Information</summary>
+            <ul>
+                <li>Has figures before abstract: Yes</li>
+            </ul>
+        </details>
+    </div>
 </div>
 <div class="paper-container">
-    <h2>Taming Large Multimodal Agents for Ultra-low Bitrate Semantically Disentangled Image Compression 2503.00399v2</h2>
+    <div class="paper-header">
+        <h2 class="paper-title">Taming Large Multimodal Agents for Ultra-low Bitrate Semantically Disentangled Image Compression 2503.00399v2</h2>
+        <span class="layout-badge">Figures before Abstract</span>
+    </div>
     <div class="section-title"><h3>Keywords</h3></div>
     <div class="keywords">
         <span>semantic</span>
@@ -510,6 +568,39 @@
     <div class="abstract">It remains a significant challenge to compress images at ultra-low bitrate while achieving both semantic consistency and high perceptual quality. We propose a novel image compression framework, Semantically Disentangled Image Compression (SEDIC) in this paper. Our proposed SEDIC leverages large multimodal models (LMMs) to disentangle the image into several essential semantic information, including an extremely compressed reference image, overall and object-level text descriptions, and the semantic masks. A multi-stage semantic decoder is designed to progressively restore the transmitted reference image object-by-object, ultimately producing high-quality and perceptually consistent reconstructions. In each decoding stage, a pre-trained controllable diffusion model is utilized to restore the object details on the reference image conditioned by the text descriptions and semantic masks. Experimental results demonstrate that SEDIC significantly outperforms state-of-the-art approaches, achieving superior perceptual quality and semantic consistency at ultra-low bitrates ( ≤0.05 bpp). Our code is available at [URL] .</div>
     <div class="section-title"><h3>Summary</h3></div>
     <div class="summary">It remains a significant challenge to compress images at ultra-low bitrate while achieving both semantic consistency and high perceptual quality. We propose a novel image compression framework, Semantically Disentangled Image Compression (SEDIC) SEDIC leverages large multimodal models to disentangle the image into several essential semantic information, including an extremely compressed reference image, overall and object-level text descriptions, and the semantic masks. A multi-stage semantic decoder is designed to progressively restore the transmitted reference image object-by-object.</div>
+    <div class="paper-metadata">
+        <details>
+            <summary>Paper Layout Information</summary>
+            <ul>
+                <li>Has figures before abstract: Yes</li>
+            </ul>
+        </details>
+    </div>
+</div>
+<div class="paper-metadata">
+    <h3>Summary Statistics</h3>
+    <ul>
+        <li>Total papers processed: 12</li>
+        <li>Papers with abstracts: 12</li>
+        <li>Papers with summaries: 12</li>
+        <li>Papers with figures before abstract: 11</li>
+    </ul>
+    <details>
+        <summary>Papers with Non-Standard Layouts</summary>
+        <ul>
+            <li>MAC-Ego3D Multi-Agent Gaussian Consensus for Real-Time Collaborative Ego-Motion and Photorealistic 3 2412.09723v1</li>
+            <li>From Multimodal LLMs to Generalist Embodied Agents Methods and Lessons 2412.08442v1</li>
+            <li>Unlocking Video-LLM via Agent-of-Thoughts Distillation 2412.01694v2</li>
+            <li>Learning to Detect Objects from Multi-Agent Li DAR Scans without Manual Labels 2503.08421v2</li>
+            <li>NADER Neural Architecture Design via Multi-Agent Collaboration 2412.19206v1</li>
+            <li>Optimus-2 Mulitimodal Minecraft Agent with Goal-Observation-Action Conditioned Policy 2502.19902v2</li>
+            <li>Show UI One Vision-Language-Action Model for GUI Visual Agent 2411.17465v1</li>
+            <li>Spirit Sight Agent Advanced GUI Agent with One Look 2503.03196v1</li>
+            <li>TANGO Training-free Embodied AI Agents for Open-world Tasks 2412.10402v1</li>
+            <li>Reasoning in visual navigation of end-to-end trained agents a dynamical systems approach 2503.08306v3</li>
+            <li>Taming Large Multimodal Agents for Ultra-low Bitrate Semantically Disentangled Image Compression 2503.00399v2</li>
+        </ul>
+    </details>
 </div>
 </body>
 </html>
